@@ -214,7 +214,8 @@ export function extractTextForEmbedding(content: string, absPath: string): strin
   if (/\.(htm|html)$/i.test(lower)) {
     text = stripHtml(content);
   } else {
-    text = content; // MD, .mq5, .mqh — use as-is
+    // MD, .mq5, .mqh, .pdf (already plain text via readFileText) — use as-is
+    text = content;
   }
   return text.substring(0, MAX_EMBED_CHARS).trim();
 }

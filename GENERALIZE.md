@@ -171,9 +171,9 @@ build_semantic_index 工具
 | HTML | ✅ 支持 | 通用化 stripHtml |
 | Markdown | ✅ 支持 | 已可用 |
 | MQL5 代码 .mq5/.mqh | ✅ 支持 | 移入 mql5 插件 |
-| PDF | ❌ | `pdfjs-dist` 解析，提取纯文本 |
-| Confluence export | ❌ | HTML 导出，现有引擎即可处理 |
-| Notion export | ❌ | Markdown 导出，现有引擎即可处理 |
+| PDF | ✅ | `pdf-parse`，动态导入，提取纯文本 |
+| Confluence export | ✅ | HTML 导出，现有引擎直接处理 |
+| Notion export | ✅ | Markdown 导出，现有引擎直接处理 |
 
 PDF 支持是企业知识库最高频的需求，优先级高。
 
@@ -232,10 +232,11 @@ PDF 支持是企业知识库最高频的需求，优先级高。
 
 **验收：中文 query "如何设置止损" 能命中 OrderModify 相关文档。**
 
-### Phase 3 — 多源接入（按需）
-- [ ] PDF ingestion（`pdfjs-dist`）
-- [ ] Confluence HTML export 适配
-- [ ] 重命名项目为 `knowledge-mcp` 或类似通用名
+### Phase 3 — 多源接入（✅ 完成）
+- [x] PDF ingestion（`pdf-parse`，动态导入，零冷启动开销）
+- [x] Confluence HTML export 适配（复用现有 HTML 引擎，无需改造）
+- [x] Notion / 内部 Wiki Markdown 导出（复用现有 MD 引擎，无需改造）
+- [ ] 重命名项目为 `knowledge-mcp` 或类似通用名（按需，不影响功能）
 
 ---
 

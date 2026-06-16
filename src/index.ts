@@ -33,6 +33,7 @@ import {
   hybridMerge,
   extractTextForEmbedding,
 } from "./core/embedding.js";
+import { readFileText, PDF_EXT } from "./core/ingestion.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -159,7 +160,7 @@ let queryEngine: SmartQueryEngine | null = null;
 // 支持的文件扩展名
 const DOC_EXTS  = /\.(htm|html|md)$/i;
 const CODE_EXTS = /\.(mq5|mqh)$/i;
-const ALL_EXTS  = /\.(htm|html|md|mq5|mqh)$/i;
+const ALL_EXTS  = /\.(htm|html|md|mq5|mqh|pdf)$/i;
 
 // 递归读取目录下的文件
 async function walkDir(rootAbs: string, repoKey: string, baseRel = ""): Promise<DocEntry[]> {
@@ -387,12 +388,12 @@ async function getDoc(filename: string): Promise<string> {
   }
 
   try {
-    const content = await fs.readFile(entry.absPath, "utf-8");
     const header = `📄 ${entry.relPath} (${entry.repo})\n${"=".repeat(60)}\n\n`;
     const footer = `\n\n${"=".repeat(60)}`;
 
     if (CODE_EXTS.test(entry.absPath)) {
       // .mq5 / .mqh — 原始代码，保留格式
+      const content = await fs.readFile(entry.absPath, "utf-8");
       const truncated = content.length > 12000
         ? content.substring(0, 12000) + "\n\n// ... (内容过长，已截断)"
         : content;
@@ -400,13 +401,23 @@ async function getDoc(filename: string): Promise<string> {
     }
 
     if (/\.(md)$/i.test(entry.absPath)) {
+      const content = await fs.readFile(entry.absPath, "utf-8");
       const truncated = content.length > 15000
         ? content.substring(0, 15000) + "\n\n... (内容过长，已截断)"
         : content;
       return header + truncated + footer;
     }
 
+    if (PDF_EXT.test(entry.absPath)) {
+      const text = await readFileText(entry.absPath);
+      const truncated = text.length > 12000
+        ? text.substring(0, 12000) + "\n\n... (内容过长，已截断)"
+        : text;
+      return header + truncated + footer;
+    }
+
     // HTML 文档
+    const content = await fs.readFile(entry.absPath, "utf-8");
     const text = stripHtml(content);
     const truncated = text.length > 10000 ? text.substring(0, 10000) + "..." : text;
     return header + truncated + footer;
@@ -1057,7 +1068,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           }
 
           try {
-            const raw = await fs.readFile(entry.absPath, "utf-8");
+            const raw = await readFileText(entry.absPath);
             const text = extractTextForEmbedding(raw, entry.absPath);
             if (text.length < 30) { skipped++; continue; }
 
