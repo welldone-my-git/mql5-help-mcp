@@ -15,6 +15,7 @@ import { getErrorDb, closeErrorDb } from "./error-db.js";
 import { stripHtml, MIGRATION_HINTS } from "./utils.js";
 import { LibraryPreprocessor, knowledgeStore, contextAssembler, } from "./library-knowledge.js";
 import { fixPatternsDb } from "./fix-patterns.js";
+import { vectorStore, ollamaEmbed, ollamaHealthCheck, semanticSearch, hybridMerge, extractTextForEmbedding, } from "./core/embedding.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // 配置文件路径
@@ -80,6 +81,10 @@ async function loadPlugin() {
         console.error(`⚠️  插件 "${pluginName}" 加载失败: ${e}`);
         return null;
     }
+}
+async function getEmbeddingConfig() {
+    const cfg = await loadConfig();
+    return cfg.embedding ?? null;
 }
 // ── Runtime state ─────────────────────────────────────────────────────────────
 // 已加载的库清单（供 list_libraries / preprocess_library 使用）
@@ -199,73 +204,94 @@ async function buildIndex() {
     queryEngine = new SmartQueryEngine(docIndex);
     return docIndex;
 }
-// 搜索文档（含错误文本与迁移提示）
-async function searchDocs(query, limit = 10) {
-    const index = await buildIndex();
+// ── 关键词搜索（内部，返回结构化结果）────────────────────────────────────────
+function keywordSearch(query, index) {
     const queryLower = query.toLowerCase();
-    // 智能错误识别（undeclared identifier ...）
-    const smartHints = [];
-    const undeclaredMatch = queryLower.match(/undeclared\s+identifier\s+'?"?([a-z_][a-z0-9_]*)'?"?/i) ||
-        queryLower.match(/undeclared\s+identifier\s+([a-z_][a-z0-9_]*)/i);
-    if (undeclaredMatch && undeclaredMatch[1]) {
-        const missing = undeclaredMatch[1].toLowerCase();
-        if (MIGRATION_HINTS[missing]) {
-            const h = MIGRATION_HINTS[missing];
-            smartHints.push(`🩺 诊断：未声明标识符 '${missing}' → 可能应改为 '${h.replacement}'（${h.hint}）`);
-        }
-    }
-    // 迁移建议（直接包含左侧关键词时）
-    for (const [k, v] of Object.entries(MIGRATION_HINTS)) {
-        if (queryLower.includes(k))
-            smartHints.push(`🔁 迁移建议：'${k}' → '${v.replacement}'（${v.hint}）`);
-    }
-    // 精确匹配
-    const exact = index.get(queryLower);
-    // 模糊匹配 + 迁移目标扩展
     const expansionKeys = new Set();
     for (const [k, v] of Object.entries(MIGRATION_HINTS)) {
         if (queryLower.includes(k))
             v.targetKeys.forEach((t) => expansionKeys.add(t));
     }
-    if (undeclaredMatch && undeclaredMatch[1]) {
+    const undeclaredMatch = queryLower.match(/undeclared\s+identifier\s+'?"?([a-z_][a-z0-9_]*)'?"?/i) ||
+        queryLower.match(/undeclared\s+identifier\s+([a-z_][a-z0-9_]*)/i);
+    if (undeclaredMatch?.[1]) {
         const m = undeclaredMatch[1].toLowerCase();
-        if (MIGRATION_HINTS[m])
-            MIGRATION_HINTS[m].targetKeys.forEach((t) => expansionKeys.add(t));
+        MIGRATION_HINTS[m]?.targetKeys.forEach((t) => expansionKeys.add(t));
     }
     const results = [];
     for (const [key, entry] of index.entries()) {
-        let matched = false;
         let score = 0;
-        if (key === queryLower) {
-            matched = true;
+        if (key === queryLower)
             score = 1.0;
-        }
-        else if (key.includes(queryLower)) {
-            matched = true;
+        else if (key.includes(queryLower))
             score = queryLower.length / Math.max(2, key.length);
-        }
-        else if (expansionKeys.has(key)) {
-            matched = true;
+        else if (expansionKeys.has(key))
             score = 0.95;
-        }
-        if (matched)
-            results.push({ entry, key, score });
+        if (score > 0)
+            results.push({ key, entry, score });
     }
     results.sort((a, b) => b.score - a.score);
-    let out = `🔍 搜索: "${query}"\n\n`;
+    return results;
+}
+// 构建迁移提示行
+function buildSmartHints(query) {
+    const queryLower = query.toLowerCase();
+    const hints = [];
+    const undeclaredMatch = queryLower.match(/undeclared\s+identifier\s+'?"?([a-z_][a-z0-9_]*)'?"?/i) ||
+        queryLower.match(/undeclared\s+identifier\s+([a-z_][a-z0-9_]*)/i);
+    if (undeclaredMatch?.[1]) {
+        const missing = undeclaredMatch[1].toLowerCase();
+        const h = MIGRATION_HINTS[missing];
+        if (h)
+            hints.push(`🩺 诊断：未声明标识符 '${missing}' → 可能应改为 '${h.replacement}'（${h.hint}）`);
+    }
+    for (const [k, v] of Object.entries(MIGRATION_HINTS)) {
+        if (queryLower.includes(k))
+            hints.push(`🔁 迁移建议：'${k}' → '${v.replacement}'（${v.hint}）`);
+    }
+    return hints;
+}
+// ── 搜索文档（关键词 or 混合）────────────────────────────────────────────────
+async function searchDocs(query, limit = 10) {
+    const index = await buildIndex();
+    const kwResults = keywordSearch(query, index);
+    const smartHints = buildSmartHints(query);
+    const exact = index.get(query.toLowerCase());
+    let searchMode = "关键词";
+    let finalResults = kwResults.slice(0, limit);
+    // 混合搜索：embedding 已配置且 vectorStore 有数据
+    const embCfg = await getEmbeddingConfig();
+    if (embCfg && vectorStore.count() > 0) {
+        const queryVec = await ollamaEmbed(embCfg.url, embCfg.model, query);
+        if (queryVec) {
+            const semHits = semanticSearch(queryVec, vectorStore, limit * 2);
+            const kwHits = kwResults.map(r => ({ key: r.key, score: r.score }));
+            const merged = hybridMerge(kwHits, semHits, limit);
+            finalResults = merged.map(h => ({
+                key: h.key,
+                entry: index.get(h.key),
+                displayScore: h.hybridScore,
+            })).filter(r => r.entry != null);
+            searchMode = "混合（关键词 + 语义）";
+        }
+    }
+    let out = `🔍 搜索: "${query}"  [${searchMode}]\n\n`;
     if (smartHints.length)
         out += smartHints.map((s) => `• ${s}`).join("\n") + "\n\n";
     if (exact)
         out += `✅ 精确匹配: ${exact.relPath}  (来源: ${exact.repo})\n\n`;
-    if (results.length > 0) {
-        out += `📋 相关文档 (${Math.min(results.length, limit)} / ${results.length})：\n`;
-        results.slice(0, limit).forEach((m, i) => {
-            out += `  ${i + 1}. ${m.entry.relPath}  (${m.entry.repo})\n`;
+    if (finalResults.length > 0) {
+        out += `📋 相关文档 (${finalResults.length})：\n`;
+        finalResults.forEach((m, i) => {
+            const score = m.displayScore != null ? `  [${(m.displayScore * 100).toFixed(0)}%]` : "";
+            out += `  ${i + 1}. ${m.entry.relPath}  (${m.entry.repo})${score}\n`;
         });
     }
     else if (!exact) {
-        out += `❌ 未找到匹配文档\n`;
-        out += `💡 提示: 使用英文关键字，如 OrderSend, CopyBuffer；或尝试更短关键词`;
+        out += "❌ 未找到匹配文档\n";
+        if (searchMode === "关键词") {
+            out += "💡 提示: 使用英文关键字，或运行 build_semantic_index 开启语义搜索（可用中文查询）";
+        }
     }
     return out;
 }
@@ -490,6 +516,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                     },
                 },
                 required: ["action"],
+            },
+        },
+        {
+            name: "build_semantic_index",
+            description: "🔮 构建语义向量索引（一次性）。调用 Ollama 本地 embedding 模型对所有已索引文档向量化并存入本地 SQLite。完成后 search/smart_query 自动切换为混合模式（关键词 + 语义），支持中文查询命中英文文档。需先在 config.json 配置 embedding 字段并安装 Ollama。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    force_reindex: {
+                        type: "boolean",
+                        description: "是否强制重建（忽略已有索引，默认 false）",
+                        default: false,
+                    },
+                    limit: {
+                        type: "number",
+                        description: "限制最多处理的文档数量（调试用，默认不限制）",
+                    },
+                },
             },
         },
         {
@@ -794,6 +838,94 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     return { content: [{ type: "text", text: output }] };
                 }
                 throw new Error(`未知操作: ${action}`);
+            }
+            case "build_semantic_index": {
+                const { force_reindex = false, limit: docLimit } = args;
+                const embCfg = await getEmbeddingConfig();
+                if (!embCfg) {
+                    return {
+                        content: [{ type: "text", text: [
+                                    "❌ 未配置 embedding。请在 ~/.mql5-help-mcp/config.json 中添加：",
+                                    "```json",
+                                    '{',
+                                    '  "embedding": {',
+                                    '    "provider": "ollama",',
+                                    '    "model": "nomic-embed-text",',
+                                    '    "url": "http://localhost:11434"',
+                                    '  }',
+                                    '}',
+                                    "```",
+                                    "",
+                                    "然后安装 Ollama：https://ollama.ai  并运行：",
+                                    "  ollama pull nomic-embed-text",
+                                ].join("\n") }],
+                        isError: true,
+                    };
+                }
+                // 检查 Ollama 是否在线
+                const healthy = await ollamaHealthCheck(embCfg.url);
+                if (!healthy) {
+                    return {
+                        content: [{ type: "text", text: `❌ Ollama 服务不可达 (${embCfg.url})\n\n请确认 Ollama 已启动：ollama serve` }],
+                        isError: true,
+                    };
+                }
+                if (force_reindex) {
+                    vectorStore.deleteAll();
+                }
+                await buildIndex();
+                const allEntries = [...docIndex.entries()];
+                const toIndex = allEntries.filter(([key]) => !vectorStore.hasKey(key));
+                const limited = docLimit ? toIndex.slice(0, docLimit) : toIndex;
+                if (limited.length === 0) {
+                    const stats = vectorStore.getStats();
+                    return {
+                        content: [{ type: "text", text: `✅ 所有文档已有索引（共 ${stats.count} 个）。使用 force_reindex=true 强制重建。` }],
+                    };
+                }
+                const lines = [
+                    `🔮 开始构建语义索引`,
+                    `   模型: ${embCfg.model}  服务: ${embCfg.url}`,
+                    `   待处理: ${limited.length} 个文档（已有 ${vectorStore.count()} 个）`,
+                    "",
+                ];
+                let succeeded = 0, skipped = 0, failed = 0;
+                const t0 = Date.now();
+                for (let i = 0; i < limited.length; i++) {
+                    const [key, entry] = limited[i];
+                    // 进度日志每50个输出一次
+                    if (i > 0 && i % 50 === 0) {
+                        lines.push(`  [${i}/${limited.length}] 已处理 ${succeeded} 成功, ${failed} 失败...`);
+                    }
+                    try {
+                        const raw = await fs.readFile(entry.absPath, "utf-8");
+                        const text = extractTextForEmbedding(raw, entry.absPath);
+                        if (text.length < 30) {
+                            skipped++;
+                            continue;
+                        }
+                        const embedding = await ollamaEmbed(embCfg.url, embCfg.model, text);
+                        if (!embedding) {
+                            failed++;
+                            continue;
+                        }
+                        vectorStore.upsert(key, entry.absPath, embedding, {
+                            preview: text.substring(0, 120),
+                            model: embCfg.model,
+                        });
+                        succeeded++;
+                    }
+                    catch {
+                        failed++;
+                    }
+                }
+                const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+                lines.push(`✅ 完成！耗时 ${elapsed}s`);
+                lines.push(`   成功: ${succeeded}  跳过: ${skipped}  失败: ${failed}`);
+                lines.push(`   向量库总量: ${vectorStore.count()} 个文档`);
+                lines.push("");
+                lines.push("现在 search / smart_query 将自动使用混合搜索模式（中文查询可命中英文文档）。");
+                return { content: [{ type: "text", text: lines.join("\n") }] };
             }
             case "list_libraries": {
                 await buildIndex();

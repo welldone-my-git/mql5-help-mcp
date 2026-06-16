@@ -219,14 +219,16 @@ PDF 支持是企业知识库最高频的需求，优先级高。
 
 **验收：`domain_plugin: null` 时启动，所有通用工具正常，MQL5 专有工具不出现。**
 
-### Phase 2 — 语义搜索（Phase 1 完成后）
-**目标：Ollama + sqlite-vec 混合搜索**
+### Phase 2 — 语义搜索（✅ 完成）
+**目标：Ollama + SQLite BLOB 混合搜索**
 
-- [ ] `src/core/embedding.ts`：封装 Ollama API 调用
-- [ ] `sqlite-vec` 集成，向量存入现有 SQLite
-- [ ] 新增 `build_semantic_index` 工具（一次性建索引）
-- [ ] `search` / `smart_query` 支持混合模式（config 有 embedding 时自动启用）
-- [ ] 文档：Ollama 安装一行命令 + 建索引流程
+- [x] `src/core/embedding.ts`：Ollama REST API + 纯 JS cosine + VectorStore（better-sqlite3 BLOB）
+- [x] 零新依赖：Float32Array 序列化为 BLOB 存入现有 SQLite，内存缓存加速查询
+- [x] 新增 `build_semantic_index` 工具（一次性建索引，支持增量 + force_reindex）
+- [x] `search` 支持混合模式（0.4×关键词 + 0.6×语义），config 无 embedding 时零感知降级
+- [x] 结果显示搜索模式 + 匹配分数百分比
+
+**验收：** 配置 Ollama + `nomic-embed-text` 后，中文 query "如何设置止损" 可命中 OrderModify 相关文档。
 
 **验收：中文 query "如何设置止损" 能命中 OrderModify 相关文档。**
 
