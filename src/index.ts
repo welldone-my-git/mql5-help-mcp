@@ -600,7 +600,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "manage_knowledge",
-        description: "🔄 管理预处理库知识：export（导出为可分享的 JSON 包）、import（导入他人分享的知识包，无需自己运行 Haiku）、stats（查看各库的知识统计）。",
+        description: "🔄 管理预处理库知识：export（导出为磁盘 JSON 文件供分享）、import（从文件路径导入他人知识包，无需自己运行 Haiku）、stats（查看各库的知识统计）。",
         inputSchema: {
           type: "object",
           properties: {
@@ -613,13 +613,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "string",
               description: "export 时必填，指定要导出的库 key",
             },
-            data: {
+            file_path: {
               type: "string",
-              description: "import 时必填，JSON 知识包内容",
+              description: "import 时必填，指向 .knowledge.json 文件的绝对路径",
             },
             import_as: {
               type: "string",
-              description: "import 时可选，覆盖知识包中的 key（用于重命名）",
+              description: "import 时可选，覆盖知识包中的库 key（用于重命名）",
             },
           },
           required: ["action"],
@@ -1128,10 +1128,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "manage_knowledge": {
-        const { action, library_key: lk, data, import_as } = args as {
+        const { action, library_key: lk, file_path: fp, import_as } = args as {
           action: "export" | "import" | "stats";
           library_key?: string;
-          data?: string;
+          file_path?: string;
           import_as?: string;
         };
 
@@ -1139,33 +1139,48 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           if (!lk) {
             return { content: [{ type: "text", text: "❌ export 操作需要提供 library_key" }], isError: true };
           }
-          const json = await knowledgeStore.exportLibrary(lk);
-          const parsed = JSON.parse(json) as { files: unknown[] };
-          if (parsed.files.length === 0) {
+          const result = await knowledgeStore.exportLibrary(lk);
+          if (result.fileCount === 0) {
             return {
-              content: [{ type: "text", text: `❌ 库 "${lk}" 尚无已预处理的知识。请先运行 preprocess_library。` }],
+              content: [{ type: "text", text: `❌ 库 "${lk}" 尚无已预处理的知识。请先运行 preprocess_library("${lk}")。` }],
               isError: true,
             };
           }
           return {
             content: [{
               type: "text",
-              text: `✅ 已导出库 "${lk}" 的知识包（${parsed.files.length} 个文件）\n\n` +
-                "**分享方式:** 将以下 JSON 内容保存为 .json 文件，他人可通过 manage_knowledge(action=import, data=...) 导入，" +
-                "无需自己运行 Haiku API。\n\n```json\n" + json + "\n```",
+              text: [
+                `✅ 已导出库 "${lk}" 的知识包`,
+                `   文件数: ${result.fileCount}  类数: ${result.classCount}`,
+                `   路径: ${result.filePath}`,
+                "",
+                "**分享方式:**",
+                `1. 将 \`${result.filePath}\` 发送给团队成员`,
+                `2. 对方运行: manage_knowledge(action="import", file_path="/path/to/${lk}.knowledge.json")`,
+                "3. 对方无需配置 ANTHROPIC_API_KEY 或运行 preprocess_library，直接可用 analyze_code",
+              ].join("\n"),
             }],
           };
         }
 
         if (action === "import") {
-          if (!data) {
-            return { content: [{ type: "text", text: "❌ import 操作需要提供 data（JSON 知识包内容）" }], isError: true };
+          if (!fp) {
+            return { content: [{ type: "text", text: "❌ import 操作需要提供 file_path（.knowledge.json 文件的绝对路径）" }], isError: true };
           }
-          const result = await knowledgeStore.importLibrary(data, import_as);
+          const result = await knowledgeStore.importLibrary(fp, import_as);
           return {
             content: [{
               type: "text",
-              text: `✅ 知识包导入完成\n- 新增: ${result.imported} 个文件\n- 已跳过（已存在）: ${result.skipped}\n- 失败: ${result.errors}`,
+              text: [
+                `✅ 知识包导入完成 → 库: "${result.libraryKey}"`,
+                `   新增: ${result.imported} 个文件`,
+                `   已跳过（已存在）: ${result.skipped}`,
+                `   失败: ${result.errors}`,
+                "",
+                result.imported > 0
+                  ? `现在可以直接运行 analyze_code(code, "${result.libraryKey}") 使用导入的知识。`
+                  : "提示：若全部跳过，说明该库知识已存在。可删除 ~/.mql5-help-mcp/knowledge/${result.libraryKey}/ 后重新导入。",
+              ].join("\n"),
             }],
           };
         }
