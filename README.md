@@ -767,7 +767,7 @@ npm run build
 
 - 🔮 `build_semantic_index` 工具 — 调用本地 Ollama embedding 模型（`nomic-embed-text`，274MB）对所有文档向量化，增量运行，已有索引自动跳过
 - 🔀 混合搜索模式 — 配置 embedding 后 `search` 自动启用（0.4×关键词 + 0.6×语义），支持中文/自然语言查询命中英文 API 文档
-- 🏗️ 领域插件系统（Phase 1）— 核心引擎与 MQL5 专有逻辑解耦，`domain_plugin: null` 可作为纯通用知识库使用
+- 🏗️ 领域插件系统（Phase 1）— 核心引擎与 MQL5 专有逻辑解耦，`domain_plugin: null` 可作为纯通用知识库使用（→ [插件开发指南](PLUGIN_GUIDE.md)）
 - ⚙️ Config v2 `sources[]` — 统一来源配置，向后兼容旧 `extraLibraries`
 
 **💡 设计亮点：**
