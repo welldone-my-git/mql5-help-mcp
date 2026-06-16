@@ -154,11 +154,11 @@ AI 助手会自动调用 `smart_query`，直接返回解决方案：
 列出你可以使用的 MQL5 文档工具
 ```
 
-AI 应该会显示七个工具：`smart_query`、`search`、`get`、`browse`、`log_error`、`list_common_errors`、`manage_error_db`。
+AI 应该会显示十个工具：`smart_query`、`search`、`get`、`browse`、`diagnose_error`、`list_libraries`、`log_error`、`list_common_errors`、`manage_error_db`。
 
 ## 工具列表
 
-本 MCP 服务器当前提供 7 个工具：
+本 MCP 服务器当前提供 **10 个工具**：
 
 ### 核心查询工具
 
@@ -172,26 +172,47 @@ AI 应该会显示七个工具：`smart_query`、`search`、`get`、`browse`、`
   - 节省 80%+ token 消耗
   - 完全本地化，零 API 成本
 - 示例：
-  - "error E512: undeclared identifier ResultCode"（优先从数据库查询）
-  - "OrderSend 函数用法"
-  - "如何使用 CTrade 类下单"
-2) `search` - 搜索文档
+  - “error E512: undeclared identifier ResultCode”（优先从数据库查询）
+  - “OrderSend 函数用法”
+  - “如何使用 CTrade 类下单”
+2) `search` - 搜索文档与代码库
 - 参数：`query`（必填，关键词），`limit`（可选，默认 10）
 - 示例：
   - “搜索与订单发送相关的函数”
   - “查找 ONNX 模型相关的文档”
-2) `get` - 获取文档详情
-- 参数：`filename`（必填，如 `ordersend.htm` 或 `ordersend`）
+  - “搜索外部库文件：mylib_filename”
+3) `get` - 获取文档或代码文件详情
+- 参数：`filename`（必填，如 `ordersend.htm`、`ordersend`、`MyClass.mqh`）
+- 支持类型：`.htm/.html`（HTML文档）、`.md`（Markdown）、`.mq5/.mqh`（代码，原始返回）
 - 示例：
   - “获取 OrderSend 的完整文档”
   - “查看 CTrade 类的详细说明”
+  - “读取 MyExpert.mq5 代码”
 4) `browse` - 浏览分类目录
 - 参数：`category`（可选，如 `trading`, `indicators`, `math` 等）
 - 常见分类：`trading`, `indicators`, `math`, `array`, `string`, `datetime`, `files`, `chart`, `objects`, `onnx`
 
+### 诊断工具（新增 v1.4.0）
+
+5) **`diagnose_error`** - 🔬 编译日志批量诊断
+- 参数：`compile_log`（必填）：MetaEditor 完整编译输出文本
+- 功能：
+  - 自动解析所有 `error/warning` 行，相同错误自动去重
+  - 逐条匹配 18 条 MQL4→MQL5 迁移映射
+  - 查询本地错误数据库中的历史解决方案
+  - 推荐相关参考文档
+- 示例：
+  ```
+  粘贴 MetaEditor 编译窗口的完整输出（可包含多个错误）
+  ```
+6) **`list_libraries`** - 📚 查看已加载资料库
+- 无需参数
+- 功能：列出所有内置库与用户配置的外部库，显示文件数量与路径
+- 未配置外部库时，显示 `config.json` 配置示例
+
 ### 错误收集与管理工具（新增 v1.3.0）
 
-5) **`log_error`** - 📝 记录编译错误
+7) **`log_error`** - 📝 记录编译错误
 - 参数：
   
   - `error_code`（必填）：错误代码（如 `E512`、`E308`）
@@ -209,7 +230,7 @@ AI 应该会显示七个工具：`smart_query`、`search`、`get`、`browse`、`
   ```
   记录错误：E512，消息是"undeclared identifier ResultCode"，解决方案是"改用 ResultRetcode()"
   ```
-6) **`list_common_errors`** - 📊 查看高频错误
+8) **`list_common_errors`** - 📊 查看高频错误
 - 参数：`limit`（可选，默认 10）：返回错误数量
 
 - 功能：列出最常见的编译错误（按出现频率排序）
@@ -221,7 +242,7 @@ AI 应该会显示七个工具：`smart_query`、`search`、`get`、`browse`、`
   ```
   显示最常见的 10 个 MQL5 编译错误
   ```
-7) **`manage_error_db`** - 🔧 管理错误数据库
+9) **`manage_error_db`** - 🔧 管理错误数据库
 - 参数：
   
   - `action`（必填）：操作类型
@@ -531,6 +552,34 @@ npm run build
 
 ## 版本历史
 
+### v1.4.0 (2026-06-16) - 诊断增强 + 外部代码库支持
+
+**🎉 新功能:**
+
+- 🔬 `diagnose_error` 工具 — 粘贴 MetaEditor 完整编译日志，自动解析所有 error/warning 行，去重后逐条匹配迁移映射与历史方案，输出结构化诊断报告
+- 📚 `list_libraries` 工具 — 列出所有已加载资料库（内置 + 外部），显示文件数量与配置路径
+- 🔌 外部代码库支持 — 通过 `~/.mql5-help-mcp/config.json` 挂载任意本地 MQL5 开源库（`.mq5/.mqh`），无需修改源码
+- 🗺️ MQL4→MQL5 迁移映射从 4 条扩展至 18 条，新增 `MarketInfo`、`RefreshRates`、指标句柄、账户信息等
+
+**🔧 Bug 修复:**
+
+- `searchSimilarErrors` 改用 `OR` 逻辑，避免多词查询因 `AND` 过严漏匹配历史错误
+- 文档索引改为 first-wins，确保 `MQL5_HELP` 官方文档优先级不被同名电子书文件覆盖
+- `SmartQueryEngine` 改为模块级单例，不再每次请求重新实例化
+- `stripHtml` 提取为公共 `utils.ts`，消除 `index.ts` / `smart-query.ts` 重复代码
+
+**💡 使用外部库：**
+
+在 `~/.mql5-help-mcp/config.json` 中添加：
+```json
+{
+  "extraLibraries": [
+    { "key": "EA31337", "path": "/path/to/EA31337", "description": "EA31337 framework" }
+  ]
+}
+```
+重启服务后，`search`、`get`、`smart_query` 均可命中外部库中的文件。
+
 ### v1.3.0 (2024-11-25) - 错误收集系统
 
 **🎉 新功能:**
@@ -603,11 +652,13 @@ npm run build
 
 - ✅ [高] 团队错误库共享 - **v1.3.0已实现**
 
+- ✅ [高] 错误自动诊断：分析编译输出并提供解决方案 - **v1.4.0已实现**
+
+- ✅ [中] 上下文感知搜索增强：MQL4→MQL5 迁移映射扩展至18条 - **v1.4.0已实现**
+
+- ✅ [新] 外部开源代码库支持：通过 config.json 挂载 .mq5/.mqh 库 - **v1.4.0已实现**
+
 - [ ] [高] 代码示例库扩展：更多EA模板与策略示例
-
-- [ ] [高] 错误自动诊断：分析编译输出并提供解决方案
-
-- [ ] [中] 上下文感知搜索增强：更多术语映射
 
 - [ ] [中] 交互式帮助：多轮对话支持
 
@@ -615,7 +666,7 @@ npm run build
 
 - [ ] [中] 错误预测：基于代码模式预警潜在问题
 
-- [ ] [低] 统一索引两本电子书
+- [ ] [低] 统一索引两本电子书（browse 分类支持）
 
 - [ ] [低] 标签系统与版本标注
 
