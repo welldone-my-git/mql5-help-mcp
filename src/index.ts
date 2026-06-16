@@ -14,9 +14,9 @@ import {
 import * as fs from "fs/promises";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { SmartQueryEngine } from "./smart-query.js";
+import { SmartQueryEngine, DiagnoseEngine } from "./smart-query.js";
 import { getErrorDb, closeErrorDb } from "./error-db.js";
-import { stripHtml } from "./utils.js";
+import { stripHtml, MIGRATION_HINTS } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,30 +33,6 @@ type DocEntry = { absPath: string; relPath: string; repo: string };
 let docIndex: Map<string, DocEntry> | null = null; // key -> entry（key为检索键）
 let nameIndex: Map<string, DocEntry> | null = null; // 文件名（无扩展）-> entry
 let queryEngine: SmartQueryEngine | null = null;   // 单例，随索引一同初始化
-
-// MQL4→MQL5 常见迁移映射/别名（用于智能搜索提示）
-const MIGRATION_HINTS: Record<string, { replacement: string; hint: string; targetKeys: string[] }> = {
-  "resultcode": {
-    replacement: "ResultRetcode",
-    hint: "CTrade 结果方法在 MQL5 中改为 ResultRetcode()",
-    targetKeys: ["ctrade", "trade"],
-  },
-  "symbol()": {
-    replacement: "_Symbol",
-    hint: "预定义变量由 Symbol() 迁移为 _Symbol",
-    targetKeys: ["_symbol", "symbol"],
-  },
-  "period()": {
-    replacement: "_Period",
-    hint: "预定义变量由 Period() 迁移为 _Period",
-    targetKeys: ["_period", "period"],
-  },
-  "ima": {
-    replacement: "IndicatorCreate",
-    hint: "iMA 在 MQL5 中通常通过 IndicatorCreate 构建",
-    targetKeys: ["indicatorcreate", "icustom"],
-  },
-};
 
 // 递归读取目录下的文件
 async function walkDir(rootAbs: string, repoKey: string, baseRel = ""): Promise<DocEntry[]> {
@@ -417,6 +393,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["action"],
         },
       },
+      {
+        name: "diagnose_error",
+        description: "🔬 编译日志诊断：粘贴 MetaEditor 完整编译输出，自动解析所有错误/警告行，匹配迁移映射与历史解决方案，返回结构化诊断报告。适用于一次性修复多个编译错误的场景。",
+        inputSchema: {
+          type: "object",
+          properties: {
+            compile_log: {
+              type: "string",
+              description: "MetaEditor 编译窗口的完整输出文本，支持多行，如：\n  ma_cross.mq5(155,39) : error 256: undeclared identifier 'ResultCode'",
+            },
+          },
+          required: ["compile_log"],
+        },
+      },
     ],
   };
 });
@@ -655,6 +645,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
 
         throw new Error(`未知操作: ${action}`);
+      }
+
+      case "diagnose_error": {
+        const { compile_log } = args as { compile_log: string };
+
+        await buildIndex();
+        const engine = new DiagnoseEngine(docIndex!);
+        const report = await engine.diagnose(compile_log);
+
+        return { content: [{ type: "text", text: report }] };
       }
 
       default:
