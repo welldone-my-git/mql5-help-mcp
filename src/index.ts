@@ -12,6 +12,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import * as fs from "fs/promises";
+import * as fsSync from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { homedir } from "os";
@@ -428,38 +429,162 @@ async function getDoc(filename: string): Promise<string> {
 }
 
 // 浏览分类（仍以官方主题分类为主）
-function browseCategories(category?: string): string {
-  const categories: Record<string, string[]> = {
-    trading: ["ordersend", "ordercheck", "ctrade", "positionselect"],
+// ── Book browsing helpers ─────────────────────────────────────────────────────
+
+function readHtmlTitle(absPath: string): string {
+  try {
+    const raw = fsSync.readFileSync(absPath, "utf-8").slice(0, 3000);
+    const m = raw.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+    return m ? m[1].replace(/<[^>]+>/g, "").trim() : path.basename(absPath, path.extname(absPath));
+  } catch {
+    return path.basename(absPath, path.extname(absPath));
+  }
+}
+
+function numericFileCompare(a: string, b: string): number {
+  const parts = (s: string) =>
+    s.split(/[_.]/).map(p => (p !== "" && !isNaN(Number(p)) ? Number(p) : p));
+  const ap = parts(a), bp = parts(b);
+  for (let i = 0; i < Math.min(ap.length, bp.length); i++) {
+    if (ap[i] < bp[i]) return -1;
+    if (ap[i] > bp[i]) return 1;
+  }
+  return ap.length - bp.length;
+}
+
+async function browseBook(
+  repoKey: string,
+  bookTitle: string,
+  subChapter?: string   // e.g. "2" means show only chapter 2
+): Promise<string> {
+  const index = await buildIndex();
+
+  // collect all entries belonging to this book, sorted numerically
+  const entries: DocEntry[] = [];
+  for (const entry of index.values()) {
+    if (entry.repo === repoKey) entries.push(entry);
+  }
+  const seen = new Set<string>();
+  const unique = entries.filter(e => {
+    if (seen.has(e.absPath)) return false;
+    seen.add(e.absPath);
+    return true;
+  });
+  unique.sort((a, b) => numericFileCompare(path.basename(a.relPath), path.basename(b.relPath)));
+
+  // group by chapter (leading digit)
+  const chapters = new Map<string, DocEntry[]>();
+  for (const e of unique) {
+    const fname = path.basename(e.relPath);
+    const m = fname.match(/^(\d+)_/);
+    const ch = m ? m[1] : "0";
+    if (!chapters.has(ch)) chapters.set(ch, []);
+    chapters.get(ch)!.push(e);
+  }
+
+  const SEP = "─".repeat(60);
+
+  if (subChapter !== undefined) {
+    // drill-down: show all files in one chapter
+    const files = chapters.get(subChapter) ?? [];
+    if (files.length === 0) {
+      return `❌ 未找到第 ${subChapter} 章（可用: ${[...chapters.keys()].filter(k => k !== "0").join(", ")}）`;
+    }
+    const lines = [
+      `📖 ${bookTitle} — 第 ${subChapter} 章（${files.length} 页）`,
+      SEP, "",
+    ];
+    for (const e of files) {
+      const fname = path.basename(e.relPath);
+      const title = readHtmlTitle(e.absPath);
+      lines.push(`  • ${fname}  —  ${title}`);
+    }
+    lines.push("", `💡 使用 get_doc <文件名> 查看内容，如: get_doc ${path.basename(files[0].relPath)}`);
+    return lines.join("\n");
+  }
+
+  // top-level: chapter list
+  const totalFiles = unique.length;
+  const lines = [
+    `📖 ${bookTitle}（共 ${totalFiles} 页）`,
+    SEP, "",
+  ];
+
+  // misc files (no chapter prefix)
+  const misc = chapters.get("0") ?? [];
+  if (misc.length > 0) {
+    const names = misc.map(e => path.basename(e.relPath, ".htm")).join(", ");
+    lines.push(`  📄 序言/附录（${misc.length} 页）— ${names}`);
+  }
+
+  for (const [ch, files] of [...chapters.entries()].filter(([k]) => k !== "0").sort((a, b) => Number(a[0]) - Number(b[0]))) {
+    // chapter title: first file numerically
+    const firstTitle = readHtmlTitle(files[0].absPath);
+    lines.push(`  📄 第 ${ch} 章（${files.length} 页）— ${firstTitle}`);
+  }
+
+  lines.push("");
+  lines.push(`💡 使用 browse ${repoKey === "MQL5_Algo_Book" ? "algo_book" : "neural_book"}/<章号> 查看章节详细列表`);
+  lines.push(`   使用 search <关键词> 直接搜索全书内容`);
+  return lines.join("\n");
+}
+
+// ── Browse API categories ─────────────────────────────────────────────────────
+
+async function browseCategories(category?: string): Promise<string> {
+  const API_CATEGORIES: Record<string, string[]> = {
+    trading:    ["ordersend", "ordercheck", "ctrade", "positionselect"],
     indicators: ["icustom", "copybuffer", "indicatorcreate", "setindexbuffer"],
-    math: ["mathabs", "mathsin", "mathcos", "mathrandom", "mathpow"],
-    array: ["arrayresize", "arraycopy", "arraysort", "arrayinitialize"],
-    string: ["stringfind", "stringsplit", "stringreplace", "stringformat"],
-    datetime: ["timecurrent", "timelocal", "timetostruct", "timegmt"],
-    files: ["fileopen", "fileclose", "filewrite", "fileread"],
-    chart: ["chartopen", "chartredraw", "chartid", "chartsetinteger"],
-    objects: ["objectcreate", "objectdelete", "objectsetinteger"],
-    onnx: ["onnxcreate", "onnxrun", "onnxrelease", "MQL5_ONNX_Integration_Guide"],
+    math:       ["mathabs", "mathsin", "mathcos", "mathrandom", "mathpow"],
+    array:      ["arrayresize", "arraycopy", "arraysort", "arrayinitialize"],
+    string:     ["stringfind", "stringsplit", "stringreplace", "stringformat"],
+    datetime:   ["timecurrent", "timelocal", "timetostruct", "timegmt"],
+    files:      ["fileopen", "fileclose", "filewrite", "fileread"],
+    chart:      ["chartopen", "chartredraw", "chartid", "chartsetinteger"],
+    objects:    ["objectcreate", "objectdelete", "objectsetinteger"],
+    onnx:       ["onnxcreate", "onnxrun", "onnxrelease", "MQL5_ONNX_Integration_Guide"],
   };
 
   if (!category) {
-    let result = "📚 MQL5 文档分类\n" + "=".repeat(60) + "\n\n";
-    for (const [cat, docs] of Object.entries(categories)) {
-      result += `📁 ${cat}: ${docs.length} 个文档\n`;
+    const lines = ["📚 文档分类\n" + "=".repeat(60), "", "MQL5 API 分类："];
+    for (const [cat, docs] of Object.entries(API_CATEGORIES)) {
+      lines.push(`  📁 ${cat}（${docs.length} 个）`);
     }
-    result += "\n💡 使用 category 参数查看具体分类";
-    return result;
+    lines.push(
+      "",
+      "📖 内置电子书：",
+      "  📖 algo_book    — MQL5 算法交易手册（582 页，7 章）",
+      "  📖 neural_book  — 神经网络与机器学习手册（112 页，7 章）",
+      "",
+      "💡 使用 browse <分类> 查看具体内容",
+      "   电子书示例: browse algo_book  /  browse neural_book  /  browse algo_book/2",
+    );
+    return lines.join("\n");
   }
 
-  const docs = categories[category.toLowerCase()];
+  const lower = category.toLowerCase();
+
+  // ebook: algo_book[/chapter]
+  if (lower === "algo_book" || lower.startsWith("algo_book/")) {
+    const ch = lower.startsWith("algo_book/") ? lower.split("/")[1] : undefined;
+    return browseBook("MQL5_Algo_Book", "MQL5 算法交易手册", ch);
+  }
+
+  // ebook: neural_book[/chapter]
+  if (lower === "neural_book" || lower.startsWith("neural_book/")) {
+    const ch = lower.startsWith("neural_book/") ? lower.split("/")[1] : undefined;
+    return browseBook("Neural_Networks_Book", "神经网络与机器学习手册", ch);
+  }
+
+  // MQL5 API category
+  const docs = API_CATEGORIES[lower];
   if (!docs) {
-    return `❌ 未知分类: ${category}\n\n可用: ${Object.keys(categories).join(", ")}`;
+    const allCats = [...Object.keys(API_CATEGORIES), "algo_book", "neural_book"].join(", ");
+    return `❌ 未知分类: ${category}\n\n可用: ${allCats}`;
   }
 
-  let result = `📁 ${category.toUpperCase()}\n${"=".repeat(60)}\n\n`;
-  docs.forEach((doc) => {
-    result += `  • ${doc}.htm\n`;
-  });
+  let result = `📁 ${lower.toUpperCase()}\n${"=".repeat(60)}\n\n`;
+  docs.forEach(doc => { result += `  • ${doc}.htm\n`; });
   return result;
 }
 
@@ -538,13 +663,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "browse",
-        description: "浏览文档分类目录",
+        description: "📂 浏览文档分类目录，包含 MQL5 API 分类与两本内置电子书（MQL5算法交易手册、神经网络手册）。",
         inputSchema: {
           type: "object",
           properties: {
             category: {
               type: "string",
-              description: "分类名（可选）: trading, indicators, math, array, string, datetime, files, chart, objects, onnx",
+              description: "分类名（可选）。API 分类: trading, indicators, math, array, string, datetime, files, chart, objects, onnx。电子书: algo_book, neural_book, algo_book/2（第2章详细列表）。留空显示所有分类。",
             },
           },
         },
@@ -836,7 +961,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case "browse": {
         const { category } = args as { category?: string };
-        const result = browseCategories(category);
+        const result = await browseCategories(category);
         return { content: [{ type: "text", text: result }] };
       }
 
