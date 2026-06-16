@@ -12,6 +12,7 @@ import { fileURLToPath } from "url";
 import { SmartQueryEngine, DiagnoseEngine } from "./smart-query.js";
 import { getErrorDb, closeErrorDb } from "./error-db.js";
 import { stripHtml, MIGRATION_HINTS } from "./utils.js";
+import { LibraryPreprocessor, knowledgeStore, contextAssembler, } from "./library-knowledge.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // 内置文档根目录
@@ -23,8 +24,10 @@ const BUILTIN_ROOTS = [
 // 配置文件路径
 import { homedir } from "os";
 const CONFIG_PATH = path.join(homedir(), ".mql5-help-mcp", "config.json");
-// 已加载的外部库清单（供 list_libraries 使用）
+// 已加载的外部库清单（供 list_libraries / preprocess_library 使用）
 const loadedLibraries = [];
+// 外部库文件列表（供 preprocess_library 使用，buildIndex 时填充）
+const externalLibFiles = new Map();
 // 读取用户配置中的外部库
 async function loadExtraLibraries() {
     try {
@@ -98,8 +101,13 @@ async function buildIndex() {
     }
     // 遍历并索引
     loadedLibraries.length = 0;
+    externalLibFiles.clear();
     for (const r of roots) {
         const files = await walkDir(r.abs, r.key);
+        // 记录外部库文件列表，供 preprocess_library 使用
+        if (r.external) {
+            externalLibFiles.set(r.key, files.map(f => ({ absPath: f.absPath, relPath: f.relPath })));
+        }
         for (const f of files) {
             const base = path.basename(f.relPath).toLowerCase();
             const noExt = base.replace(ALL_EXTS, "");
@@ -461,6 +469,37 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                     properties: {},
                 },
             },
+            {
+                name: "preprocess_library",
+                description: "🤖 用 Claude Haiku 预处理指定外部库的 .mqh 文件，提取类/方法/用途等结构化知识并缓存到本地。只需运行一次；源文件更新后会自动重新处理。需要环境变量 ANTHROPIC_API_KEY。",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        library_key: {
+                            type: "string",
+                            description: "库的 key，与 config.json 中 extraLibraries[].key 一致。留空则处理所有已加载的外部库。",
+                        },
+                    },
+                },
+            },
+            {
+                name: "analyze_code",
+                description: "🧠 智能代码分析：将你的 MQL5 代码与已预处理的外部库知识对比，返回结构化的 API 摘要和可优化点，供 Claude 给出具体改进建议。需先运行 preprocess_library。",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        code: {
+                            type: "string",
+                            description: "需要分析的 MQL5 代码片段（EA、指标或函数均可）",
+                        },
+                        library_key: {
+                            type: "string",
+                            description: "限定分析范围到指定库（可选，留空则跨所有已预处理库分析）",
+                        },
+                    },
+                    required: ["code"],
+                },
+            },
         ],
     };
 });
@@ -682,6 +721,94 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     out += `\n💡 搜索外部库文件可加前缀，如 search("${external[0].key.toLowerCase()}_filename")`;
                 }
                 return { content: [{ type: "text", text: out }] };
+            }
+            case "preprocess_library": {
+                const { library_key } = args;
+                const apiKey = process.env.ANTHROPIC_API_KEY;
+                if (!apiKey) {
+                    return {
+                        content: [{
+                                type: "text",
+                                text: "❌ 未设置 ANTHROPIC_API_KEY 环境变量。\n\n请在启动 MCP server 前设置：\n  export ANTHROPIC_API_KEY=sk-ant-...",
+                            }],
+                        isError: true,
+                    };
+                }
+                await buildIndex();
+                const preprocessor = new LibraryPreprocessor(apiKey, knowledgeStore);
+                // 确定要处理的库
+                const targets = loadedLibraries.filter(lib => {
+                    const isExternal = !BUILTIN_ROOTS.some(b => b.key === lib.key);
+                    if (!isExternal)
+                        return false;
+                    if (library_key)
+                        return lib.key === library_key;
+                    return true;
+                });
+                if (targets.length === 0) {
+                    return {
+                        content: [{
+                                type: "text",
+                                text: library_key
+                                    ? `❌ 未找到外部库 "${library_key}"，请检查 config.json 中的 key。`
+                                    : "❌ 未配置任何外部库，请先在 ~/.mql5-help-mcp/config.json 中添加 extraLibraries。",
+                            }],
+                        isError: true,
+                    };
+                }
+                const logLines = [`🤖 开始预处理外部库（模型: claude-haiku）\n`];
+                for (const lib of targets) {
+                    const files = externalLibFiles.get(lib.key) ?? [];
+                    const report = await preprocessor.processLibrary(lib.key, files, msg => logLines.push(msg));
+                    logLines.push(`\n✅ ${lib.key} 完成：新处理 ${report.processed} 个，已缓存 ${report.cached} 个，失败 ${report.failed} 个`);
+                    logLines.push(`💰 本次 API 消耗估算: ${report.totalCost}`);
+                }
+                logLines.push("\n📌 知识已缓存到本地，后续 analyze_code 零 API 成本。");
+                return { content: [{ type: "text", text: logLines.join("\n") }] };
+            }
+            case "analyze_code": {
+                const { code, library_key } = args;
+                await buildIndex();
+                const externalLibKeys = loadedLibraries
+                    .filter(lib => !BUILTIN_ROOTS.some(b => b.key === lib.key))
+                    .filter(lib => !library_key || lib.key === library_key)
+                    .map(lib => lib.key);
+                if (externalLibKeys.length === 0) {
+                    return {
+                        content: [{
+                                type: "text",
+                                text: "❌ 未找到可分析的外部库。请先：\n1. 在 config.json 中配置 extraLibraries\n2. 运行 preprocess_library 生成本地知识缓存",
+                            }],
+                        isError: true,
+                    };
+                }
+                const ctx = await contextAssembler.assemble(code, externalLibKeys);
+                if (!ctx.hasKnowledge) {
+                    return {
+                        content: [{
+                                type: "text",
+                                text: `❌ 未找到预处理的库知识。\n\n请先运行：preprocess_library${library_key ? `("${library_key}")` : "()"}\n\n这会调用 Claude Haiku 分析库文件并缓存到本地（一次性操作）。`,
+                            }],
+                        isError: true,
+                    };
+                }
+                const out = [
+                    "🧠 代码分析上下文",
+                    "=".repeat(60),
+                    "",
+                    `📋 用户代码 (${code.split("\n").length} 行):`,
+                    "```mql5",
+                    code.length > 3000 ? code.substring(0, 3000) + "\n// ...(已截断)" : code,
+                    "```",
+                    "",
+                    ctx.libraryAPISummary,
+                ];
+                if (ctx.detectedPatterns.length > 0) {
+                    out.push(`\n🔍 自动检测到 ${ctx.detectedPatterns.length} 处可优化点（已包含在上方摘要中）`);
+                }
+                out.push("\n" + "─".repeat(60));
+                out.push("💡 请根据以上库知识和用户代码，给出具体可编译的改进建议。");
+                return { content: [{ type: "text", text: out.join("\n") }] };
             }
             default:
                 throw new Error(`未知工具: ${name}`);

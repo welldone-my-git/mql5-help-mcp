@@ -33,6 +33,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.2",
     "@modelcontextprotocol/sdk": "^1.0.4",
     "better-sqlite3": "^11.7.0"
   },
