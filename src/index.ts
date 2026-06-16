@@ -22,6 +22,8 @@ import {
   knowledgeStore,
   contextAssembler,
 } from "./library-knowledge.js";
+import { codeStructureAnalyzer } from "./code-analyzer.js";
+import { fixPatternsDb } from "./fix-patterns.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -530,6 +532,99 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["code"],
         },
       },
+      {
+        name: "analyze_structure",
+        description: "🏗️ MQL5 代码结构分析：检测句柄泄漏、OnTick无保护开仓、未设置MagicNumber、固定手数、缺少错误检查等常见问题，输出带行号的评分报告。完全本地，零API成本。",
+        inputSchema: {
+          type: "object",
+          properties: {
+            code: {
+              type: "string",
+              description: "需要分析的 MQL5 代码（EA 或指标）",
+            },
+          },
+          required: ["code"],
+        },
+      },
+      {
+        name: "record_fix",
+        description: "💾 记录已验证的代码修复模式。当 analyze_code 或 analyze_structure 发现问题并由 Claude 给出修复建议后，调用此工具将 问题→修复 映射保存到本地。下次遇到相同问题时直接命中，无需再次分析。",
+        inputSchema: {
+          type: "object",
+          properties: {
+            pattern_description: {
+              type: "string",
+              description: "问题的简短描述，如 'OnTick 中未检查持仓数量就调用 CTrade::Buy'",
+            },
+            fix_description: {
+              type: "string",
+              description: "修复说明，如 '在 Buy 调用前添加 if(PositionsTotal()>0) return'",
+            },
+            original_snippet: {
+              type: "string",
+              description: "有问题的代码示例（可选）",
+            },
+            fixed_snippet: {
+              type: "string",
+              description: "修复后的代码示例（可选）",
+            },
+            library_key: {
+              type: "string",
+              description: "关联的库 key（可选）",
+            },
+            tags: {
+              type: "string",
+              description: "标签，JSON 数组格式，如 '[\"CTrade\",\"OnTick\",\"risk\"]'（可选）",
+            },
+          },
+          required: ["pattern_description", "fix_description"],
+        },
+      },
+      {
+        name: "list_fixes",
+        description: "📋 查看已记录的代码修复模式，按使用频率排序。也可按关键词搜索。",
+        inputSchema: {
+          type: "object",
+          properties: {
+            query: {
+              type: "string",
+              description: "搜索关键词（可选，留空则列出全部）",
+            },
+            limit: {
+              type: "number",
+              description: "返回数量（默认 20）",
+              default: 20,
+            },
+          },
+        },
+      },
+      {
+        name: "manage_knowledge",
+        description: "🔄 管理预处理库知识：export（导出为可分享的 JSON 包）、import（导入他人分享的知识包，无需自己运行 Haiku）、stats（查看各库的知识统计）。",
+        inputSchema: {
+          type: "object",
+          properties: {
+            action: {
+              type: "string",
+              enum: ["export", "import", "stats"],
+              description: "操作类型",
+            },
+            library_key: {
+              type: "string",
+              description: "export 时必填，指定要导出的库 key",
+            },
+            data: {
+              type: "string",
+              description: "import 时必填，JSON 知识包内容",
+            },
+            import_as: {
+              type: "string",
+              description: "import 时可选，覆盖知识包中的 key（用于重命名）",
+            },
+          },
+          required: ["action"],
+        },
+      },
     ],
   };
 });
@@ -925,10 +1020,179 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           out.push(`\n🔍 自动检测到 ${ctx.detectedPatterns.length} 处可优化点（已包含在上方摘要中）`);
         }
 
+        // 查询本地 fix patterns DB，附上已知修复提示
+        const knownFixes = fixPatternsDb.search(code.substring(0, 500));
+        if (knownFixes.length > 0) {
+          out.push("\n📚 本地已记录的相关修复模式（无需 API）:");
+          for (const fix of knownFixes.slice(0, 3)) {
+            out.push(`  • [${fix.usage_count}次] ${fix.pattern_description}`);
+            out.push(`    → ${fix.fix_description}`);
+            if (fix.fixed_snippet) {
+              out.push(`    修复示例:\n\`\`\`mql5\n${fix.fixed_snippet}\n\`\`\``);
+            }
+          }
+        }
+
         out.push("\n" + "─".repeat(60));
         out.push("💡 请根据以上库知识和用户代码，给出具体可编译的改进建议。");
 
         return { content: [{ type: "text", text: out.join("\n") }] };
+      }
+
+      case "analyze_structure": {
+        const { code } = args as { code: string };
+        const result = codeStructureAnalyzer.analyze(code);
+        const report = codeStructureAnalyzer.format(result);
+
+        // 也查 fix patterns 数据库看是否有匹配的修复
+        const issueText = result.issues.map(i => i.detail + " " + i.id).join(" ");
+        const knownFixes = issueText.length > 10 ? fixPatternsDb.search(issueText.substring(0, 400)) : [];
+
+        const out: string[] = [report];
+        if (knownFixes.length > 0) {
+          out.push("\n\n📚 **本地已记录的修复模式（直接可用）:**");
+          for (const fix of knownFixes.slice(0, 3)) {
+            out.push(`\n**${fix.pattern_description}**`);
+            out.push(`修复: ${fix.fix_description}`);
+            if (fix.fixed_snippet) {
+              out.push("```mql5\n" + fix.fixed_snippet + "\n```");
+            }
+          }
+        }
+
+        return { content: [{ type: "text", text: out.join("\n") }] };
+      }
+
+      case "record_fix": {
+        const { pattern_description, fix_description, original_snippet, fixed_snippet, library_key: lk, tags } = args as {
+          pattern_description: string;
+          fix_description: string;
+          original_snippet?: string;
+          fixed_snippet?: string;
+          library_key?: string;
+          tags?: string;
+        };
+
+        const saved = fixPatternsDb.record({
+          pattern_description,
+          fix_description,
+          original_snippet,
+          fixed_snippet,
+          library_key: lk,
+          tags,
+        });
+
+        return {
+          content: [{
+            type: "text",
+            text: `✅ 修复模式已保存 (ID: ${saved.id ?? "已更新"}, 使用次数: ${saved.usage_count})\n\n**问题:** ${saved.pattern_description}\n**修复:** ${saved.fix_description}`,
+          }],
+        };
+      }
+
+      case "list_fixes": {
+        const { query, limit = 20 } = args as { query?: string; limit?: number };
+
+        if (query) {
+          const results = fixPatternsDb.search(query);
+          if (results.length === 0) {
+            return { content: [{ type: "text", text: `🔍 未找到匹配 "${query}" 的修复模式` }] };
+          }
+          const lines = [`🔍 搜索 "${query}" 的结果 (${results.length} 条):\n`];
+          for (const r of results) {
+            lines.push(`**[${r.usage_count}次] ${r.pattern_description}**`);
+            lines.push(`→ ${r.fix_description}`);
+            if (r.library_key) lines.push(`库: ${r.library_key}`);
+            if (r.tags) lines.push(`标签: ${r.tags}`);
+            if (r.fixed_snippet) lines.push("```mql5\n" + r.fixed_snippet + "\n```");
+            lines.push("---");
+          }
+          return { content: [{ type: "text", text: lines.join("\n") }] };
+        }
+
+        const all = fixPatternsDb.list(limit);
+        if (all.length === 0) {
+          return {
+            content: [{ type: "text", text: "📭 暂无已记录的修复模式。使用 record_fix 工具开始记录。" }],
+          };
+        }
+        const stats = fixPatternsDb.getStats();
+        const lines = [`📋 本地修复模式库 (共 ${stats.total} 条, 累计使用 ${stats.totalUsage ?? 0} 次)\n`];
+        for (const r of all) {
+          lines.push(`**#${r.id} [${r.usage_count}次] ${r.pattern_description}**`);
+          lines.push(`→ ${r.fix_description}`);
+          if (r.library_key) lines.push(`库: ${r.library_key}`);
+          lines.push("---");
+        }
+        return { content: [{ type: "text", text: lines.join("\n") }] };
+      }
+
+      case "manage_knowledge": {
+        const { action, library_key: lk, data, import_as } = args as {
+          action: "export" | "import" | "stats";
+          library_key?: string;
+          data?: string;
+          import_as?: string;
+        };
+
+        if (action === "export") {
+          if (!lk) {
+            return { content: [{ type: "text", text: "❌ export 操作需要提供 library_key" }], isError: true };
+          }
+          const json = await knowledgeStore.exportLibrary(lk);
+          const parsed = JSON.parse(json) as { files: unknown[] };
+          if (parsed.files.length === 0) {
+            return {
+              content: [{ type: "text", text: `❌ 库 "${lk}" 尚无已预处理的知识。请先运行 preprocess_library。` }],
+              isError: true,
+            };
+          }
+          return {
+            content: [{
+              type: "text",
+              text: `✅ 已导出库 "${lk}" 的知识包（${parsed.files.length} 个文件）\n\n` +
+                "**分享方式:** 将以下 JSON 内容保存为 .json 文件，他人可通过 manage_knowledge(action=import, data=...) 导入，" +
+                "无需自己运行 Haiku API。\n\n```json\n" + json + "\n```",
+            }],
+          };
+        }
+
+        if (action === "import") {
+          if (!data) {
+            return { content: [{ type: "text", text: "❌ import 操作需要提供 data（JSON 知识包内容）" }], isError: true };
+          }
+          const result = await knowledgeStore.importLibrary(data, import_as);
+          return {
+            content: [{
+              type: "text",
+              text: `✅ 知识包导入完成\n- 新增: ${result.imported} 个文件\n- 已跳过（已存在）: ${result.skipped}\n- 失败: ${result.errors}`,
+            }],
+          };
+        }
+
+        // action === "stats"
+        await buildIndex();
+        const libKeys = loadedLibraries
+          .filter(lib => !BUILTIN_ROOTS.some(b => b.key === lib.key))
+          .map(lib => lib.key);
+
+        if (libKeys.length === 0) {
+          return { content: [{ type: "text", text: "📊 暂无外部库（仅有内置 MQL5 文档）。在 config.json 中配置 extraLibraries 后重启。" }] };
+        }
+
+        const statsArr = await knowledgeStore.stats(libKeys);
+        const lines = ["📊 库知识统计:\n"];
+        for (const s of statsArr) {
+          const statusIcon = s.fileCount > 0 ? "✅" : "⬜";
+          lines.push(`${statusIcon} **${s.key}**: ${s.fileCount} 个文件已分析, ${s.classCount} 个类`);
+          if (s.fileCount === 0) {
+            lines.push(`   → 运行 preprocess_library("${s.key}") 开始预处理`);
+          }
+        }
+        const fixStats = fixPatternsDb.getStats();
+        lines.push(`\n💾 **本地修复模式库**: ${fixStats.total} 条记录`);
+
+        return { content: [{ type: "text", text: lines.join("\n") }] };
       }
 
       default:

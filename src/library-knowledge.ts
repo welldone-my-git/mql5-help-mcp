@@ -92,6 +92,46 @@ export class KnowledgeStore {
     return all;
   }
 
+  /** 导出指定库的全部知识为 JSON 字符串（可分享给他人） */
+  async exportLibrary(libraryKey: string): Promise<string> {
+    const files = await this.loadLibrary(libraryKey);
+    return JSON.stringify({ libraryKey, exportedAt: new Date().toISOString(), files }, null, 2);
+  }
+
+  /** 从 JSON 字符串导入知识（importedKey 可覆盖原始 key） */
+  async importLibrary(jsonData: string, importedKey?: string): Promise<{ imported: number; skipped: number; errors: number }> {
+    let imported = 0, skipped = 0, errors = 0;
+    try {
+      const pkg = JSON.parse(jsonData) as { libraryKey: string; files: FileKnowledge[] };
+      const targetKey = importedKey || pkg.libraryKey;
+      for (const fk of pkg.files) {
+        try {
+          const fakePath = path.join(KNOWLEDGE_DIR, targetKey, fk.file.replace(/[/\\]/g, "_"));
+          const existing = await this.get(targetKey, fakePath);
+          if (existing) { skipped++; continue; }
+          // 为导入的知识创建一个虚拟 absPath（不依赖本地文件）
+          fk.library = targetKey;
+          const jsonFile = this.jsonPath(targetKey, fakePath);
+          fssync.mkdirSync(path.dirname(jsonFile), { recursive: true });
+          await fs.writeFile(jsonFile, JSON.stringify(fk, null, 2));
+          imported++;
+        } catch { errors++; }
+      }
+    } catch { throw new Error("JSON 格式错误，无法解析知识包"); }
+    return { imported, skipped, errors };
+  }
+
+  /** 统计知识库状态 */
+  async stats(libraryKeys: string[]): Promise<Array<{ key: string; fileCount: number; classCount: number }>> {
+    const result = [];
+    for (const key of libraryKeys) {
+      const files = await this.loadLibrary(key);
+      const classCount = files.reduce((sum, f) => sum + f.classes.length, 0);
+      result.push({ key, fileCount: files.length, classCount });
+    }
+    return result;
+  }
+
   private async readJsonDir(dir: string): Promise<FileKnowledge[]> {
     const results: FileKnowledge[] = [];
     try {
