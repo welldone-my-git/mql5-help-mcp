@@ -7,7 +7,7 @@ import Database from "better-sqlite3";
 import { homedir } from "os";
 import { join } from "path";
 import { mkdirSync, existsSync } from "fs";
-class FixPatternsDb {
+export class FixPatternsDb {
     db = null;
     dbPath;
     constructor() {

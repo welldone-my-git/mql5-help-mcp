@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * MQL5 Help MCP Server
- * 文档/电子书一体化检索，基础迁移/错误提示
+ * Knowledge Base MCP Server
+ * 通用文档/代码库检索引擎，可通过 domain_plugin 加载领域专有能力
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -14,7 +14,8 @@ import {
 import * as fs from "fs/promises";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { SmartQueryEngine, DiagnoseEngine } from "./smart-query.js";
+import { homedir } from "os";
+import { SmartQueryEngine } from "./smart-query.js";
 import { getErrorDb, closeErrorDb } from "./error-db.js";
 import { stripHtml, MIGRATION_HINTS } from "./utils.js";
 import {
@@ -22,47 +23,111 @@ import {
   knowledgeStore,
   contextAssembler,
 } from "./library-knowledge.js";
-import { codeStructureAnalyzer } from "./code-analyzer.js";
 import { fixPatternsDb } from "./fix-patterns.js";
+import type { DomainPlugin } from "./core/plugin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 内置文档根目录
-const BUILTIN_ROOTS = [
-  { key: "MQL5_HELP",           abs: path.resolve(__dirname, "..", "MQL5_HELP") },
-  { key: "MQL5_Algo_Book",      abs: path.resolve(__dirname, "..", "MQL5_Algo_Book") },
-  { key: "Neural_Networks_Book",abs: path.resolve(__dirname, "..", "Neural_Networks_Book") },
-];
-
 // 配置文件路径
-import { homedir } from "os";
 const CONFIG_PATH = path.join(homedir(), ".mql5-help-mcp", "config.json");
 
-interface LibraryConfig {
+// ── Config v2 schema ──────────────────────────────────────────────────────────
+
+interface SourceConfig {
   key: string;
   path: string;
+  type?: "html" | "md" | "code" | "auto";
+  priority?: number;
   description?: string;
+  builtin?: boolean;
 }
 
-// 已加载的外部库清单（供 list_libraries / preprocess_library 使用）
-const loadedLibraries: Array<{ key: string; absPath: string; description: string; fileCount: number }> = [];
-// 外部库文件列表（供 preprocess_library 使用，buildIndex 时填充）
-const externalLibFiles = new Map<string, Array<{ absPath: string; relPath: string }>>();
+interface AppConfig {
+  /** v2: 统一来源列表 */
+  sources?: SourceConfig[];
+  /** v1 兼容：外部库（自动合并进 sources） */
+  extraLibraries?: Array<{ key: string; path: string; description?: string }>;
+  /** 领域插件名，null 表示不加载任何专有工具 */
+  domain_plugin?: string | null;
+}
 
-// 读取用户配置中的外部库
-async function loadExtraLibraries(): Promise<Array<{ key: string; abs: string }>> {
+// 内置默认来源（当 config.sources 未覆盖时使用）
+const DEFAULT_BUILTIN: SourceConfig[] = [
+  { key: "MQL5_HELP",            path: path.resolve(__dirname, "..", "MQL5_HELP"),            builtin: true, priority: 1 },
+  { key: "MQL5_Algo_Book",       path: path.resolve(__dirname, "..", "MQL5_Algo_Book"),       builtin: true, priority: 2 },
+  { key: "Neural_Networks_Book", path: path.resolve(__dirname, "..", "Neural_Networks_Book"), builtin: true, priority: 3 },
+];
+
+// 向后兼容：BUILTIN_ROOTS 形状（供 list_libraries 判断是否内置）
+const BUILTIN_ROOTS = DEFAULT_BUILTIN;
+
+async function loadConfig(): Promise<AppConfig> {
   try {
     const raw = await fs.readFile(CONFIG_PATH, "utf-8");
-    const config = JSON.parse(raw) as { extraLibraries?: LibraryConfig[] };
-    if (!Array.isArray(config.extraLibraries)) return [];
-    return config.extraLibraries
-      .filter(l => l.key && l.path)
-      .map(l => ({ key: l.key, abs: path.resolve(l.path), description: l.description || "" })) as any;
+    return JSON.parse(raw) as AppConfig;
   } catch {
-    return []; // 文件不存在或格式错误时静默跳过
+    return {};
   }
 }
+
+/** 合并 config 产出最终来源列表（builtin first-wins） */
+async function resolveSources(): Promise<SourceConfig[]> {
+  const cfg = await loadConfig();
+  const result: SourceConfig[] = [];
+
+  // 内置来源（sources 里没显式覆盖时都加入）
+  for (const b of DEFAULT_BUILTIN) {
+    const override = cfg.sources?.find(s => s.key === b.key);
+    result.push(override ?? b);
+  }
+
+  // config.sources 里的非内置条目
+  if (cfg.sources) {
+    for (const s of cfg.sources) {
+      if (!DEFAULT_BUILTIN.some(b => b.key === s.key)) {
+        result.push(s);
+      }
+    }
+  }
+
+  // v1 兼容：extraLibraries 追加
+  if (cfg.extraLibraries) {
+    for (const e of cfg.extraLibraries) {
+      if (!result.some(r => r.key === e.key)) {
+        result.push({ key: e.key, path: e.path, description: e.description });
+      }
+    }
+  }
+
+  return result;
+}
+
+/** 加载领域插件（按 config.domain_plugin，默认 "mql5"） */
+async function loadPlugin(): Promise<DomainPlugin | null> {
+  const cfg = await loadConfig();
+  // 明确设为 null 则不加载
+  if (cfg.domain_plugin === null) return null;
+  const pluginName = cfg.domain_plugin ?? "mql5";
+  try {
+    const mod = await import(`./plugins/${pluginName}/index.js`);
+    const plugin: DomainPlugin = mod[`${pluginName}Plugin`] ?? mod.default;
+    console.error(`🔌 已加载领域插件: ${plugin.name}`);
+    return plugin;
+  } catch (e) {
+    console.error(`⚠️  插件 "${pluginName}" 加载失败: ${e}`);
+    return null;
+  }
+}
+
+// ── Runtime state ─────────────────────────────────────────────────────────────
+
+// 已加载的库清单（供 list_libraries / preprocess_library 使用）
+const loadedLibraries: Array<{ key: string; absPath: string; description: string; fileCount: number }> = [];
+// 外部库文件列表（供 preprocess_library 使用）
+const externalLibFiles = new Map<string, Array<{ absPath: string; relPath: string }>>();
+// 已加载的领域插件
+let activePlugin: DomainPlugin | null = null;
 
 // 文档索引缓存
 type DocEntry = { absPath: string; relPath: string; repo: string };
@@ -98,27 +163,30 @@ async function walkDir(rootAbs: string, repoKey: string, baseRel = ""): Promise<
   return entries;
 }
 
-// 构建文档索引（内置目录 + 用户配置的外部库）
+// 构建文档索引（所有来源按 resolveSources 顺序，first-wins）
 async function buildIndex(): Promise<Map<string, DocEntry>> {
   if (docIndex) return docIndex;
 
   docIndex = new Map();
   nameIndex = new Map();
 
-  // 内置根目录（MQL5_HELP 优先）
-  const roots: Array<{ key: string; abs: string; external?: boolean; description?: string }> = [];
-  for (const c of BUILTIN_ROOTS) {
-    try { await fs.access(c.abs); roots.push(c); } catch {}
+  // 加载插件（只初始化一次）
+  if (!activePlugin) {
+    activePlugin = await loadPlugin();
   }
 
-  // 用户配置的外部库
-  const extras = await loadExtraLibraries();
-  for (const e of extras as any[]) {
+  // 解析所有来源
+  const allSources = await resolveSources();
+  const roots: Array<{ key: string; abs: string; builtin: boolean; description: string }> = [];
+  for (const s of allSources) {
+    const absPath = path.resolve(s.path);
     try {
-      await fs.access(e.abs);
-      roots.push({ key: e.key, abs: e.abs, external: true, description: e.description || "" });
+      await fs.access(absPath);
+      roots.push({ key: s.key, abs: absPath, builtin: !!s.builtin, description: s.description ?? "" });
     } catch {
-      console.error(`⚠️  外部库路径不存在，已跳过: ${e.key} (${e.abs})`);
+      if (!s.builtin) {
+        console.error(`⚠️  来源路径不存在，已跳过: ${s.key} (${absPath})`);
+      }
     }
   }
 
@@ -128,8 +196,8 @@ async function buildIndex(): Promise<Map<string, DocEntry>> {
   for (const r of roots) {
     const files = await walkDir(r.abs, r.key);
 
-    // 记录外部库文件列表，供 preprocess_library 使用
-    if ((r as any).external) {
+    // 非内置库记录文件列表，供 preprocess_library 使用
+    if (!r.builtin) {
       externalLibFiles.set(r.key, files.map(f => ({ absPath: f.absPath, relPath: f.relPath })));
     }
 
@@ -141,8 +209,8 @@ async function buildIndex(): Promise<Map<string, DocEntry>> {
       if (!docIndex.has(noExt)) docIndex.set(noExt, f);
       if (!nameIndex.has(noExt)) nameIndex.set(noExt, f);
 
-      // 外部库专用命名空间前缀（避免冲突）
-      if ((r as any).external) {
+      // 非内置库加命名空间前缀（避免冲突）
+      if (!r.builtin) {
         const nsKey = `${r.key.toLowerCase()}_${noExt}`;
         docIndex.set(nsKey, f);
       }
@@ -166,11 +234,10 @@ async function buildIndex(): Promise<Map<string, DocEntry>> {
       if (f.repo === "Neural_Networks_Book") docIndex.set(`nn_${noExt}`, f);
     }
 
-    // 记录到已加载库列表
     loadedLibraries.push({
       key: r.key,
       absPath: r.abs,
-      description: (r as any).description || (r as any).external ? "外部库" : "内置",
+      description: r.description || (r.builtin ? "内置" : "外部库"),
       fileCount: files.length,
     });
   }
@@ -343,8 +410,11 @@ const server = new Server(
 
 // 注册工具列表
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return {
-    tools: [
+  // 确保插件已初始化
+  await buildIndex();
+
+  // 核心工具（与域无关）
+  const coreTools = [
       {
         name: "smart_query",
         description: "🎯 智能查询工具（推荐）：输入错误信息、函数名或问题，自动搜索并返回精简答案。完全本地化，零API成本，节省80%+ token。适用于：错误诊断、函数查询、快速学习。",
@@ -480,20 +550,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: "diagnose_error",
-        description: "🔬 编译日志诊断：粘贴 MetaEditor 完整编译输出，自动解析所有错误/警告行，匹配迁移映射与历史解决方案，返回结构化诊断报告。适用于一次性修复多个编译错误的场景。",
-        inputSchema: {
-          type: "object",
-          properties: {
-            compile_log: {
-              type: "string",
-              description: "MetaEditor 编译窗口的完整输出文本，支持多行，如：\n  ma_cross.mq5(155,39) : error 256: undeclared identifier 'ResultCode'",
-            },
-          },
-          required: ["compile_log"],
-        },
-      },
-      {
         name: "list_libraries",
         description: "📚 列出当前已加载的所有资料库（内置文档 + 用户配置的外部代码库），显示每个库的文件数量与路径。配置文件位于 ~/.mql5-help-mcp/config.json。",
         inputSchema: {
@@ -527,20 +583,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             library_key: {
               type: "string",
               description: "限定分析范围到指定库（可选，留空则跨所有已预处理库分析）",
-            },
-          },
-          required: ["code"],
-        },
-      },
-      {
-        name: "analyze_structure",
-        description: "🏗️ MQL5 代码结构分析：检测句柄泄漏、OnTick无保护开仓、未设置MagicNumber、固定手数、缺少错误检查等常见问题，输出带行号的评分报告。完全本地，零API成本。",
-        inputSchema: {
-          type: "object",
-          properties: {
-            code: {
-              type: "string",
-              description: "需要分析的 MQL5 代码（EA 或指标）",
             },
           },
           required: ["code"],
@@ -625,8 +667,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["action"],
         },
       },
-    ],
-  };
+  ];
+
+  // 插件工具动态追加（插件未加载时为空）
+  const pluginTools = activePlugin?.getToolDefinitions() ?? [];
+
+  return { tools: [...coreTools, ...pluginTools] };
 });
 
 // 处理工具调用
@@ -865,16 +911,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         throw new Error(`未知操作: ${action}`);
       }
 
-      case "diagnose_error": {
-        const { compile_log } = args as { compile_log: string };
-
-        await buildIndex();
-        const engine = new DiagnoseEngine(docIndex!);
-        const report = await engine.diagnose(compile_log);
-
-        return { content: [{ type: "text", text: report }] };
-      }
-
       case "list_libraries": {
         await buildIndex();
 
@@ -1039,30 +1075,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return { content: [{ type: "text", text: out.join("\n") }] };
       }
 
-      case "analyze_structure": {
-        const { code } = args as { code: string };
-        const result = codeStructureAnalyzer.analyze(code);
-        const report = codeStructureAnalyzer.format(result);
-
-        // 也查 fix patterns 数据库看是否有匹配的修复
-        const issueText = result.issues.map(i => i.detail + " " + i.id).join(" ");
-        const knownFixes = issueText.length > 10 ? fixPatternsDb.search(issueText.substring(0, 400)) : [];
-
-        const out: string[] = [report];
-        if (knownFixes.length > 0) {
-          out.push("\n\n📚 **本地已记录的修复模式（直接可用）:**");
-          for (const fix of knownFixes.slice(0, 3)) {
-            out.push(`\n**${fix.pattern_description}**`);
-            out.push(`修复: ${fix.fix_description}`);
-            if (fix.fixed_snippet) {
-              out.push("```mql5\n" + fix.fixed_snippet + "\n```");
-            }
-          }
-        }
-
-        return { content: [{ type: "text", text: out.join("\n") }] };
-      }
-
       case "record_fix": {
         const { pattern_description, fix_description, original_snippet, fixed_snippet, library_key: lk, tags } = args as {
           pattern_description: string;
@@ -1210,8 +1222,28 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return { content: [{ type: "text", text: lines.join("\n") }] };
       }
 
-      default:
+      default: {
+        // 路由给领域插件
+        if (activePlugin) {
+          const pluginToolNames = activePlugin.getToolDefinitions().map(t => t.name);
+          if (pluginToolNames.includes(name)) {
+            await buildIndex();
+            const r = await activePlugin.handleToolCall(name, args, {
+              docIndex: docIndex!,
+              knowledgeStore,
+              fixPatternsDb,
+              loadedLibraries: loadedLibraries.map(l => ({
+                key: l.key,
+                fileCount: l.fileCount,
+                rootPath: l.absPath,
+              })),
+            });
+            // 解构为对象字面量，让 TS 推断为 MCP SDK 兼容类型
+            return { content: r.content, isError: r.isError };
+          }
+        }
         throw new Error(`未知工具: ${name}`);
+      }
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

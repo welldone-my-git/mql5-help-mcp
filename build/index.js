@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * MQL5 Help MCP Server
- * 文档/电子书一体化检索，基础迁移/错误提示
+ * Knowledge Base MCP Server
+ * 通用文档/代码库检索引擎，可通过 domain_plugin 加载领域专有能力
  */
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -9,42 +9,85 @@ import { CallToolRequestSchema, ListToolsRequestSchema, } from "@modelcontextpro
 import * as fs from "fs/promises";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { SmartQueryEngine, DiagnoseEngine } from "./smart-query.js";
+import { homedir } from "os";
+import { SmartQueryEngine } from "./smart-query.js";
 import { getErrorDb, closeErrorDb } from "./error-db.js";
 import { stripHtml, MIGRATION_HINTS } from "./utils.js";
 import { LibraryPreprocessor, knowledgeStore, contextAssembler, } from "./library-knowledge.js";
-import { codeStructureAnalyzer } from "./code-analyzer.js";
 import { fixPatternsDb } from "./fix-patterns.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// 内置文档根目录
-const BUILTIN_ROOTS = [
-    { key: "MQL5_HELP", abs: path.resolve(__dirname, "..", "MQL5_HELP") },
-    { key: "MQL5_Algo_Book", abs: path.resolve(__dirname, "..", "MQL5_Algo_Book") },
-    { key: "Neural_Networks_Book", abs: path.resolve(__dirname, "..", "Neural_Networks_Book") },
-];
 // 配置文件路径
-import { homedir } from "os";
 const CONFIG_PATH = path.join(homedir(), ".mql5-help-mcp", "config.json");
-// 已加载的外部库清单（供 list_libraries / preprocess_library 使用）
-const loadedLibraries = [];
-// 外部库文件列表（供 preprocess_library 使用，buildIndex 时填充）
-const externalLibFiles = new Map();
-// 读取用户配置中的外部库
-async function loadExtraLibraries() {
+// 内置默认来源（当 config.sources 未覆盖时使用）
+const DEFAULT_BUILTIN = [
+    { key: "MQL5_HELP", path: path.resolve(__dirname, "..", "MQL5_HELP"), builtin: true, priority: 1 },
+    { key: "MQL5_Algo_Book", path: path.resolve(__dirname, "..", "MQL5_Algo_Book"), builtin: true, priority: 2 },
+    { key: "Neural_Networks_Book", path: path.resolve(__dirname, "..", "Neural_Networks_Book"), builtin: true, priority: 3 },
+];
+// 向后兼容：BUILTIN_ROOTS 形状（供 list_libraries 判断是否内置）
+const BUILTIN_ROOTS = DEFAULT_BUILTIN;
+async function loadConfig() {
     try {
         const raw = await fs.readFile(CONFIG_PATH, "utf-8");
-        const config = JSON.parse(raw);
-        if (!Array.isArray(config.extraLibraries))
-            return [];
-        return config.extraLibraries
-            .filter(l => l.key && l.path)
-            .map(l => ({ key: l.key, abs: path.resolve(l.path), description: l.description || "" }));
+        return JSON.parse(raw);
     }
     catch {
-        return []; // 文件不存在或格式错误时静默跳过
+        return {};
     }
 }
+/** 合并 config 产出最终来源列表（builtin first-wins） */
+async function resolveSources() {
+    const cfg = await loadConfig();
+    const result = [];
+    // 内置来源（sources 里没显式覆盖时都加入）
+    for (const b of DEFAULT_BUILTIN) {
+        const override = cfg.sources?.find(s => s.key === b.key);
+        result.push(override ?? b);
+    }
+    // config.sources 里的非内置条目
+    if (cfg.sources) {
+        for (const s of cfg.sources) {
+            if (!DEFAULT_BUILTIN.some(b => b.key === s.key)) {
+                result.push(s);
+            }
+        }
+    }
+    // v1 兼容：extraLibraries 追加
+    if (cfg.extraLibraries) {
+        for (const e of cfg.extraLibraries) {
+            if (!result.some(r => r.key === e.key)) {
+                result.push({ key: e.key, path: e.path, description: e.description });
+            }
+        }
+    }
+    return result;
+}
+/** 加载领域插件（按 config.domain_plugin，默认 "mql5"） */
+async function loadPlugin() {
+    const cfg = await loadConfig();
+    // 明确设为 null 则不加载
+    if (cfg.domain_plugin === null)
+        return null;
+    const pluginName = cfg.domain_plugin ?? "mql5";
+    try {
+        const mod = await import(`./plugins/${pluginName}/index.js`);
+        const plugin = mod[`${pluginName}Plugin`] ?? mod.default;
+        console.error(`🔌 已加载领域插件: ${plugin.name}`);
+        return plugin;
+    }
+    catch (e) {
+        console.error(`⚠️  插件 "${pluginName}" 加载失败: ${e}`);
+        return null;
+    }
+}
+// ── Runtime state ─────────────────────────────────────────────────────────────
+// 已加载的库清单（供 list_libraries / preprocess_library 使用）
+const loadedLibraries = [];
+// 外部库文件列表（供 preprocess_library 使用）
+const externalLibFiles = new Map();
+// 已加载的领域插件
+let activePlugin = null;
 let docIndex = null;
 let nameIndex = null;
 let queryEngine = null;
@@ -75,30 +118,29 @@ async function walkDir(rootAbs, repoKey, baseRel = "") {
     }
     return entries;
 }
-// 构建文档索引（内置目录 + 用户配置的外部库）
+// 构建文档索引（所有来源按 resolveSources 顺序，first-wins）
 async function buildIndex() {
     if (docIndex)
         return docIndex;
     docIndex = new Map();
     nameIndex = new Map();
-    // 内置根目录（MQL5_HELP 优先）
-    const roots = [];
-    for (const c of BUILTIN_ROOTS) {
-        try {
-            await fs.access(c.abs);
-            roots.push(c);
-        }
-        catch { }
+    // 加载插件（只初始化一次）
+    if (!activePlugin) {
+        activePlugin = await loadPlugin();
     }
-    // 用户配置的外部库
-    const extras = await loadExtraLibraries();
-    for (const e of extras) {
+    // 解析所有来源
+    const allSources = await resolveSources();
+    const roots = [];
+    for (const s of allSources) {
+        const absPath = path.resolve(s.path);
         try {
-            await fs.access(e.abs);
-            roots.push({ key: e.key, abs: e.abs, external: true, description: e.description || "" });
+            await fs.access(absPath);
+            roots.push({ key: s.key, abs: absPath, builtin: !!s.builtin, description: s.description ?? "" });
         }
         catch {
-            console.error(`⚠️  外部库路径不存在，已跳过: ${e.key} (${e.abs})`);
+            if (!s.builtin) {
+                console.error(`⚠️  来源路径不存在，已跳过: ${s.key} (${absPath})`);
+            }
         }
     }
     // 遍历并索引
@@ -106,8 +148,8 @@ async function buildIndex() {
     externalLibFiles.clear();
     for (const r of roots) {
         const files = await walkDir(r.abs, r.key);
-        // 记录外部库文件列表，供 preprocess_library 使用
-        if (r.external) {
+        // 非内置库记录文件列表，供 preprocess_library 使用
+        if (!r.builtin) {
             externalLibFiles.set(r.key, files.map(f => ({ absPath: f.absPath, relPath: f.relPath })));
         }
         for (const f of files) {
@@ -118,8 +160,8 @@ async function buildIndex() {
                 docIndex.set(noExt, f);
             if (!nameIndex.has(noExt))
                 nameIndex.set(noExt, f);
-            // 外部库专用命名空间前缀（避免冲突）
-            if (r.external) {
+            // 非内置库加命名空间前缀（避免冲突）
+            if (!r.builtin) {
                 const nsKey = `${r.key.toLowerCase()}_${noExt}`;
                 docIndex.set(nsKey, f);
             }
@@ -146,11 +188,10 @@ async function buildIndex() {
             if (f.repo === "Neural_Networks_Book")
                 docIndex.set(`nn_${noExt}`, f);
         }
-        // 记录到已加载库列表
         loadedLibraries.push({
             key: r.key,
             absPath: r.abs,
-            description: r.description || r.external ? "外部库" : "内置",
+            description: r.description || (r.builtin ? "内置" : "外部库"),
             fileCount: files.length,
         });
     }
@@ -313,290 +354,266 @@ const server = new Server({
 });
 // 注册工具列表
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-        tools: [
-            {
-                name: "smart_query",
-                description: "🎯 智能查询工具（推荐）：输入错误信息、函数名或问题，自动搜索并返回精简答案。完全本地化，零API成本，节省80%+ token。适用于：错误诊断、函数查询、快速学习。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        query: {
-                            type: "string",
-                            description: "查询内容：1) 错误信息如 'error 256: undeclared identifier ResultCode' 2) 函数名如 'OrderSend' 3) 类名如 'CTrade' 4) 问题如 'how to send order'",
-                        },
-                        mode: {
-                            type: "string",
-                            enum: ["quick", "detailed"],
-                            description: "返回模式: quick=精简答案(~500 tokens,推荐), detailed=详细说明(~1500 tokens)",
-                            default: "quick",
-                        },
+    // 确保插件已初始化
+    await buildIndex();
+    // 核心工具（与域无关）
+    const coreTools = [
+        {
+            name: "smart_query",
+            description: "🎯 智能查询工具（推荐）：输入错误信息、函数名或问题，自动搜索并返回精简答案。完全本地化，零API成本，节省80%+ token。适用于：错误诊断、函数查询、快速学习。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    query: {
+                        type: "string",
+                        description: "查询内容：1) 错误信息如 'error 256: undeclared identifier ResultCode' 2) 函数名如 'OrderSend' 3) 类名如 'CTrade' 4) 问题如 'how to send order'",
                     },
-                    required: ["query"],
-                },
-            },
-            {
-                name: "search",
-                description: "搜索MQL5文档（函数名、类名、关键字）。返回文档列表，需再调用get获取内容。如需直接答案请用smart_query。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        query: {
-                            type: "string",
-                            description: "搜索关键词或错误文本",
-                        },
-                        limit: {
-                            type: "number",
-                            description: "返回结果数量",
-                            default: 10,
-                        },
-                    },
-                    required: ["query"],
-                },
-            },
-            {
-                name: "get",
-                description: "获取指定文档的详细内容（完整HTML，~3000 tokens）。如需精简答案请用smart_query。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        filename: {
-                            type: "string",
-                            description: "文档名（可不带扩展）",
-                        },
-                    },
-                    required: ["filename"],
-                },
-            },
-            {
-                name: "browse",
-                description: "浏览文档分类目录",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        category: {
-                            type: "string",
-                            description: "分类名（可选）: trading, indicators, math, array, string, datetime, files, chart, objects, onnx",
-                        },
+                    mode: {
+                        type: "string",
+                        enum: ["quick", "detailed"],
+                        description: "返回模式: quick=精简答案(~500 tokens,推荐), detailed=详细说明(~1500 tokens)",
+                        default: "quick",
                     },
                 },
+                required: ["query"],
             },
-            {
-                name: "log_error",
-                description: "📝 记录MQL5编译错误到本地数据库。用于收集常见错误及解决方案，下次遇到相同错误时可快速查询。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        error_code: {
-                            type: "string",
-                            description: "错误代码（如 E512, E308）",
-                        },
-                        error_message: {
-                            type: "string",
-                            description: "完整错误消息",
-                        },
-                        file_path: {
-                            type: "string",
-                            description: "发生错误的文件路径（可选，隐私考虑）",
-                        },
-                        solution: {
-                            type: "string",
-                            description: "解决方案描述（可选）",
-                        },
-                        related_docs: {
-                            type: "string",
-                            description: "相关文档列表，JSON数组格式（可选）",
-                        },
+        },
+        {
+            name: "search",
+            description: "搜索MQL5文档（函数名、类名、关键字）。返回文档列表，需再调用get获取内容。如需直接答案请用smart_query。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    query: {
+                        type: "string",
+                        description: "搜索关键词或错误文本",
                     },
-                    required: ["error_code", "error_message"],
+                    limit: {
+                        type: "number",
+                        description: "返回结果数量",
+                        default: 10,
+                    },
                 },
+                required: ["query"],
             },
-            {
-                name: "list_common_errors",
-                description: "📊 列出最常见的MQL5编译错误（按出现频率排序）。帮助快速了解常见问题。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        limit: {
-                            type: "number",
-                            description: "返回错误数量（默认10）",
-                            default: 10,
-                        },
+        },
+        {
+            name: "get",
+            description: "获取指定文档的详细内容（完整HTML，~3000 tokens）。如需精简答案请用smart_query。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    filename: {
+                        type: "string",
+                        description: "文档名（可不带扩展）",
+                    },
+                },
+                required: ["filename"],
+            },
+        },
+        {
+            name: "browse",
+            description: "浏览文档分类目录",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    category: {
+                        type: "string",
+                        description: "分类名（可选）: trading, indicators, math, array, string, datetime, files, chart, objects, onnx",
                     },
                 },
             },
-            {
-                name: "manage_error_db",
-                description: "🔧 管理错误数据库：导出/导入错误记录，查看数据库统计信息。支持团队共享错误库。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        action: {
-                            type: "string",
-                            enum: ["export", "import", "stats"],
-                            description: "操作类型：export=导出为JSON, import=从JSON导入, stats=查看统计",
-                        },
-                        data: {
-                            type: "string",
-                            description: "导入时的JSON数据（action=import时必需）",
-                        },
-                        anonymize: {
-                            type: "boolean",
-                            description: "导出时是否移除文件路径（保护隐私，默认false）",
-                            default: false,
-                        },
+        },
+        {
+            name: "log_error",
+            description: "📝 记录MQL5编译错误到本地数据库。用于收集常见错误及解决方案，下次遇到相同错误时可快速查询。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    error_code: {
+                        type: "string",
+                        description: "错误代码（如 E512, E308）",
                     },
-                    required: ["action"],
-                },
-            },
-            {
-                name: "diagnose_error",
-                description: "🔬 编译日志诊断：粘贴 MetaEditor 完整编译输出，自动解析所有错误/警告行，匹配迁移映射与历史解决方案，返回结构化诊断报告。适用于一次性修复多个编译错误的场景。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        compile_log: {
-                            type: "string",
-                            description: "MetaEditor 编译窗口的完整输出文本，支持多行，如：\n  ma_cross.mq5(155,39) : error 256: undeclared identifier 'ResultCode'",
-                        },
+                    error_message: {
+                        type: "string",
+                        description: "完整错误消息",
                     },
-                    required: ["compile_log"],
+                    file_path: {
+                        type: "string",
+                        description: "发生错误的文件路径（可选，隐私考虑）",
+                    },
+                    solution: {
+                        type: "string",
+                        description: "解决方案描述（可选）",
+                    },
+                    related_docs: {
+                        type: "string",
+                        description: "相关文档列表，JSON数组格式（可选）",
+                    },
                 },
+                required: ["error_code", "error_message"],
             },
-            {
-                name: "list_libraries",
-                description: "📚 列出当前已加载的所有资料库（内置文档 + 用户配置的外部代码库），显示每个库的文件数量与路径。配置文件位于 ~/.mql5-help-mcp/config.json。",
-                inputSchema: {
-                    type: "object",
-                    properties: {},
-                },
-            },
-            {
-                name: "preprocess_library",
-                description: "🤖 用 Claude Haiku 预处理指定外部库的 .mqh 文件，提取类/方法/用途等结构化知识并缓存到本地。只需运行一次；源文件更新后会自动重新处理。需要环境变量 ANTHROPIC_API_KEY。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        library_key: {
-                            type: "string",
-                            description: "库的 key，与 config.json 中 extraLibraries[].key 一致。留空则处理所有已加载的外部库。",
-                        },
+        },
+        {
+            name: "list_common_errors",
+            description: "📊 列出最常见的MQL5编译错误（按出现频率排序）。帮助快速了解常见问题。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    limit: {
+                        type: "number",
+                        description: "返回错误数量（默认10）",
+                        default: 10,
                     },
                 },
             },
-            {
-                name: "analyze_code",
-                description: "🧠 智能代码分析：将你的 MQL5 代码与已预处理的外部库知识对比，返回结构化的 API 摘要和可优化点，供 Claude 给出具体改进建议。需先运行 preprocess_library。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        code: {
-                            type: "string",
-                            description: "需要分析的 MQL5 代码片段（EA、指标或函数均可）",
-                        },
-                        library_key: {
-                            type: "string",
-                            description: "限定分析范围到指定库（可选，留空则跨所有已预处理库分析）",
-                        },
+        },
+        {
+            name: "manage_error_db",
+            description: "🔧 管理错误数据库：导出/导入错误记录，查看数据库统计信息。支持团队共享错误库。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    action: {
+                        type: "string",
+                        enum: ["export", "import", "stats"],
+                        description: "操作类型：export=导出为JSON, import=从JSON导入, stats=查看统计",
                     },
-                    required: ["code"],
-                },
-            },
-            {
-                name: "analyze_structure",
-                description: "🏗️ MQL5 代码结构分析：检测句柄泄漏、OnTick无保护开仓、未设置MagicNumber、固定手数、缺少错误检查等常见问题，输出带行号的评分报告。完全本地，零API成本。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        code: {
-                            type: "string",
-                            description: "需要分析的 MQL5 代码（EA 或指标）",
-                        },
+                    data: {
+                        type: "string",
+                        description: "导入时的JSON数据（action=import时必需）",
                     },
-                    required: ["code"],
-                },
-            },
-            {
-                name: "record_fix",
-                description: "💾 记录已验证的代码修复模式。当 analyze_code 或 analyze_structure 发现问题并由 Claude 给出修复建议后，调用此工具将 问题→修复 映射保存到本地。下次遇到相同问题时直接命中，无需再次分析。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        pattern_description: {
-                            type: "string",
-                            description: "问题的简短描述，如 'OnTick 中未检查持仓数量就调用 CTrade::Buy'",
-                        },
-                        fix_description: {
-                            type: "string",
-                            description: "修复说明，如 '在 Buy 调用前添加 if(PositionsTotal()>0) return'",
-                        },
-                        original_snippet: {
-                            type: "string",
-                            description: "有问题的代码示例（可选）",
-                        },
-                        fixed_snippet: {
-                            type: "string",
-                            description: "修复后的代码示例（可选）",
-                        },
-                        library_key: {
-                            type: "string",
-                            description: "关联的库 key（可选）",
-                        },
-                        tags: {
-                            type: "string",
-                            description: "标签，JSON 数组格式，如 '[\"CTrade\",\"OnTick\",\"risk\"]'（可选）",
-                        },
+                    anonymize: {
+                        type: "boolean",
+                        description: "导出时是否移除文件路径（保护隐私，默认false）",
+                        default: false,
                     },
-                    required: ["pattern_description", "fix_description"],
                 },
+                required: ["action"],
             },
-            {
-                name: "list_fixes",
-                description: "📋 查看已记录的代码修复模式，按使用频率排序。也可按关键词搜索。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        query: {
-                            type: "string",
-                            description: "搜索关键词（可选，留空则列出全部）",
-                        },
-                        limit: {
-                            type: "number",
-                            description: "返回数量（默认 20）",
-                            default: 20,
-                        },
+        },
+        {
+            name: "list_libraries",
+            description: "📚 列出当前已加载的所有资料库（内置文档 + 用户配置的外部代码库），显示每个库的文件数量与路径。配置文件位于 ~/.mql5-help-mcp/config.json。",
+            inputSchema: {
+                type: "object",
+                properties: {},
+            },
+        },
+        {
+            name: "preprocess_library",
+            description: "🤖 用 Claude Haiku 预处理指定外部库的 .mqh 文件，提取类/方法/用途等结构化知识并缓存到本地。只需运行一次；源文件更新后会自动重新处理。需要环境变量 ANTHROPIC_API_KEY。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    library_key: {
+                        type: "string",
+                        description: "库的 key，与 config.json 中 extraLibraries[].key 一致。留空则处理所有已加载的外部库。",
                     },
                 },
             },
-            {
-                name: "manage_knowledge",
-                description: "🔄 管理预处理库知识：export（导出为磁盘 JSON 文件供分享）、import（从文件路径导入他人知识包，无需自己运行 Haiku）、stats（查看各库的知识统计）。",
-                inputSchema: {
-                    type: "object",
-                    properties: {
-                        action: {
-                            type: "string",
-                            enum: ["export", "import", "stats"],
-                            description: "操作类型",
-                        },
-                        library_key: {
-                            type: "string",
-                            description: "export 时必填，指定要导出的库 key",
-                        },
-                        file_path: {
-                            type: "string",
-                            description: "import 时必填，指向 .knowledge.json 文件的绝对路径",
-                        },
-                        import_as: {
-                            type: "string",
-                            description: "import 时可选，覆盖知识包中的库 key（用于重命名）",
-                        },
+        },
+        {
+            name: "analyze_code",
+            description: "🧠 智能代码分析：将你的 MQL5 代码与已预处理的外部库知识对比，返回结构化的 API 摘要和可优化点，供 Claude 给出具体改进建议。需先运行 preprocess_library。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    code: {
+                        type: "string",
+                        description: "需要分析的 MQL5 代码片段（EA、指标或函数均可）",
                     },
-                    required: ["action"],
+                    library_key: {
+                        type: "string",
+                        description: "限定分析范围到指定库（可选，留空则跨所有已预处理库分析）",
+                    },
+                },
+                required: ["code"],
+            },
+        },
+        {
+            name: "record_fix",
+            description: "💾 记录已验证的代码修复模式。当 analyze_code 或 analyze_structure 发现问题并由 Claude 给出修复建议后，调用此工具将 问题→修复 映射保存到本地。下次遇到相同问题时直接命中，无需再次分析。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    pattern_description: {
+                        type: "string",
+                        description: "问题的简短描述，如 'OnTick 中未检查持仓数量就调用 CTrade::Buy'",
+                    },
+                    fix_description: {
+                        type: "string",
+                        description: "修复说明，如 '在 Buy 调用前添加 if(PositionsTotal()>0) return'",
+                    },
+                    original_snippet: {
+                        type: "string",
+                        description: "有问题的代码示例（可选）",
+                    },
+                    fixed_snippet: {
+                        type: "string",
+                        description: "修复后的代码示例（可选）",
+                    },
+                    library_key: {
+                        type: "string",
+                        description: "关联的库 key（可选）",
+                    },
+                    tags: {
+                        type: "string",
+                        description: "标签，JSON 数组格式，如 '[\"CTrade\",\"OnTick\",\"risk\"]'（可选）",
+                    },
+                },
+                required: ["pattern_description", "fix_description"],
+            },
+        },
+        {
+            name: "list_fixes",
+            description: "📋 查看已记录的代码修复模式，按使用频率排序。也可按关键词搜索。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    query: {
+                        type: "string",
+                        description: "搜索关键词（可选，留空则列出全部）",
+                    },
+                    limit: {
+                        type: "number",
+                        description: "返回数量（默认 20）",
+                        default: 20,
+                    },
                 },
             },
-        ],
-    };
+        },
+        {
+            name: "manage_knowledge",
+            description: "🔄 管理预处理库知识：export（导出为磁盘 JSON 文件供分享）、import（从文件路径导入他人知识包，无需自己运行 Haiku）、stats（查看各库的知识统计）。",
+            inputSchema: {
+                type: "object",
+                properties: {
+                    action: {
+                        type: "string",
+                        enum: ["export", "import", "stats"],
+                        description: "操作类型",
+                    },
+                    library_key: {
+                        type: "string",
+                        description: "export 时必填，指定要导出的库 key",
+                    },
+                    file_path: {
+                        type: "string",
+                        description: "import 时必填，指向 .knowledge.json 文件的绝对路径",
+                    },
+                    import_as: {
+                        type: "string",
+                        description: "import 时可选，覆盖知识包中的库 key（用于重命名）",
+                    },
+                },
+                required: ["action"],
+            },
+        },
+    ];
+    // 插件工具动态追加（插件未加载时为空）
+    const pluginTools = activePlugin?.getToolDefinitions() ?? [];
+    return { tools: [...coreTools, ...pluginTools] };
 });
 // 处理工具调用
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -778,13 +795,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 }
                 throw new Error(`未知操作: ${action}`);
             }
-            case "diagnose_error": {
-                const { compile_log } = args;
-                await buildIndex();
-                const engine = new DiagnoseEngine(docIndex);
-                const report = await engine.diagnose(compile_log);
-                return { content: [{ type: "text", text: report }] };
-            }
             case "list_libraries": {
                 await buildIndex();
                 let out = `📚 已加载资料库\n${"=".repeat(60)}\n\n`;
@@ -917,26 +927,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 out.push("💡 请根据以上库知识和用户代码，给出具体可编译的改进建议。");
                 return { content: [{ type: "text", text: out.join("\n") }] };
             }
-            case "analyze_structure": {
-                const { code } = args;
-                const result = codeStructureAnalyzer.analyze(code);
-                const report = codeStructureAnalyzer.format(result);
-                // 也查 fix patterns 数据库看是否有匹配的修复
-                const issueText = result.issues.map(i => i.detail + " " + i.id).join(" ");
-                const knownFixes = issueText.length > 10 ? fixPatternsDb.search(issueText.substring(0, 400)) : [];
-                const out = [report];
-                if (knownFixes.length > 0) {
-                    out.push("\n\n📚 **本地已记录的修复模式（直接可用）:**");
-                    for (const fix of knownFixes.slice(0, 3)) {
-                        out.push(`\n**${fix.pattern_description}**`);
-                        out.push(`修复: ${fix.fix_description}`);
-                        if (fix.fixed_snippet) {
-                            out.push("```mql5\n" + fix.fixed_snippet + "\n```");
-                        }
-                    }
-                }
-                return { content: [{ type: "text", text: out.join("\n") }] };
-            }
             case "record_fix": {
                 const { pattern_description, fix_description, original_snippet, fixed_snippet, library_key: lk, tags } = args;
                 const saved = fixPatternsDb.record({
@@ -1063,8 +1053,28 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 lines.push(`\n💾 **本地修复模式库**: ${fixStats.total} 条记录`);
                 return { content: [{ type: "text", text: lines.join("\n") }] };
             }
-            default:
+            default: {
+                // 路由给领域插件
+                if (activePlugin) {
+                    const pluginToolNames = activePlugin.getToolDefinitions().map(t => t.name);
+                    if (pluginToolNames.includes(name)) {
+                        await buildIndex();
+                        const r = await activePlugin.handleToolCall(name, args, {
+                            docIndex: docIndex,
+                            knowledgeStore,
+                            fixPatternsDb,
+                            loadedLibraries: loadedLibraries.map(l => ({
+                                key: l.key,
+                                fileCount: l.fileCount,
+                                rootPath: l.absPath,
+                            })),
+                        });
+                        // 解构为对象字面量，让 TS 推断为 MCP SDK 兼容类型
+                        return { content: r.content, isError: r.isError };
+                    }
+                }
                 throw new Error(`未知工具: ${name}`);
+            }
         }
     }
     catch (error) {

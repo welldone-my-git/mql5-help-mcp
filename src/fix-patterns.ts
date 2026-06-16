@@ -26,7 +26,7 @@ export interface FixSearchResult extends FixPattern {
   relevance: number;
 }
 
-class FixPatternsDb {
+export class FixPatternsDb {
   private db: Database.Database | null = null;
   private dbPath: string;
 
