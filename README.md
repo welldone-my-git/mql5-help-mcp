@@ -56,7 +56,7 @@
 如果你使用 Claude Code，可以直接在命令行运行：
 
 ```bash
-claude mcp add mql5-help npx -- -y github:welldone-my-git/mql5-help-mcp
+claude mcp add mql5-help npx -- -y github:welldone-my-git/kb-mcp-esp4-mql5
 ```
 
 安装后验证：
@@ -89,7 +89,7 @@ JSON
   "command": "npx",
   "args": [
     "-y",
-    "github:welldone-my-git/mql5-help-mcp"
+    "github:welldone-my-git/kb-mcp-esp4-mql5"
   ]
 }
 ```
@@ -665,7 +665,7 @@ AI → smart_query("OrderSend")
 3. 如果仍然失败，手动测试服务器：
    
    ```bash
-   npx -y github:welldone-my-git/mql5-help-mcp
+   npx -y github:welldone-my-git/kb-mcp-esp4-mql5
    ```
    
    你应该看到：
@@ -706,7 +706,7 @@ claude mcp remove mql5-help
   "mcpServers": {
     "mql5-help": {
       "command": "npx",
-      "args": ["-y", "github:welldone-my-git/mql5-help-mcp"]
+      "args": ["-y", "github:welldone-my-git/kb-mcp-esp4-mql5"]
     }
   }
 }
