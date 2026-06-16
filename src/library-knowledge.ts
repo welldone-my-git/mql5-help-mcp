@@ -3,7 +3,7 @@
  *
  * 设计：
  *   - LibraryPreprocessor  用 Claude Haiku 分析 .mqh，结果写入本地 JSON 缓存（一次性）
- *   - KnowledgeStore       读写 ~/.mql5-help-mcp/knowledge/<key>/<hash>.json
+ *   - KnowledgeStore       读写 ~/.knowledge-mcp/knowledge/<key>/<hash>.json
  *   - ContextAssembler     从缓存中提取与用户代码相关的 API 摘要，供 Claude 推理
  */
 
@@ -11,7 +11,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import * as fs from "fs/promises";
 import * as fssync from "fs";
 import * as path from "path";
-import { homedir } from "os";
+import { DATA_DIR } from "./core/paths.js";
 
 // ========== 数据结构 ==========
 
@@ -42,7 +42,7 @@ export interface FileKnowledge {
 
 // ========== KnowledgeStore ==========
 
-const KNOWLEDGE_DIR = path.join(homedir(), ".mql5-help-mcp", "knowledge");
+const KNOWLEDGE_DIR = path.join(DATA_DIR, "knowledge");
 
 export class KnowledgeStore {
   private mem = new Map<string, FileKnowledge>();

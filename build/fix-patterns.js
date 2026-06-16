@@ -4,17 +4,16 @@
  * 每次 analyze_code 优先查这里，命中则直接返回修复，无需 API
  */
 import Database from "better-sqlite3";
-import { homedir } from "os";
 import { join } from "path";
 import { mkdirSync, existsSync } from "fs";
+import { DATA_DIR } from "./core/paths.js";
 export class FixPatternsDb {
     db = null;
     dbPath;
     constructor() {
-        const dir = join(homedir(), ".mql5-help-mcp");
-        if (!existsSync(dir))
-            mkdirSync(dir, { recursive: true });
-        this.dbPath = join(dir, "fix_patterns.db");
+        if (!existsSync(DATA_DIR))
+            mkdirSync(DATA_DIR, { recursive: true });
+        this.dbPath = join(DATA_DIR, "fix_patterns.db");
     }
     init() {
         if (this.db)

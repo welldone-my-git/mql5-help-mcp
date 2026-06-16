@@ -1,20 +1,24 @@
 {
-  "name": "mql5-help-mcp",
-  "version": "1.3.0",
-  "description": "MQL5 Documentation MCP Server - Fast and Simple",
+  "name": "knowledge-mcp",
+  "version": "2.0.0",
+  "description": "General-purpose knowledge base MCP server — domain plugins, semantic search, PDF/HTML/Markdown ingestion",
   "type": "module",
-  "author": "caoshuo594",
+  "author": "welldone-my-git",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/caoshuo594/mql5-help-mcp.git"
+    "url": "https://github.com/welldone-my-git/mql5-help-mcp.git"
   },
   "keywords": [
     "mcp",
+    "knowledge-base",
+    "semantic-search",
+    "ollama",
     "mql5",
     "documentation",
     "trading",
-    "metatrader"
+    "metatrader",
+    "enterprise"
   ],
   "files": [
     "build/",
@@ -25,6 +29,7 @@
     "LICENSE"
   ],
   "bin": {
+    "knowledge-mcp": "./build/index.js",
     "mql5-help-mcp": "./build/index.js"
   },
   "scripts": {

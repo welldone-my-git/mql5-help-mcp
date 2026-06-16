@@ -5,9 +5,9 @@
  */
 
 import Database from "better-sqlite3";
-import { homedir } from "os";
 import { join } from "path";
 import { mkdirSync, existsSync } from "fs";
+import { DATA_DIR } from "./core/paths.js";
 
 export interface FixPattern {
   id?: number;
@@ -31,9 +31,8 @@ export class FixPatternsDb {
   private dbPath: string;
 
   constructor() {
-    const dir = join(homedir(), ".mql5-help-mcp");
-    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-    this.dbPath = join(dir, "fix_patterns.db");
+    if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+    this.dbPath = join(DATA_DIR, "fix_patterns.db");
   }
 
   private init(): Database.Database {

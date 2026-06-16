@@ -25,6 +25,7 @@ import {
 } from "./library-knowledge.js";
 import { fixPatternsDb } from "./fix-patterns.js";
 import type { DomainPlugin } from "./core/plugin.js";
+import { DATA_DIR } from "./core/paths.js";
 import {
   vectorStore,
   ollamaEmbed,
@@ -39,7 +40,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 配置文件路径
-const CONFIG_PATH = path.join(homedir(), ".mql5-help-mcp", "config.json");
+const CONFIG_PATH = path.join(DATA_DIR, "config.json");
 
 // ── Config v2 schema ──────────────────────────────────────────────────────────
 
@@ -465,7 +466,7 @@ function browseCategories(category?: string): string {
 // 创建MCP服务器
 const server = new Server(
   {
-    name: "mql5-help-mcp",
+    name: "knowledge-mcp",
     version: "1.1.0",
   },
   {
@@ -636,7 +637,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: "list_libraries",
-        description: "📚 列出当前已加载的所有资料库（内置文档 + 用户配置的外部代码库），显示每个库的文件数量与路径。配置文件位于 ~/.mql5-help-mcp/config.json。",
+        description: "📚 列出当前已加载的所有资料库（内置文档 + 用户配置的外部代码库），显示每个库的文件数量与路径。配置文件位于 ~/.knowledge-mcp/config.json。",
         inputSchema: {
           type: "object",
           properties: {},
@@ -1006,7 +1007,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (!embCfg) {
           return {
             content: [{ type: "text", text: [
-              "❌ 未配置 embedding。请在 ~/.mql5-help-mcp/config.json 中添加：",
+              "❌ 未配置 embedding。请在 ~/.knowledge-mcp/config.json 中添加：",
               "```json",
               '{',
               '  "embedding": {',
@@ -1165,7 +1166,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               type: "text",
               text: library_key
                 ? `❌ 未找到外部库 "${library_key}"，请检查 config.json 中的 key。`
-                : "❌ 未配置任何外部库，请先在 ~/.mql5-help-mcp/config.json 中添加 extraLibraries。",
+                : "❌ 未配置任何外部库，请先在 ~/.knowledge-mcp/config.json 中添加 extraLibraries。",
             }],
             isError: true,
           };
@@ -1373,7 +1374,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 "",
                 result.imported > 0
                   ? `现在可以直接运行 analyze_code(code, "${result.libraryKey}") 使用导入的知识。`
-                  : "提示：若全部跳过，说明该库知识已存在。可删除 ~/.mql5-help-mcp/knowledge/${result.libraryKey}/ 后重新导入。",
+                  : "提示：若全部跳过，说明该库知识已存在。可删除 ~/.knowledge-mcp/knowledge/${result.libraryKey}/ 后重新导入。",
               ].join("\n"),
             }],
           };

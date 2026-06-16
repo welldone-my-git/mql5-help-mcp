@@ -1,8 +1,8 @@
-# MQL5 Help MCP Server
+# knowledge-mcp
 
-[![npm package](https://img.shields.io/npm/v/mql5-help-mcp.svg)](https://npmjs.org/package/mql5-help-mcp)
+[![npm package](https://img.shields.io/npm/v/knowledge-mcp.svg)](https://npmjs.org/package/knowledge-mcp)
 
-`mql5-help-mcp` 让你的 AI 编程助手（Claude Code、Cursor、Copilot、Gemini CLI 等）直接访问本地的 MQL5 文档与学习资料库。基于 Model Context Protocol (MCP)，为 AI 助手提供 4500+ 官方文档与两本补充电子书（HTML）的快速检索能力，助你更高效地完成 EA/指标/脚本开发与调试。
+**通用知识库 MCP 服务器**，默认内置 MQL5 文档（4500+ 官方文档 + 两本电子书），同时支持通过 `domain_plugin` 加载任意领域插件（已内置 `mql5`、`java`），通过 `sources[]` 接入 HTML/Markdown/PDF 文档，以及通过 Ollama 实现本地语义搜索。让你的 AI 编程助手（Claude Code、Cursor、Copilot 等）直接访问私有知识库，数据不出内网。
 
 ## 有哪些资料被内置？
 
@@ -56,7 +56,7 @@
 如果你使用 Claude Code，可以直接在命令行运行：
 
 ```bash
-claude mcp add mql5-help npx -- -y github:caoshuo594/mql5-help-mcp
+claude mcp add mql5-help npx -- -y github:welldone-my-git/mql5-help-mcp
 ```
 
 安装后验证：
@@ -89,7 +89,7 @@ JSON
   "command": "npx",
   "args": [
     "-y",
-    "github:caoshuo594/mql5-help-mcp"
+    "github:welldone-my-git/mql5-help-mcp"
   ]
 }
 ```
@@ -219,7 +219,7 @@ AI 应该会显示 16 个工具，包括 `smart_query`、`search`、`diagnose_er
 - 前提：需设置环境变量 `ANTHROPIC_API_KEY`
 - 功能：
   - 调用 Claude Haiku 逐文件分析 `.mqh`，提取类/方法/用途/典型用法
-  - 结果缓存到 `~/.mql5-help-mcp/knowledge/<key>/`（本地 JSON）
+  - 结果缓存到 `~/.knowledge-mcp/knowledge/<key>/`（本地 JSON）
   - 源文件更新后自动重新处理，未变更文件跳过
   - 显示实时进度与 API 成本估算（100 个文件约 $0.10）
 - 示例：
@@ -306,7 +306,7 @@ AI 应该会显示 16 个工具，包括 `smart_query`、`search`、`diagnose_er
   - `file_path`（import 时必填）：`.knowledge.json` 文件的绝对路径
   - `import_as`（可选）：导入时覆盖库名
 - 功能：
-  - `export`：将本地预处理知识写入磁盘（`~/.mql5-help-mcp/exports/<key>.knowledge.json`），返回文件路径
+  - `export`：将本地预处理知识写入磁盘（`~/.knowledge-mcp/exports/<key>.knowledge.json`），返回文件路径
   - `import`：从磁盘文件路径导入他人知识包，**无需自己运行 Haiku API**
   - `stats`：查看各库的知识缓存状态 + 修复模式数量
 - 示例：
@@ -323,7 +323,7 @@ AI 应该会显示 16 个工具，包括 `smart_query`、`search`、`diagnose_er
 2. analyze_code(code)           → 库级优化建议（附已知修复）
 3. Claude 给出修复方案
 4. record_fix(...)              → 保存到本地
-5. manage_knowledge("export", library_key="MyLib")  → ~/.mql5-help-mcp/exports/MyLib.knowledge.json
+5. manage_knowledge("export", library_key="MyLib")  → ~/.knowledge-mcp/exports/MyLib.knowledge.json
    manage_knowledge("import", file_path="...")       → 团队复用，节省 API 成本
 ```
 
@@ -335,7 +335,7 @@ AI 应该会显示 16 个工具，包括 `smart_query`、`search`、`diagnose_er
   - `limit`（可选）：限制处理文档数量（调试用）
 - 前提：需先配置 Ollama（见下方"语义搜索配置"章节）
 - 功能：
-  - 调用本地 Ollama embedding 模型对所有文档向量化，存入 `~/.mql5-help-mcp/semantic.db`
+  - 调用本地 Ollama embedding 模型对所有文档向量化，存入 `~/.knowledge-mcp/semantic.db`
   - 增量运行：已索引的文档自动跳过，只处理新增文档
   - 完成后 `search` / `smart_query` **自动切换为混合模式**（无需任何额外操作）
 - 示例：
@@ -360,7 +360,7 @@ AI 应该会显示 16 个工具，包括 `smart_query`、`search`、`diagnose_er
   - `solution`（可选）：解决方案描述
   - `related_docs`（可选）：相关文档列表（JSON 数组格式）
 
-- 功能：记录错误到本地 SQLite 数据库（存储在 `~/.mql5-help-mcp/mql5_errors.db`）
+- 功能：记录错误到本地 SQLite 数据库（存储在 `~/.knowledge-mcp/mql5_errors.db`）
 
 - 自动去重：相同错误会增加计数而不是重复记录
 
@@ -403,7 +403,7 @@ AI 应该会显示 16 个工具，包括 `smart_query`、`search`、`diagnose_er
   从JSON文件导入团队共享的错误库
   ```
 
-> **错误数据库位置**：`~/.mql5-help-mcp/mql5_errors.db`（用户主目录，跨项目共享）
+> **错误数据库位置**：`~/.knowledge-mcp/mql5_errors.db`（用户主目录，跨项目共享）
 > 
 > **工作流程**：
 > 
@@ -434,7 +434,7 @@ ollama pull nomic-embed-text
 
 ### 第二步：更新 config.json
 
-在 `~/.mql5-help-mcp/config.json` 中添加 `embedding` 字段：
+在 `~/.knowledge-mcp/config.json` 中添加 `embedding` 字段：
 
 ```json
 {
@@ -665,7 +665,7 @@ AI → smart_query("OrderSend")
 3. 如果仍然失败，手动测试服务器：
    
    ```bash
-   npx -y github:caoshuo594/mql5-help-mcp
+   npx -y github:welldone-my-git/mql5-help-mcp
    ```
    
    你应该看到：
@@ -706,7 +706,7 @@ claude mcp remove mql5-help
   "mcpServers": {
     "mql5-help": {
       "command": "npx",
-      "args": ["-y", "github:caoshuo594/mql5-help-mcp"]
+      "args": ["-y", "github:welldone-my-git/mql5-help-mcp"]
     }
   }
 }
@@ -777,7 +777,7 @@ npm run build
 - **优雅降级**：未配置 Ollama 或服务不可达时，自动退化为纯关键词搜索，现有工具零感知
 - **团队复用**：企业内一台服务器运行 Ollama，全团队共享同一 embedding 服务，边际成本为零
 
-**📋 配置方式（~/.mql5-help-mcp/config.json）：**
+**📋 配置方式（~/.knowledge-mcp/config.json）：**
 
 ```json
 {
@@ -830,7 +830,7 @@ manage_knowledge export → 分享给团队 → import → 他人零成本获取
 
 - 🔬 `diagnose_error` 工具 — 粘贴 MetaEditor 完整编译日志，自动解析所有 error/warning 行，去重后逐条匹配迁移映射与历史方案，输出结构化诊断报告
 - 📚 `list_libraries` 工具 — 列出所有已加载资料库（内置 + 外部），显示文件数量与配置路径
-- 🔌 外部代码库支持 — 通过 `~/.mql5-help-mcp/config.json` 挂载任意本地 MQL5 开源库（`.mq5/.mqh`），无需修改源码
+- 🔌 外部代码库支持 — 通过 `~/.knowledge-mcp/config.json` 挂载任意本地 MQL5 开源库（`.mq5/.mqh`），无需修改源码
 - 🗺️ MQL4→MQL5 迁移映射从 4 条扩展至 18 条，新增 `MarketInfo`、`RefreshRates`、指标句柄、账户信息等
 
 **🔧 Bug 修复:**
@@ -842,7 +842,7 @@ manage_knowledge export → 分享给团队 → import → 他人零成本获取
 
 **💡 使用外部库：**
 
-在 `~/.mql5-help-mcp/config.json` 中添加：
+在 `~/.knowledge-mcp/config.json` 中添加：
 ```json
 {
   "extraLibraries": [
@@ -864,7 +864,7 @@ manage_knowledge export → 分享给团队 → import → 他人零成本获取
 
 **💡 核心特性:**
 
-- 完全本地化存储（`~/.mql5-help-mcp/mql5_errors.db`）
+- 完全本地化存储（`~/.knowledge-mcp/mql5_errors.db`）
 - 智能去重：相同错误自动合并并计数
 - 隐私保护：导出时可选移除文件路径
 - 团队协作：支持导出/导入 JSON 格式错误库

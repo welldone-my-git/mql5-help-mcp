@@ -10,8 +10,8 @@
 import Database from "better-sqlite3";
 import * as fsSync from "fs";
 import * as path from "path";
-import { homedir } from "os";
 import { stripHtml } from "../utils.js";
+import { DATA_DIR } from "./paths.js";
 
 // ── Math ─────────────────────────────────────────────────────────────────────
 
@@ -60,7 +60,7 @@ export async function ollamaHealthCheck(url: string): Promise<boolean> {
 
 // ── Vector store (SQLite + BLOB) ──────────────────────────────────────────────
 
-const DEFAULT_DB = path.join(homedir(), ".mql5-help-mcp", "semantic.db");
+const DEFAULT_DB = path.join(DATA_DIR, "semantic.db");
 
 export class VectorStore {
   private db: Database.Database;

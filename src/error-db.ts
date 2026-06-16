@@ -4,9 +4,9 @@
  */
 
 import Database from 'better-sqlite3';
-import { homedir } from 'os';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { DATA_DIR } from './core/paths.js';
 
 // 错误记录接口
 export interface ErrorRecord {
@@ -32,7 +32,7 @@ class ErrorDatabase {
 
   constructor() {
     // 数据库存放在用户主目录,避免多项目冲突
-    const configDir = join(homedir(), '.mql5-help-mcp');
+    const configDir = DATA_DIR;
     if (!existsSync(configDir)) {
       mkdirSync(configDir, { recursive: true });
     }

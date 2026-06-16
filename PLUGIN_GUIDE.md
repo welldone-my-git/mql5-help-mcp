@@ -181,7 +181,7 @@ const plugin = mod[`${pluginName}Plugin`] ?? mod.default;
 
 ### 4. 配置激活
 
-在 `~/.mql5-help-mcp/config.json` 中指定：
+在 `~/.knowledge-mcp/config.json` 中指定：
 
 ```json
 {
@@ -361,7 +361,7 @@ Array<{
 
 ## 激活插件
 
-`~/.mql5-help-mcp/config.json`：
+`~/.knowledge-mcp/config.json`：
 
 ```json
 {
