@@ -171,7 +171,7 @@ class ErrorDatabase {
     const terms = keywords.toLowerCase().split(/\s+/).filter(t => t.length > 2);
     if (terms.length === 0) return [];
 
-    const likeConditions = terms.map(() => `(LOWER(error_message) LIKE ? OR LOWER(solution) LIKE ?)`).join(' AND ');
+    const likeConditions = terms.map(() => `(LOWER(error_message) LIKE ? OR LOWER(solution) LIKE ?)`).join(' OR ');
     const params = terms.flatMap(term => [`%${term}%`, `%${term}%`]);
 
     const stmt = db.prepare(`

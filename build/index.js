@@ -11,6 +11,7 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 import { SmartQueryEngine } from "./smart-query.js";
 import { getErrorDb, closeErrorDb } from "./error-db.js";
+import { stripHtml } from "./utils.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // 文档根目录（多资料库）：MQL5_HELP（官方）、两本电子书（可选）
@@ -19,17 +20,9 @@ const ROOT_CANDIDATES = [
     { key: "MQL5_Algo_Book", abs: path.resolve(__dirname, "..", "MQL5_Algo_Book") },
     { key: "Neural_Networks_Book", abs: path.resolve(__dirname, "..", "Neural_Networks_Book") },
 ];
-// 简单的HTML标签清理
-function stripHtml(html) {
-    return html
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-        .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-        .replace(/<[^>]+>/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-}
 let docIndex = null; // key -> entry（key为检索键）
 let nameIndex = null; // 文件名（无扩展）-> entry
+let queryEngine = null; // 单例，随索引一同初始化
 // MQL4→MQL5 常见迁移映射/别名（用于智能搜索提示）
 const MIGRATION_HINTS = {
     "resultcode": {
@@ -97,22 +90,29 @@ async function buildIndex() {
         for (const f of files) {
             const base = path.basename(f.relPath).toLowerCase();
             const noExt = base.replace(/\.(htm|html|md)$/i, "");
-            // 主键：文件名（无扩展）
-            docIndex.set(noExt, f);
+            // 主键：文件名（无扩展）— first-wins 保证 MQL5_HELP 优先
+            if (!docIndex.has(noExt))
+                docIndex.set(noExt, f);
             if (!nameIndex.has(noExt))
                 nameIndex.set(noExt, f);
             // 类名变体（去掉开头 C）
             if (noExt.startsWith("c") && noExt.length > 2) {
-                docIndex.set(noExt.substring(1), f);
+                const shortKey = noExt.substring(1);
+                if (!docIndex.has(shortKey))
+                    docIndex.set(shortKey, f);
             }
             // ONNX 相关关键词
             if (noExt.includes("onnx")) {
-                docIndex.set("onnx", f);
-                docIndex.set("onnx_guide", f);
-                docIndex.set("ml", f);
-                docIndex.set("ai", f);
+                if (!docIndex.has("onnx"))
+                    docIndex.set("onnx", f);
+                if (!docIndex.has("onnx_guide"))
+                    docIndex.set("onnx_guide", f);
+                if (!docIndex.has("ml"))
+                    docIndex.set("ml", f);
+                if (!docIndex.has("ai"))
+                    docIndex.set("ai", f);
             }
-            // 电子书目录粗粒度前缀
+            // 电子书目录粗粒度前缀（专用命名空间，无冲突风险）
             if (f.repo === "MQL5_Algo_Book")
                 docIndex.set(`algo_${noExt}`, f);
             if (f.repo === "Neural_Networks_Book")
@@ -120,6 +120,7 @@ async function buildIndex() {
         }
     }
     console.error(`📚 索引已建立: ${docIndex.size} 个键，${nameIndex.size} 个文件名索引`);
+    queryEngine = new SmartQueryEngine(docIndex);
     return docIndex;
 }
 // 搜索文档（含错误文本与迁移提示）
@@ -412,9 +413,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         switch (name) {
             case "smart_query": {
                 const { query, mode = "quick" } = args;
-                // 初始化智能查询引擎
-                const index = await buildIndex();
-                const engine = new SmartQueryEngine(index);
+                // 确保索引和引擎已初始化
+                await buildIndex();
+                const engine = queryEngine;
                 // 执行智能查询
                 const result = await engine.query(query, mode);
                 // 格式化输出

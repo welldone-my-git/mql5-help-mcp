@@ -5,6 +5,7 @@
 
 import * as fs from "fs/promises";
 import { getErrorDb, ErrorSearchResult } from "./error-db.js";
+import { stripHtml } from "./utils.js";
 
 // ========== 类型定义 ==========
 
@@ -159,16 +160,6 @@ class QueryAnalyzer {
 // ========== 信息提取器 ==========
 
 class InfoExtractor {
-  // HTML清理
-  static stripHtml(html: string): string {
-    return html
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
   // 提取函数签名
   static extractSyntax(html: string): string | undefined {
     const patterns = [
@@ -279,7 +270,7 @@ class InfoExtractor {
   static async extract(docPath: string): Promise<ExtractedInfo> {
     try {
       const html = await fs.readFile(docPath, "utf-8");
-      const text = this.stripHtml(html);
+      const text = stripHtml(html);
 
       return {
         syntax: this.extractSyntax(html),

@@ -4,6 +4,7 @@
  */
 import * as fs from "fs/promises";
 import { getErrorDb } from "./error-db.js";
+import { stripHtml } from "./utils.js";
 // ========== 查询分析器 ==========
 class QueryAnalyzer {
     // 错误模式匹配 - 提取错误代码和消息
@@ -103,15 +104,6 @@ class QueryAnalyzer {
 }
 // ========== 信息提取器 ==========
 class InfoExtractor {
-    // HTML清理
-    static stripHtml(html) {
-        return html
-            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-            .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-            .replace(/<[^>]+>/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
-    }
     // 提取函数签名
     static extractSyntax(html) {
         const patterns = [
@@ -211,7 +203,7 @@ class InfoExtractor {
     static async extract(docPath) {
         try {
             const html = await fs.readFile(docPath, "utf-8");
-            const text = this.stripHtml(html);
+            const text = stripHtml(html);
             return {
                 syntax: this.extractSyntax(html),
                 parameters: this.extractParameters(text),
@@ -324,6 +316,21 @@ export class SmartQueryEngine {
             if (dbResults.length > 0) {
                 // 找到历史错误记录,直接返回
                 const topError = dbResults[0];
+                let relatedDocs = [];
+                if (topError.related_docs) {
+                    try {
+                        const parsed = JSON.parse(topError.related_docs);
+                        if (Array.isArray(parsed)) {
+                            relatedDocs = parsed.filter((item) => typeof item === "string");
+                        }
+                        else if (typeof parsed === "string") {
+                            relatedDocs = [parsed];
+                        }
+                    }
+                    catch {
+                        relatedDocs = [];
+                    }
+                }
                 const answer = `🔍 **从错误数据库找到解决方案** (出现${topError.occurrence_count}次)\n\n` +
                     `**错误:** ${topError.error_code} - ${topError.error_message}\n\n` +
                     (topError.solution ? `**解决方案:**\n${topError.solution}\n\n` : '') +
@@ -333,7 +340,7 @@ export class SmartQueryEngine {
                     type: mode,
                     answer,
                     reference: "错误数据库",
-                    relatedDocs: topError.related_docs ? JSON.parse(topError.related_docs) : [],
+                    relatedDocs,
                     estimatedTokens: answer.length / 4,
                 };
             }
