@@ -124,10 +124,9 @@ export class VectorStore {
     return (this.db.prepare("SELECT COUNT(*) as n FROM doc_embeddings").get() as { n: number }).n;
   }
 
-  getStats(): { count: number; dbPath: string; model: string | null } {
-    const row = this.db.prepare("SELECT model FROM doc_embeddings LIMIT 1").get() as
-      { model: string | null } | undefined;
-    return { count: this.count(), dbPath: DEFAULT_DB, model: row?.model ?? null };
+  getStats(): { count: number; dbPath: string; models: string[] } {
+    const rows = this.db.prepare("SELECT DISTINCT model FROM doc_embeddings WHERE model IS NOT NULL").all() as { model: string }[];
+    return { count: this.count(), dbPath: DEFAULT_DB, models: rows.map(r => r.model) };
   }
 
   deleteAll(): void {
