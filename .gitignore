@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
 
-# Build output - 注意：build/ 需要提交，因为 npx github:... 安装时需要预编译的 JS
-# build/
+# Build output
+build/
 dist/
 
 # Environment files
