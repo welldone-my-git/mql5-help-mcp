@@ -7,6 +7,7 @@
 import { DomainPlugin, PluginContext, ToolDefinition, PluginResult, EnrichedQuery } from "../../core/plugin.js";
 import { DiagnoseEngine } from "../../diagnose-engine.js";
 import { codeStructureAnalyzer } from "../../code-analyzer.js";
+import { formatAnalysisResult } from "../../code-analyzer-formatter.js";
 import { MIGRATION_HINTS } from "../../utils.js";
 
 class Mql5Plugin implements DomainPlugin {
@@ -57,7 +58,7 @@ class Mql5Plugin implements DomainPlugin {
       case "analyze_structure": {
         const { code } = args as { code: string };
         const result = codeStructureAnalyzer.analyze(code);
-        const report = codeStructureAnalyzer.format(result);
+        const report = formatAnalysisResult(result);
 
         const issueText = result.issues.map(i => i.detail + " " + i.id).join(" ");
         const knownFixes = issueText.length > 10
