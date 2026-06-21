@@ -12,11 +12,18 @@ export const PDF_EXT = /\.pdf$/i;
 
 /**
  * Extract plain text from a PDF buffer.
- * Uses pdf-parse (pdfjs-dist underneath). Suppresses warnings.
+ * Uses pdf-parse v2 (pdfjs-dist underneath). Suppresses warnings.
  */
 export async function extractPdfText(buffer: Buffer): Promise<string> {
-  // Dynamic import keeps this import out of the hot path for non-PDF repos
-  const { PDFParse, VerbosityLevel } = await import("pdf-parse");
+  let mod: { PDFParse: new (opts: { data: Uint8Array; verbosity: number }) => { getText(): Promise<{ text: string }>; destroy(): Promise<void> }; VerbosityLevel: { ERRORS: number } };
+  try {
+    mod = await import("pdf-parse");
+  } catch (e) {
+    console.error(`[pdf] pdf-parse not available, install with: npm install pdf-parse@~2.4.5 (${e})`);
+    return `[PDF extraction failed — pdf-parse module not available]`;
+  }
+
+  const { PDFParse, VerbosityLevel } = mod;
   const parser = new PDFParse({
     data: new Uint8Array(buffer),
     verbosity: VerbosityLevel.ERRORS,
