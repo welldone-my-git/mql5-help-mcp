@@ -9,11 +9,7 @@ import { stripHtml, MIGRATION_HINTS } from "./utils.js";
 
 // ========== 类型定义 ==========
 
-interface DocEntry {
-  absPath: string;
-  relPath: string;
-  repo: string;
-}
+import type { DocEntry } from "./core/plugin.js";
 
 interface QueryAnalysis {
   type: "error" | "function" | "class" | "migration" | "howto" | "concept";

@@ -158,7 +158,7 @@ export class KnowledgeStore {
           const raw = await fs.readFile(path.join(dir, e.name), "utf-8");
           results.push(JSON.parse(raw) as FileKnowledge);
         } catch (e) {
-          console.warn(`[knowledge] failed to read ${e.name}: ${e}`);
+          console.warn(`[knowledge] failed to read ${e instanceof Error ? e.name : e}: ${e}`);
         }
       }
     } catch {}
