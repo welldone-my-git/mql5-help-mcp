@@ -47,11 +47,13 @@
     "@anthropic-ai/sdk": "^0.104.2",
     "@modelcontextprotocol/sdk": "^1.0.4",
     "better-sqlite3": "^11.7.0",
-    "pdf-parse": "~2.4.5"
+    "pdf-parse": "~2.4.5",
+    "turndown": "^7.2.4"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^22.10.2",
+    "@types/turndown": "^5.0.6",
     "typescript": "^5.7.2"
   }
 }

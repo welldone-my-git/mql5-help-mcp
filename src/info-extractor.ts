@@ -1,5 +1,5 @@
 import * as fs from "fs/promises";
-import { stripHtml } from "./utils.js";
+import { stripHtml, htmlToMarkdown, decodeEntities } from "./utils.js";
 
 export interface ExtractedInfo {
   syntax?: string;
@@ -12,14 +12,14 @@ export interface ExtractedInfo {
 }
 
 export class InfoExtractor {
-  static extractSyntax(html: string): string | undefined {
+  static extractSyntax(text: string): string | undefined {
     const patterns = [
       /((?:bool|int|long|double|string|void|ulong|uint|ushort|datetime|color)\s+[A-Z][a-zA-Z0-9_]*\s*\([^)]*\))/i,
       /((?:virtual\s+)?(?:bool|int|double|string|void)\s+[A-Z][a-zA-Z0-9_]*\s*\([^)]*\))/i,
     ];
 
     for (const pattern of patterns) {
-      const match = html.match(pattern);
+      const match = text.match(pattern);
       if (match) {
         return match[1].replace(/\s+/g, " ").trim().substring(0, 200);
       }
@@ -59,21 +59,15 @@ export class InfoExtractor {
   }
 
   static extractExample(html: string): string | undefined {
-    const patterns = [
-      /<pre[^>]*>([\s\S]*?)<\/pre>/i,
-      /<code[^>]*>([\s\S]*?)<\/code>/i,
-      /Example[:\s]*\n?([\s\S]{0,500})/i,
-    ];
-
-    for (const pattern of patterns) {
-      const match = html.match(pattern);
-      if (match) {
-        let code = match[1].replace(/<[^>]+>/g, "").trim();
-        if (code.length > 500) {
-          code = code.substring(0, 500) + "\n// ...";
-        }
-        return code;
-      }
+    const preMatch = /<pre[^>]*>([\s\S]*?)<\/pre>/i.exec(html);
+    if (preMatch) {
+      const code = decodeEntities(preMatch[1].replace(/<[^>]+>/g, "")).trim();
+      return code.length > 500 ? code.substring(0, 500) + "\n// ..." : code;
+    }
+    const codeMatch = /<code[^>]*>([\s\S]*?)<\/code>/i.exec(html);
+    if (codeMatch) {
+      const code = decodeEntities(codeMatch[1].replace(/<[^>]+>/g, "")).trim();
+      return code.length > 500 ? code.substring(0, 500) + "\n// ..." : code;
     }
     return undefined;
   }
@@ -112,14 +106,15 @@ export class InfoExtractor {
     try {
       const html = await fs.readFile(docPath, "utf-8");
       const text = stripHtml(html);
+      const md = htmlToMarkdown(html);
 
       return {
-        syntax: this.extractSyntax(html),
+        syntax: this.extractSyntax(text),
         parameters: this.extractParameters(text),
         returns: this.extractReturns(text),
         example: this.extractExample(html),
         notes: this.extractNotes(text),
-        description: this.extractDescription(text),
+        description: this.extractDescription(md),
       };
     } catch (error) {
       return {};

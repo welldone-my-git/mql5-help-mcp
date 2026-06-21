@@ -1,10 +1,42 @@
+const ENTITY_RE = /&(#\d+|#x[0-9a-f]+|amp|lt|gt|nbsp|quot|apos);/gi;
+
+export function decodeEntities(text: string): string {
+  return text.replace(ENTITY_RE, (_, e) => {
+    if (e.startsWith("#x")) return String.fromCharCode(parseInt(e.slice(2), 16));
+    if (e.startsWith("#")) return String.fromCharCode(parseInt(e.slice(1), 10));
+    const m: Record<string, string> = { amp: "&", lt: "<", gt: ">", nbsp: " ", quot: '"', apos: "'" };
+    return m[e] ?? _;
+  });
+}
+
 export function stripHtml(html: string): string {
-  return html
+  return decodeEntities(html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
-    .trim();
+    .trim());
+}
+
+import TurndownService from "turndown";
+
+const turndown = new TurndownService({
+  headingStyle: "atx",
+  hr: "---",
+  bulletListMarker: "-",
+  codeBlockStyle: "fenced",
+  emDelimiter: "*",
+  strongDelimiter: "**",
+  linkStyle: "inlined",
+});
+
+export function htmlToMarkdown(html: string): string {
+  const cleaned = html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+    .replace(/\s*class="[^"]*"/gi, "")
+    .replace(/\s*style="[^"]*"/gi, "");
+  return decodeEntities(turndown.turndown(cleaned));
 }
 
 export interface MigrationHint {
