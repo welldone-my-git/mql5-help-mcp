@@ -254,13 +254,8 @@ function keywordSearch(
   for (const [k, v] of Object.entries(MIGRATION_HINTS)) {
     if (queryLower.includes(k)) v.targetKeys.forEach((t) => expansionKeys.add(t));
   }
-  const undeclaredMatch =
-    queryLower.match(/undeclared\s+identifier\s+'?"?([a-z_][a-z0-9_]*)'?"?/i) ||
-    queryLower.match(/undeclared\s+identifier\s+([a-z_][a-z0-9_]*)/i);
-  if (undeclaredMatch?.[1]) {
-    const m = undeclaredMatch[1].toLowerCase();
-    MIGRATION_HINTS[m]?.targetKeys.forEach((t) => expansionKeys.add(t));
-  }
+  const ident = extractUndeclaredIdent(queryLower);
+  if (ident) MIGRATION_HINTS[ident]?.targetKeys.forEach((t) => expansionKeys.add(t));
 
   const results: Array<{ key: string; entry: DocEntry; score: number }> = [];
   for (const [key, entry] of index.entries()) {
@@ -274,15 +269,21 @@ function keywordSearch(
   return results;
 }
 
+// 匹配 "undeclared identifier 'name'" 或 "undeclared identifier name"
+const UNDECLARED_RE = /undeclared\s+identifier\s+'?"?([a-z_][a-z0-9_]*)'?"?/i;
+const UNDECLARED_RE_NQ = /undeclared\s+identifier\s+([a-z_][a-z0-9_]*)/i;
+
+/** 从查询中提取 undeclared identifier 的变量名 */
+function extractUndeclaredIdent(query: string): string | undefined {
+  return query.match(UNDECLARED_RE)?.[1] ?? query.match(UNDECLARED_RE_NQ)?.[1];
+}
+
 // 构建迁移提示行
 function buildSmartHints(query: string): string[] {
   const queryLower = query.toLowerCase();
   const hints: string[] = [];
-  const undeclaredMatch =
-    queryLower.match(/undeclared\s+identifier\s+'?"?([a-z_][a-z0-9_]*)'?"?/i) ||
-    queryLower.match(/undeclared\s+identifier\s+([a-z_][a-z0-9_]*)/i);
-  if (undeclaredMatch?.[1]) {
-    const missing = undeclaredMatch[1].toLowerCase();
+  const missing = extractUndeclaredIdent(queryLower);
+  if (missing) {
     const h = MIGRATION_HINTS[missing];
     if (h) hints.push(`🩺 诊断：未声明标识符 '${missing}' → 可能应改为 '${h.replacement}'（${h.hint}）`);
   }
