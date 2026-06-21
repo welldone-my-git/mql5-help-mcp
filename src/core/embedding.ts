@@ -44,7 +44,8 @@ export async function ollamaEmbed(
     const data = await res.json() as { embedding?: number[] };
     if (!Array.isArray(data.embedding)) return null;
     return new Float32Array(data.embedding);
-  } catch {
+  } catch (e) {
+    console.error(`[embedding] ollamaEmbed failed: ${e}`);
     return null;
   }
 }

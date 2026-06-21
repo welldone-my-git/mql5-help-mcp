@@ -414,7 +414,8 @@ export class SmartQueryEngine {
             } else if (typeof parsed === "string") {
               relatedDocs = [parsed];
             }
-          } catch {
+          } catch (e) {
+            console.warn(`[smart-query] failed to parse related_docs: ${e}`);
             relatedDocs = [];
           }
         }

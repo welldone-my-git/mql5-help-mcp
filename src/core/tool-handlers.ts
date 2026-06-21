@@ -350,7 +350,10 @@ export function registerToolHandlers(server: Server): void {
                 model: embCfg.model,
               });
               succeeded++;
-            } catch { failed++; }
+            } catch (e) {
+              console.error(`[build_semantic_index] failed ${key}: ${e}`);
+              failed++;
+            }
           }
   
           const elapsed = ((Date.now() - t0) / 1000).toFixed(1);

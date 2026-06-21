@@ -140,7 +140,8 @@ async function walkDir(rootAbs: string, repoKey: string, baseRel = ""): Promise<
   let dirents;
   try {
     dirents = await fs.readdir(path.join(rootAbs, baseRel), { withFileTypes: true });
-  } catch {
+  } catch (e) {
+    console.debug(`[index] cannot read directory ${path.join(rootAbs, baseRel)}: ${e}`);
     return entries;
   }
 
