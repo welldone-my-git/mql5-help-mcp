@@ -62,22 +62,20 @@ async function main() {
   console.error("✅ 服务器就绪，等待连接...");
 
   // 优雅退出时关闭数据库
-  process.on('SIGINT', () => {
+  const shutdown = () => {
     console.error("🛑 正在关闭服务器...");
+    clearInterval(keepalive);
     closeErrorDb();
     process.exit(0);
-  });
+  };
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 
-  process.on('SIGTERM', () => {
-    console.error("🛑 正在关闭服务器...");
-    closeErrorDb();
-    process.exit(0);
-  });
-
-  // A piped stdin does not reliably keep Node's event loop alive on every
-  // supported runtime. The client transport terminates us with SIGTERM when it
-  // disconnects, so retain one event-loop handle for the server lifetime.
-  setInterval(() => {}, 24 * 60 * 60 * 1000);
+  // The MCP stdio transport keeps the event loop alive via process.stdin.
+  // This interval is only a safety net — .unref() ensures it does not
+  // prevent graceful exit when the transport closes.
+  const keepalive = setInterval(() => {}, 24 * 60 * 60 * 1000);
+  keepalive.unref();
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
