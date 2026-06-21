@@ -580,8 +580,8 @@ export function registerToolHandlers(server: Server): void {
               content: [{ type: "text", text: "📭 暂无已记录的修复模式。使用 record_fix 工具开始记录。" }],
             };
           }
-          const stats = fixPatternsDb.getStats();
-          const lines = [`📋 本地修复模式库 (共 ${stats.total} 条, 累计使用 ${stats.totalUsage ?? 0} 次)\n`];
+  const stats = fixPatternsDb.getStats();
+  const lines = [`📋 本地修复模式库 (共 ${stats.total} 条, 累计使用 ${stats.totalUsage} 次)\n`];
           for (const r of all) {
             lines.push(`**#${r.id} [${r.usage_count}次] ${r.pattern_description}**`);
             lines.push(`→ ${r.fix_description}`);

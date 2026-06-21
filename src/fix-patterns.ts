@@ -124,7 +124,7 @@ export class FixPatternsDb {
   getStats() {
     const db = this.init();
     const { total, totalUsage } = db.prepare(
-      "SELECT COUNT(*) as total, SUM(usage_count) as totalUsage FROM fix_patterns"
+      "SELECT COUNT(*) as total, COALESCE(SUM(usage_count), 0) as totalUsage FROM fix_patterns"
     ).get() as { total: number; totalUsage: number };
     return { total, totalUsage, dbPath: this.dbPath };
   }
