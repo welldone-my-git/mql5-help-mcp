@@ -10,8 +10,11 @@ import { CORE_TOOL_DEFINITIONS } from "./tool-definitions.js";
 import { browseDocuments } from "./browse.js";
 import { readFileText } from "./ingestion.js";
 import {
-  BUILTIN_ROOTS, CONFIG_PATH, activePlugin, buildIndex, docIndex,
-  externalLibFiles, getEmbeddingConfig, getDoc, loadedLibraries,
+  BUILTIN_ROOTS, CONFIG_PATH, getEmbeddingConfig,
+} from "./config.js";
+import {
+  activePlugin, buildIndex, docIndex,
+  externalLibFiles, getDoc, loadedLibraries,
   queryEngine, searchDocs,
 } from "./document-service.js";
 

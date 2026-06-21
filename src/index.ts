@@ -12,6 +12,8 @@ import { fileURLToPath } from "url";
 import { getErrorDb, closeErrorDb } from "./error-db.js";
 import {
   BUILTIN_ROOTS,
+} from "./core/config.js";
+import {
   buildIndex,
   loadedLibraries,
 } from "./core/document-service.js";
