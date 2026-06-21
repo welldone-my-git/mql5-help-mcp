@@ -514,14 +514,21 @@ ma_cross_ea.mq5(155,39) : error 256: undeclared identifier 'ResultCode'
 ## 项目结构（含电子书）
 
 ```
-mql5-help-mcp/
+knowledge-mcp/
 ├── src/                       # TypeScript 源码
-│   └── index.ts               # MCP 服务器实现
+│   ├── index.ts               # 服务器启动与生命周期装配
+│   ├── core/
+│   │   ├── document-service.ts # 配置、索引、search/get
+│   │   ├── tool-handlers.ts   # MCP 工具调用路由
+│   │   ├── tool-definitions.ts # MCP 工具 schema
+│   │   └── browse.ts          # API 分类与电子书浏览
+│   └── plugins/               # MQL5、Java 领域插件
 ├── build/                     # 编译输出
 ├── MQL5_HELP/                 # 官方 MQL5 文档（4500+ .htm）
 ├── MQL5_Algo_Book/            # 算法交易手册（HTML 电子书）
 ├── Neural_Networks_Book/      # 神经网络/机器学习手册（HTML 电子书）
-├── scripts/
+├── test/                      # 单元测试与 MCP 冒烟测试
+├── .github/workflows/ci.yml   # Node 20/22 持续集成
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -535,7 +542,7 @@ mql5-help-mcp/
 ┌─────────────────────────────────────────────────────────────┐
 │                    MQL5 Help MCP Server                     │
 ├─────────────────────────────────────────────────────────────┤
-│  工具层 (index.ts)                                          │
+│  工具层 (core/tool-handlers.ts)                             │
 │  ├── smart_query  → 智能查询，精简返回                       │
 │  ├── search       → 搜索文档，返回列表                       │
 │  ├── get          → 获取完整文档内容                         │

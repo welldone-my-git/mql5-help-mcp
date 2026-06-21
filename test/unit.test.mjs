@@ -6,6 +6,7 @@ import test from "node:test";
 
 import { CodeStructureAnalyzer } from "../build/code-analyzer.js";
 import { stripHtml } from "../build/utils.js";
+import { browseDocuments } from "../build/core/browse.js";
 
 test("stripHtml removes executable markup and normalizes whitespace", () => {
   const html = "<style>.x{color:red}</style><h1>Hello</h1>  <script>alert(1)</script><p>MQL5</p>";
@@ -29,6 +30,18 @@ void OnTick() { trade.Buy(0.1, _Symbol); }
   assert.ok(ids.has("fixed_lot"));
   assert.ok(ids.has("no_trade_error_check"));
   assert.ok(result.score < 50);
+});
+
+test("browse module handles API categories without loading the document index", async () => {
+  let indexRequested = false;
+  const result = await browseDocuments("trading", async () => {
+    indexRequested = true;
+    return new Map();
+  });
+
+  assert.match(result, /TRADING/);
+  assert.match(result, /ordersend\.htm/);
+  assert.equal(indexRequested, false);
 });
 
 test("embedding math, hybrid ranking, and SQLite storage work", async (t) => {
