@@ -207,15 +207,15 @@ PDF 支持是企业知识库最高频的需求，优先级高。
 
 ## 八、实施计划
 
-### Phase 1 — 插件化（当前开始）
+### Phase 1 — 插件化（✅ 完成）
 **目标：核心引擎与 MQL5 解耦，config v2 落地**
 
-- [ ] 新建 `src/core/` 和 `src/plugins/mql5/`
-- [ ] 定义 `DomainPlugin` 接口
-- [ ] 将 MQL5 专有代码移入 `plugins/mql5/`
-- [ ] `BUILTIN_ROOTS` 改由 `config.json sources[]` 驱动
-- [ ] `extraLibraries` 合并进 `sources[]`（向后兼容旧 config）
-- [ ] 更新 README，新增 `PLUGIN_GUIDE.md`
+- [x] 新建 `src/core/` 和 `src/plugins/mql5/`
+- [x] 定义 `DomainPlugin` 接口
+- [x] 将 MQL5 专有代码移入 `plugins/mql5/`
+- [x] `BUILTIN_ROOTS` 改由 `config.json sources[]` 驱动
+- [x] `extraLibraries` 合并进 `sources[]`（向后兼容旧 config）
+- [x] 更新 README，新增 `PLUGIN_GUIDE.md`
 
 **验收：`domain_plugin: null` 时启动，所有通用工具正常，MQL5 专有工具不出现。**
 
@@ -244,5 +244,4 @@ PDF 支持是企业知识库最高频的需求，优先级高。
 
 - 旧 `config.json`（含 `extraLibraries`）自动迁移，不报错
 - 所有现有 15 个工具接口不变
-- Phase 1 完成后，现有 MQL5 用户零感知
-
+- Phase 1 已完成，现有 MQL5 用户接口保持兼容

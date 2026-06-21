@@ -10,7 +10,7 @@
 - MQL5 算法交易手册（HTML）：`MQL5_Algo_Book/`
 - 神经网络与机器学习手册（HTML）：`Neural_Networks_Book/`
 
-> 说明：两本电子书版权归原作者所有，仅作为学习参考随仓库分发；当前版本主要对 `MQL5_HELP/` 做了完整索引，电子书的统一索引与搜索将在后续版本补充（Roadmap 已列出）。
+> 说明：两本电子书版权归原作者所有，仅作为学习参考随仓库分发；当前版本已将它们纳入统一索引，可通过 `search` 检索，并通过 `browse algo_book`、`browse neural_book` 浏览目录。
 
 ## 面向问题的能力（结合用户建议重构）
 
@@ -21,14 +21,14 @@
   - 覆盖交易函数、指标、标准库、ONNX 等常用主题
 - 智能匹配（已提供基础能力）
   - 支持精确/模糊匹配，兼容常见类名变体（如 CTrade/Trade）
-- 常见错误解决方案库（进行中）
+- 常见错误解决方案库（已提供）
   - 错误 256/undeclared identifier 等典型问题的成因与对照表
   - MQL4→MQL5 迁移差异：Symbol()→_Symbol，Period()→_Period，ResultCode()→ResultRetcode()
-- 智能错误匹配（规划中）
+- 智能错误匹配（已提供）
   - 直接用“编译器错误文本”搜索：如 `error 256: undeclared identifier ResultCode`
-- 上下文感知搜索（规划中）
+- 上下文感知搜索（已提供）
   - 术语映射与别名：如 MQL4 的 `iMA` → MQL5 的 `IndicatorCreate`
-- 代码分析与诊断（规划中）
+- 代码分析与诊断（已提供）
   - `analyze_code`：指出 API 更名与常见误用
   - `diagnose_error`：基于编译错误日志给出定位与替代建议
 - 交互式帮助（规划中）
@@ -48,7 +48,7 @@
 
 ### 前提条件
 
-- Node.js 18.0 或更高版本
+- Node.js 20.16 或更高版本（`pdf-parse` 的运行时要求）
 - npm 或 npx
 
 ### 🚀 Claude Code 用户快速安装（最简单）
@@ -412,7 +412,7 @@ AI 应该会显示 16 个工具，包括 `smart_query`、`search`、`diagnose_er
 > 3. 定期查看 → 使用 `list_common_errors` 了解常见问题
 > 4. 团队协作 → 使用 `manage_error_db` 导出/导入错误库
 
-> 关于两本电子书：当前版本优先索引 `MQL5_HELP/`；对 `MQL5_Algo_Book/` 与 `Neural_Networks_Book/` 的"统一搜索与浏览分类"将随 Roadmap 开启，届时可通过 `browse` 与 `search` 在一个入口里检索。
+> 关于两本电子书：`MQL5_Algo_Book/` 与 `Neural_Networks_Book/` 已加入统一搜索，并支持 `browse algo_book`、`browse neural_book` 及按章节浏览。
 
 ## 语义搜索配置（可选，v1.7.0）
 
@@ -952,7 +952,7 @@ manage_knowledge export → 分享给团队 → import → 他人零成本获取
 
 - [ ] [中] 错误预测：基于代码模式预警潜在问题
 
-- [ ] [低] 统一索引两本电子书（browse 分类支持）
+- ✅ [低] 统一索引两本电子书（search + browse 分类支持）— **v2.0.0已实现**
 
 - [ ] [低] 标签系统与版本标注
 

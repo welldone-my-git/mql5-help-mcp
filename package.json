@@ -7,7 +7,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/welldone-my-git/mql5-help-mcp.git"
+    "url": "https://github.com/welldone-my-git/kb-mcp-esp4-mql5.git"
+  },
+  "engines": {
+    "node": ">=20.16.0"
   },
   "keywords": [
     "mcp",
@@ -34,6 +37,9 @@
   },
   "scripts": {
     "build": "tsc",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "test:unit": "npm run build && node --test test/unit.test.mjs",
+    "test:smoke": "npm run build && node --test test/mcp-smoke.test.mjs",
     "dev": "node build/index.js",
     "prepare": "npm run build"
   },
