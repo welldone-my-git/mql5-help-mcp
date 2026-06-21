@@ -290,7 +290,7 @@ class ErrorDatabase {
   getStats(): { totalErrors: number; totalOccurrences: number; dbPath: string } {
     const db = this.initDb();
     const result = db.prepare(`
-      SELECT COUNT(*) as totalErrors, SUM(occurrence_count) as totalOccurrences
+          SELECT COUNT(*) as totalErrors, COALESCE(SUM(occurrence_count), 0) as totalOccurrences
       FROM error_records
     `).get() as { totalErrors: number; totalOccurrences: number };
 
