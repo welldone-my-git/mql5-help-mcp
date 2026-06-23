@@ -1,0 +1,18 @@
+# MQL5 文章知识条目
+
+这里保存从 MQL5 文章、代码片段和用户评审中提取的结构化知识。
+
+原则：
+
+- 不整篇转载第三方文章。
+- 保留来源链接、标题、日期和作者信息。
+- 沉淀为项目自有摘要、评审、最佳实践、反模式和可迁移实现建议。
+- 如需示例代码，应在 `examples/` 中重写并单独验证。
+
+## 已收录
+
+- [Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子](./adaptive-kalman-smoother-regime-factor.md)
+- [Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline](./decorator-pattern-indicator-factor-pipeline.md)
+- [From Basic to Intermediate: Objects (III)：MQL5 图表事件与对象交互](./mql5-objects-iii-chart-event-gui.md)
+- [Institutional Kyle's Lambda Market Impact Engine：市场冲击与流动性因子](./kyles-lambda-market-impact-liquidity-factor.md)
+- [Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline](./qnn-markov-feature-pipeline-mql5.md)
