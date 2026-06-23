@@ -12,7 +12,9 @@
 ## 已收录
 
 - [Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子](./adaptive-kalman-smoother-regime-factor.md)
+- [DA-CG-LSTM：动态特征注意力与时序注意力](./da-cg-lstm-dynamic-feature-attention.md)
 - [Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline](./decorator-pattern-indicator-factor-pipeline.md)
 - [From Basic to Intermediate: Objects (III)：MQL5 图表事件与对象交互](./mql5-objects-iii-chart-event-gui.md)
 - [Institutional Kyle's Lambda Market Impact Engine：市场冲击与流动性因子](./kyles-lambda-market-impact-liquidity-factor.md)
 - [Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline](./qnn-markov-feature-pipeline-mql5.md)
+- [Weekend Gap Signal System：市场事件状态机与 EA Buffer 接口](./weekend-gap-state-machine-buffer-interface.md)
