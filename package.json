@@ -40,6 +40,8 @@
     "test": "npm run build && node --test test/*.test.mjs",
     "test:unit": "npm run build && node --test test/unit.test.mjs",
     "test:smoke": "npm run build && node --test test/mcp-smoke.test.mjs",
+    "validate:release": "node scripts/validate-release.mjs",
+    "release:check": "npm run build && npm run validate:release && npm pack --dry-run --cache .npm-cache --silent",
     "dev": "node build/index.js",
     "prepare": "npm run build"
   },

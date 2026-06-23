@@ -26,6 +26,7 @@ desktop.ini
 *.log
 npm-debug.log*
 logs/
+.npm-cache/
 
 # Python
 __pycache__/
