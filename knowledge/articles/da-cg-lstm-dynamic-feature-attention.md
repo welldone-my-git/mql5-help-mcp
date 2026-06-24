@@ -2,12 +2,17 @@
 
 ## 来源
 
-- 标题：Neural Networks in Trading: LSTM Optimization for Multivariate Time Series Forecasting (Final Part)
-- 来源：https://www.mql5.com/en/articles/17939
+- 主文标题：Neural Networks in Trading: LSTM Optimization for Multivariate Time Series Forecasting (DA-CG-LSTM)
+- 主文来源：https://www.mql5.com/en/articles/17901
+- 主文发布日期：2026-06-17
+- 后续标题：Neural Networks in Trading: LSTM Optimization for Multivariate Time Series Forecasting (Final Part)
+- 后续来源：https://www.mql5.com/en/articles/17939
+- 后续发布日期：2026-06-19
 - 作者：Dmitriy Gizlyk
-- 发布日期：2026-06-19
 - 分类：MetaTrader 5 / Trading systems
 - 处理日期：2026-06-23
+
+说明：`17901` 是 DA-CG-LSTM 主文，讲理论框架和 MQL5/OpenCL 实现起点；`17939` 是后续 Final Part。本文合并收录两篇的可迁移研究价值。
 
 ## 用户评审结论
 
@@ -141,6 +146,29 @@ CG-LSTM 可以理解为带额外控制机制的 recurrent block，用于：
 再做记忆聚合
 最后预测或决策
 ```
+
+### 4. OpenCL / MQL5 实现层
+
+17901 的工程重点是把 DA-CG-LSTM 的 CG-LSTM block 拆成可在 OpenCL 中执行的计算步骤。
+
+值得学习的工程点：
+
+- 把 recurrent block 的前向计算拆成预激活线性层和激活/状态更新层。
+- 使用 `float4` 组织 gate 输入，减少全局内存访问。
+- 在 kernel 中同时处理 forget/input/new-content/output gate。
+- 对 NaN/Inf 做保护，避免训练或前向过程污染状态。
+- backward pass 中为了节省内存，不保存所有中间值，而是从 pre-activation 值重建导数所需状态。
+
+这些对 MQL5 深度学习工程有价值，但不直接提供 alpha。
+
+更关键的研究判断：
+
+```text
+OpenCL 实现能力 ≠ 预测能力
+模型复杂度 ≠ Alpha 来源
+```
+
+所以仍然应先验证输入 feature 是否有效。
 
 ## 对用户当前框架的启发
 
@@ -384,6 +412,7 @@ Feature Pipeline
 其中：
 
 - Kyle Lambda：流动性/价格冲击因子
+- AFML Microstructure Pipeline：系统化构造流动性和微观结构 feature matrix
 - Kalman Gain：市场状态强度
 - Markov State：状态转移结构
 - Decorator Pipeline：因子处理工程框架

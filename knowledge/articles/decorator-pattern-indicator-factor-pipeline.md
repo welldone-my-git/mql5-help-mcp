@@ -21,6 +21,13 @@
 - Python 迁移价值：★★★★☆
 - 学习价值：★★★★☆
 
+补充评分：
+
+- 工程设计：8/10
+- MQL5 代码规范：7/10
+- 实盘策略价值：2/10
+- 学习价值：8/10
+
 核心关键词：
 
 ```text
@@ -103,6 +110,24 @@ models/
 backtest/
 ```
 
+对于 EA 框架，也可以迁移成：
+
+```text
+Indicator
+  -> CacheDecorator
+  -> LoggerDecorator
+  -> TimingDecorator
+  -> SignalFilterDecorator
+```
+
+重点是学习：
+
+```text
+接口抽象 + 装饰器链 + 资源释放模式
+```
+
+不要把文章里的 RSI 阈值过滤当作严肃交易逻辑。
+
 ## MQL5 工程模式
 
 ### 1. 统一接口
@@ -144,6 +169,8 @@ IIndicator*
 
 这符合单一职责。
 
+资源释放意识是这篇值得学的点之一：指标 handle 有明确 owner，生命周期结束时释放，不把 terminal handle 泄漏给外层调用者。
+
 ### 3. Base Decorator
 
 `CBaseDecorator` 持有一个被包装的 `IIndicator*`。
@@ -158,6 +185,18 @@ GetName()  -> delegate to wrapped.GetName()
 析构时负责释放下游动态对象，外部只需要删除最外层 decorator。
 
 这点在 MQL5 中很重要，因为对象生命周期和指针释放需要显式管理。
+
+但要注意：这种裸指针 ownership 模式必须写清楚谁拥有对象、谁只是观察者。文章里存在非拥有观察指针的用法，虽然在 `OnDeinit()` 中置空，但这类设计容易演化成悬垂指针。更稳健的工程约束是：
+
+```text
+owner pointer:
+  只存在于 decorator chain 中，由最外层 delete 级联释放
+
+observer pointer:
+  只读，不 delete，不跨生命周期保存
+```
+
+如果确实需要旁路观察，建议用名字、ID、registry 或明确的 non-owning 注释，而不是模糊共享裸指针。
 
 ### 4. Concrete Decorators
 
@@ -175,6 +214,19 @@ CTimingDecorator
     -> CThresholdFilterDecorator
       -> CRSIIndicator
 ```
+
+文章里阈值过滤把不满足条件的值返回为 `0.0`。这在 RSI 示例里勉强能理解，但作为通用指标接口并不安全，因为 `0.0` 可能本身就是有效值。
+
+更稳健的设计：
+
+```text
+方案 A: 返回 EMPTY_VALUE
+方案 B: bool TryGetValue(int shift, double &value)
+方案 C: 返回 IndicatorValue { bool valid; double value; string reason; }
+方案 D: 单独输出 filter state / signal state
+```
+
+如果未来用于因子框架，过滤层不应把“无效/未通过”和“数值为 0”混在一起。
 
 ## 迁移到 Python 因子框架
 
@@ -328,6 +380,18 @@ Logging / Timing / Cache 属于 observational decorators，原则上不应改变
 
 Filtering / Winsorize / Neutralize 属于 transforming decorators，会改变结果，必须进入实验记录。
 
+日志 decorator 还需要节流。文章把虚函数调用和栈帧开销说得较轻，这是合理的；但在高频 tick、多品种、多指标链下，真正的大开销往往是 `Print()` 本身，而不是 decorator 调用链。
+
+建议：
+
+```text
+log every N bars
+log only on state change
+log only in debug mode
+aggregate timing stats instead of per tick Print
+disable logging in production
+```
+
 ### 3. 避免过度包装
 
 Decorator 太多会导致调试困难。需要：
@@ -340,6 +404,29 @@ Decorator 太多会导致调试困难。需要：
 ### 4. MQL5 指针所有权必须明确
 
 MQL5 中最外层 decorator 删除时会级联删除内部对象。不要重复 delete 内层对象。
+
+建议在类名或注释中区分：
+
+- owning wrapper
+- non-owning observer
+- registry-managed object
+
+否则装饰器链复杂后，最容易出现 double delete 或 dangling pointer。
+
+### 5. 过滤返回语义必须明确
+
+不要用 `0.0` 表示“未通过过滤”，除非指标定义保证 0 不是有效值。
+
+对交易系统来说，推荐区分：
+
+```text
+no value
+invalid value
+filtered out
+valid signal with value = 0
+```
+
+这些状态在风控、日志、回测归因里含义完全不同。
 
 ## 与前面知识条目的关系
 
@@ -362,6 +449,16 @@ KyleLambdaFactor
 → RankICLogger
 ```
 
+EA 工程组合示例：
+
+```text
+RSIIndicator
+→ CacheDecorator
+→ ThresholdFilterDecorator
+→ TimingDecorator
+→ ThrottledLoggerDecorator
+```
+
 ## 结论
 
 这篇不提供交易策略，也没有 alpha 价值。
@@ -372,6 +469,8 @@ KyleLambdaFactor
 把因子计算和因子处理分离。
 用 Decorator / Pipeline 组织横切能力。
 ```
+
+它适合做工程架构参考，不适合寻找交易策略。文章中的阈值过滤只是装饰器演示，不是严肃信号设计。
 
 ## 标签
 
