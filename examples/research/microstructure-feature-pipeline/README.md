@@ -22,6 +22,16 @@ AFML Chapter 19 微观结构特征工程 Python 原型。
 - tick imbalance / volume imbalance / dollar imbalance / buy fraction；
 - 输出统一 Feature Matrix，供 ML / IC / backtest 使用。
 
+参考文献路线：
+
+- AFML Chapter 19：总体框架；
+- Roll / Parkinson / Beckers / Corwin-Schultz：OHLC spread 与 volatility estimator；
+- Kyle / Amihud / Hasbrouck：price impact 与 illiquidity；
+- Easley / López de Prado / O'Hara：PIN、VPIN、flow toxicity；
+- Eisler / Tóth：order book events 与 signed order flow persistence；
+- Muravyev / Cremers：options price discovery；
+- O'Hara / Hasbrouck：microstructure 基础教材。
+
 注意：
 
 - 这是研究原型，不是可直接实盘的 EA。

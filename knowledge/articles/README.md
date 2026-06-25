@@ -18,6 +18,7 @@
 - [DA-CG-LSTM：动态特征注意力与时序注意力](./da-cg-lstm-dynamic-feature-attention.md)
 - [Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline](./decorator-pattern-indicator-factor-pipeline.md)
 - [MQL5 Wizard Part 95：DSU + DBN Signal 的事件聚类信号架构](./dsu-dbn-wizard-signal-event-cluster.md)
+- [MQL5 Wizard Part 93：Suffix Automaton + AutoEncoder 的置信度资金管理](./suffix-autoencoder-confidence-money-management.md)
 - [Fluent Order Builder：从 COrderBuilder 到可维护下单框架](./fluent-order-builder-trade-framework.md)
 - [From Basic to Intermediate: Objects (III)：MQL5 图表事件与对象交互](./mql5-objects-iii-chart-event-gui.md)
 - [Generic Object Pool in MQL5：高频指标里的对象池基础设施](./generic-object-pool-high-frequency-mql5.md)

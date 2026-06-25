@@ -387,6 +387,160 @@ warmup?
 
 以后 pipeline 可自动决定哪些 feature 能算，哪些缺数据。
 
+## References 研究链
+
+这篇文章的参考文献本身也值得保留。它基本覆盖了 AFML Chapter 19 背后的市场微观结构研究脉络，可以作为后续扩展 feature library 的路线图。
+
+### 总框架
+
+- López de Prado, M. (2018). *Advances in Financial Machine Learning*. Wiley. Chapter 19.
+
+价值：
+
+```text
+Microstructure Feature Library 的总纲。
+```
+
+### 第一代：Spread / High-Low / Volatility Estimator
+
+- Roll, R. (1984). *A Simple Implicit Measure of the Effective Bid-Ask Spread in an Efficient Market*. Journal of Finance.
+- Parkinson, M. (1980). *The Extreme Value Method for Estimating the Variance of the Rate of Return*. Journal of Business.
+- Beckers, S. (1983). *Variances of Security Price Returns Based on High, Low, and Closing Prices*. Journal of Business.
+- Corwin, S. A., & Schultz, P. (2012). *A Simple Way to Estimate Bid-Ask Spreads from Daily High and Low Prices*. Journal of Finance.
+
+对应实现：
+
+- Roll Spread
+- Roll Impact
+- Corwin-Schultz Spread
+- Corwin-Schultz / Parkinson-Beckers volatility
+
+价值：
+
+```text
+只依赖 OHLC / close 序列即可估算 spread / volatility，
+适合日线、A 股、期货、普通 MT5 bar data。
+```
+
+### 第二代：Price Impact / Illiquidity
+
+- Kyle, A. S. (1985). *Continuous Auctions and Insider Trading*. Econometrica.
+- Amihud, Y. (2002). *Illiquidity and stock returns: cross-section and time-series effects*. Journal of Financial Markets.
+- Hasbrouck, J. (2009). *Trading costs and returns for U.S. equities: Estimating effective costs from daily data*. Journal of Finance.
+
+对应实现：
+
+- Kyle Lambda
+- Amihud ILLIQ
+- Hasbrouck Lambda
+- rolling OLS t-stat
+
+价值：
+
+```text
+把 return / price change 与 volume / signed flow 关联起来，
+用于刻画流动性、价格冲击和交易成本。
+```
+
+### 第三代：PIN / VPIN / Flow Toxicity
+
+- Easley, D., Kiefer, N., O'Hara, M., & Paperman, J. (1996). *Liquidity, Information, and Infrequently Traded Stocks*. Journal of Finance.
+- Easley, D., López de Prado, M., & O'Hara, M. (2011). *The Microstructure of the Flash Crash*. Journal of Portfolio Management.
+- Easley, D., López de Prado, M., & O'Hara, M. (2012). *Flow Toxicity and Liquidity in a High-frequency World*. Review of Financial Studies.
+- Easley, D., López de Prado, M., & O'Hara, M. (2016). *Discerning information from trade data*. Journal of Financial Economics.
+- Andersen, T. G., & Bondarenko, O. (2014). *VPIN and the Flash Crash*. Journal of Financial Markets.
+
+对应实现：
+
+- VPIN
+- volume bucket
+- buy/sell volume imbalance
+- informed trading / flow toxicity proxy
+
+价值：
+
+```text
+适合作为 regime feature / liquidity stress feature，
+不建议单独作为交易信号。
+```
+
+注意：
+
+```text
+VPIN 争议较大，尤其依赖 buy/sell volume 分类质量。
+tick rule 只是近似，不等于真实主动买卖方向。
+```
+
+### 下一层：Order Book / FIX / Options
+
+- Eisler, Z., Bouchaud, J., & Kockelkoren, J. (2012). *The price impact of order book events: market orders, limit orders and cancellations*. Quantitative Finance.
+- Tóth, B., Palit, I., Lillo, F., & Farmer, J. (2011). *Why is order flow so persistent?* arXiv working paper.
+- Muravyev, D., Pearson, N., & Broussard, J. (2013). *Is there price discovery in equity options?* Journal of Financial Economics.
+- Cremers, M., & Weinbaum, D. (2010). *Deviations from Put-Call Parity and Stock Return Predictability*. Journal of Financial and Quantitative Analysis.
+
+对应未来扩展：
+
+- order size distribution；
+- cancellation rate；
+- TWAP / order splitting detection；
+- signed order flow autocorrelation；
+- order book event impact；
+- options market price discovery；
+- put-call parity deviation。
+
+价值：
+
+```text
+这是 full order book / FIX / options data 才能做的下一层，
+普通 MT5 bar/tick 数据不足以完整复现。
+```
+
+### 基础教材
+
+- O'Hara, M. (1995). *Market Microstructure Theory*. Blackwell.
+- Hasbrouck, J. (2007). *Empirical Market Microstructure*. Oxford University Press.
+
+价值：
+
+```text
+如果要系统理解 quote formation、adverse selection、inventory risk、
+price impact 和 empirical microstructure，这两本应作为底层教材。
+```
+
+## References 对 Feature Library 的启发
+
+这组文献可以直接映射成后续开发路线：
+
+```text
+Level 1: OHLC / Close
+  Roll
+  Parkinson / Beckers
+  Corwin-Schultz
+
+Level 2: OHLCV / Amount
+  Amihud
+  Hasbrouck proxy
+  Kyle proxy
+
+Level 3: Tick
+  tick imbalance
+  volume imbalance
+  VPIN
+  signed flow autocorrelation
+
+Level 4: Order Book / FIX
+  cancellation rates
+  order size distribution
+  book event impact
+  TWAP detection
+
+Level 5: Options
+  options price discovery
+  put-call parity deviation
+```
+
+这比单纯收藏公式更重要：它提供了 microstructure feature library 的扩展地图。
+
 ## 对 Python 框架的直接启发
 
 用户已有环境：
