@@ -72,6 +72,24 @@ MQL5/Experts/MSNR_CleanCollector.mq5
 MSNR_CleanEdition/MSNR_CleanEdition_SingleFile.mq5
 ```
 
+## Rolling Sharpe
+
+路径：[RollingSharpe](./RollingSharpe/)
+
+定位：
+
+```text
+Statistical Analytics 收藏样例，不是交易策略。
+```
+
+核心学习点：
+
+- `CReturnBuffer.mqh` 固定长度循环缓冲；
+- `m_sum` / `m_sumSq` 增量维护 rolling mean / variance；
+- `CSharpeCalculator.mqh` 负责 Sharpe 与标准误计算；
+- `SSharpeResult` 统一返回结果、置信带和有效标志；
+- `ComputeBar()` 无状态计算适配 MT5 完整重算行为。
+
 ## Weekend Gap Indicator
 
 路径：[WeekendGapIndicator](./WeekendGapIndicator/)

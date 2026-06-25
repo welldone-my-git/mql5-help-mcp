@@ -33,6 +33,7 @@
 - [Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline](./qnn-markov-feature-pipeline-mql5.md)
 - [Repository Pattern in MQL5：可测试 EA Analytics 架构](./repository-pattern-testable-ea-analytics.md)
 - [Regression + Causal Inference Trading Pipeline：收益回归与可信度过滤](./regression-causal-inference-confidence-trading.md)
+- [Rolling Sharpe：带统计显著性区间的策略诊断组件](./rolling-sharpe-statistical-significance-bands.md)
 - [Universal Breakout Study：Session Range 突破策略研究框架](./universal-breakout-study-research-framework.md)
 - [Weekend Gap Signal System：市场事件状态机与 EA Buffer 接口](./weekend-gap-state-machine-buffer-interface.md)
 - [Weekend Gap Structure Mapping：Chart Object 状态管理框架](./weekend-gap-object-framework.md)
