@@ -43,7 +43,9 @@
 - `knowledge/articles/da-cg-lstm-dynamic-feature-attention.md` — DA-CG-LSTM：动态特征注意力与时序注意力
 - `knowledge/articles/decorator-pattern-indicator-factor-pipeline.md` — Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline
 - `knowledge/articles/dsu-dbn-wizard-signal-event-cluster.md` — MQL5 Wizard Part 95：DSU + DBN Signal 的事件聚类信号架构
+- `knowledge/articles/markov-chain-matrix-state-engine.md` — Markov Chain Matrix：从二元频率统计提炼状态引擎骨架
 - `knowledge/articles/suffix-autoencoder-confidence-money-management.md` — MQL5 Wizard Part 93：Suffix Automaton + AutoEncoder 的置信度资金管理
+- `knowledge/articles/multi-head-attention-ai-framework-architecture.md` — Multi-Head Attention：MQL5 神经网络架构模板
 - `knowledge/articles/fluent-order-builder-trade-framework.md` — Fluent Order Builder：从 COrderBuilder 到可维护下单框架
 - `knowledge/articles/mql5-objects-iii-chart-event-gui.md` — From Basic to Intermediate: Objects (III)：MQL5 图表事件与对象交互
 - `knowledge/articles/generic-object-pool-high-frequency-mql5.md` — Generic Object Pool in MQL5：高频指标里的对象池基础设施
