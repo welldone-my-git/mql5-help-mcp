@@ -36,6 +36,7 @@
 ### 已处理文章
 
 - `knowledge/articles/adaptive-kalman-smoother-regime-factor.md` — Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子
+- `knowledge/articles/breakeven-framework-atr-rrr-mql5.md` — BreakEven Framework：ATR / RRR 保本机制的可插拔架构
 - `knowledge/articles/csv-export-parsing-pipeline-mql5.md` — CSV Data Analysis Part 2：MQL5 到 Python 的 CSV 数据出口层
 - `knowledge/articles/afml-microstructure-feature-pipeline-python.md` — Feature Engineering for ML Part 5：微观结构 Feature Pipeline 架构
 - `knowledge/articles/afml-microstructure-features-mql5.md` — Feature Engineering for ML Part 6：AFML 微观结构特征工程
@@ -56,3 +57,5 @@
 - `knowledge/articles/regression-causal-inference-confidence-trading.md` — Regression + Causal Inference Trading Pipeline：收益回归与可信度过滤
 - `knowledge/articles/universal-breakout-study-research-framework.md` — Universal Breakout Study：Session Range 突破策略研究框架
 - `knowledge/articles/weekend-gap-state-machine-buffer-interface.md` — Weekend Gap Signal System：市场事件状态机与 EA Buffer 接口
+- `knowledge/articles/weekend-gap-object-framework.md` — Weekend Gap Structure Mapping：Chart Object 状态管理框架
+- `knowledge/articles/zscore-object-oriented-engine-mql5.md` — Z-Score OOP Engine：EA / Indicator 共用的统计信号引擎

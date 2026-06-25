@@ -1,5 +1,24 @@
 # MQL5 示例
 
+## BreakEven Framework
+
+路径：[BreakEven_Framework](./BreakEven_Framework/)
+
+定位：
+
+```text
+Trade Management / BreakEven Plugin Framework 收藏样例。
+```
+
+核心学习点：
+
+- `CBreakEvenBase` 抽象基类；
+- `CBreakEvenSimple` / `CBreakEvenAtr` / `CBreakEvenRR` 多态策略；
+- `CBreakEven` Manager 与 `CreateBreakEven()` Factory；
+- `MqlParam[]` 统一参数系统；
+- ATR handle 生命周期管理；
+- ticket 级 `position_be` 状态缓存。
+
 ## Local Stop Loss EA
 
 路径：[Local_Stop_Loss](./Local_Stop_Loss/)
@@ -52,3 +71,40 @@ MQL5/Experts/MSNR_CleanCollector.mq5
 ```text
 MSNR_CleanEdition/MSNR_CleanEdition_SingleFile.mq5
 ```
+
+## Weekend Gap Indicator
+
+路径：[WeekendGapIndicator](./WeekendGapIndicator/)
+
+定位：
+
+```text
+Chart Object Framework / Visual State Machine 示例。
+```
+
+核心学习点：
+
+- `WeekendGapRecord` Entity；
+- `ENUM_GAP_STATE` 状态机；
+- 一个业务对象由多个 chart objects 组成；
+- `CreateGapObjects()` / `UpdateGapVisuals()` / `ObjectsDeleteAll()` 生命周期；
+- `VisualSettings` 外观配置；
+- `WG_` prefix 命名规范。
+
+## ZScore Source Essence
+
+路径：[ZScore_Source_Essence](./ZScore_Source_Essence/)
+
+定位：
+
+```text
+Signal Engine / Feature Engine 收藏样例，不是完整交易策略。
+```
+
+核心学习点：
+
+- `SignalEngineBase.mqh` 抽象统一信号接口；
+- `ZScoreEngine_Essence.mqh` 把数学计算从 EA / Indicator 中拆出；
+- `OncePerBar.mqh` 让 EA 每根新 K 线只执行一次；
+- `CopyClose()` 返回值和零标准差保护；
+- `new` / `delete` 与 `OnInit()` / `OnDeinit()` 生命周期管理。

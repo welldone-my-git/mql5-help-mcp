@@ -10,8 +10,11 @@
 
 ## MQL5
 
+- [BreakEven Framework](./mql5/BreakEven_Framework/) — ATR / RRR / Simple 保本机制的可插拔 Trade Management 样例，重点是 Base、Manager、Factory、`MqlParam[]` 参数系统和多态策略。
 - [Local Stop Loss EA](./mql5/Local_Stop_Loss/) — 本地止损 EA 架构样例，重点是 HashMap 仓位缓存、Position 状态机、Chart Object 生命周期和 Cleanup 管理。
 - [MSNR Clean Edition](./mql5/MSNR_CleanEdition/) — 从 `MSNR_v531Plus_AEU1.mq5` 抽取的收藏版框架模板，包含 Signal Layer、Confluence Engine、Risk Guard、Trade Executor、CSV Logger 和 Dashboard 骨架。
+- [Weekend Gap Indicator](./mql5/WeekendGapIndicator/) — Chart Object Framework 样例，重点是 Entity、状态机、Visual Layer、对象生命周期和 Prefix 命名规范。
+- [ZScore Source Essence](./mql5/ZScore_Source_Essence/) — Z-Score Signal Engine 样例，重点是 Engine 与 EA/Indicator 解耦、OncePerBar、生命周期管理和统一 `Value()` 接口。
 
 ## Research
 
