@@ -1,5 +1,23 @@
 # MQL5 示例
 
+## Local Stop Loss EA
+
+路径：[Local_Stop_Loss](./Local_Stop_Loss/)
+
+定位：
+
+```text
+EA 架构收藏样例，不是重点交易策略。
+```
+
+核心学习点：
+
+- `CHashMap<ulong,double>` 管理 ticket → stop price；
+- `PositionsCheck()` 扫描仓位；
+- `ProcessPosition()` / `CheckProcessedPosition()` 表达仓位状态机；
+- chart object 统一命名和清理；
+- helper functions 拆分业务逻辑。
+
 ## MSNR Clean Edition
 
 路径：[MSNR_CleanEdition](./MSNR_CleanEdition/)

@@ -15,6 +15,11 @@
 
 | 项目 | 评分 |
 | --- | --- |
+| 总体评价 | 8.8/10 |
+| 思想价值 | 9.5/10 |
+| 代码质量 | 8/10 |
+| 创新性 | 7.5/10 |
+| 收藏价值 | 9.5/10 |
 | 数学价值 | 9.5/10 |
 | 工程质量 | 9.5/10 |
 | Python 可迁移 | 10/10 |
@@ -22,6 +27,17 @@
 | EA 直接使用 | 6/10 |
 
 总体判断：这篇比单个公式实现更值得学习，因为它讲的是整个微观结构 feature framework，而不是某一个指标。
+
+用户补充判断：
+
+```text
+这是目前 MQL5 上关于 Microstructure Feature 实现最完整的一篇。
+真正值得学习的是整个 Feature Engine 的设计，而不是某一个指标。
+```
+
+当前源码已纳入示例库：
+
+- [examples/research/microstructure-feature-pipeline/microstructure.py](/home/novo/quant/github/welldone-my-git/mql5-help-mcp/examples/research/microstructure-feature-pipeline/microstructure.py)
 
 它和 Part 6 的关系：
 
@@ -65,6 +81,13 @@ Return
 
 ```text
 如何把交易过程、流动性、冲击成本和订单流信息编码成机器学习特征？
+```
+
+更直接地说：
+
+```text
+它不是提出新的金融因子，
+而是把 AFML Chapter 19 的微观结构特征体系工程化实现。
 ```
 
 ## 两层 Feature 架构
@@ -151,6 +174,218 @@ append_column()
 feature set 可扩展
 downstream contract 稳定
 ```
+
+当前 `microstructure.py` 的核心入口是：
+
+```text
+compute_all_microfeatures()
+```
+
+它统一输出：
+
+- `roll_measure`
+- `roll_impact`
+- `cs_spread`
+- `cs_sigma`
+- `kyle_lambda`
+- `kyle_lambda_t`
+- `amihud_lambda`
+- `hasbrouck_lambda`
+- `hasbrouck_lambda_t`
+- `tick_imbalance`
+- `volume_imbalance`
+- `dollar_imbalance`
+- `buy_fraction`
+- `vpin`
+
+这就是标准 ML feature matrix。
+
+## 源码收藏重点
+
+当前目录提供的 `microstructure.py` 值得重点收藏这些模块：
+
+| 模块 | 收藏价值 | 原因 |
+| --- | --- | --- |
+| `compute_all_microfeatures()` | ★★★★★ | 统一入口，面向 ML pipeline |
+| `bar_microstructure_features()` | ★★★★★ | tick → bar 聚合架构 |
+| Tick Mapping | ★★★★★ | `searchsorted()` 一次映射，供所有 kernel 复用 |
+| Numba kernels | ★★★★☆ | `@njit` / `prange` / `parallel`，便于迁移为 MQL5 loops |
+| Rolling OLS | ★★★★☆ | Kyle / Hasbrouck 的滚动回归实现 |
+| Roll / CS / Amihud | ★★★★★ | bar-level 流动性基础特征 |
+| VPIN Bucket | ★★★★☆ | 更适合作为 regime feature，不建议单独做 signal |
+
+## `searchsorted()` 映射设计
+
+源码中最值得收藏的工程设计之一：
+
+```text
+tick_times
+bar_times
+  ↓
+np.searchsorted(bar_times, tick_times, side="right")
+  ↓
+bar_membership
+  ↓
+bar_start / bar_end
+```
+
+很多低质量实现会在每个 tick feature 里重复扫描 tick：
+
+```text
+feature_1 → search ticks
+feature_2 → search ticks
+feature_3 → search ticks
+```
+
+这份源码的做法是：
+
+```text
+一次 tick-to-bar mapping
+  ↓
+所有 bar-level tick kernel 共用 start/end 边界
+```
+
+这把后续 feature 的计算变成复用边界数组的纯数组计算。
+
+对 MQL5 迁移也很重要：
+
+```text
+先建立 TickIndexRange[]
+再让所有 FeatureKernel 共用。
+```
+
+## Numba Kernel 设计
+
+源码没有把计算都交给：
+
+```text
+pandas.rolling().apply()
+```
+
+而是使用：
+
+```text
+@njit(cache=True)
+@njit(parallel=True, cache=True)
+prange
+pre-allocated arrays
+float32 output
+```
+
+这更接近可迁移到 MQL5 的实现方式：
+
+```text
+Numba loop
+  ↓
+MQL5 for loop
+```
+
+因此收藏价值高于普通 pandas notebook。
+
+## Feature 分层使用建议
+
+如果做 EA 或实时系统，应分层使用：
+
+### 必须优先实现
+
+- Roll Spread：流动性 / spread 风险 proxy；
+- Amihud：`return / dollar volume`，经典流动性因子；
+- Corwin-Schultz：只需 high / low，不需要 tick，泛化性强。
+
+### 推荐保留
+
+- Kyle Lambda：price impact，但方向识别容易错；
+- Hasbrouck Lambda：Kyle 的增强思路，可作为 impact feature。
+
+### 谨慎使用
+
+- VPIN：学术价值高，实盘争议较大，更适合作为 regime feature，不建议单独做 signal。
+
+## 可升级方向
+
+如果继续把它升级成长期量化基础库，建议：
+
+### 1. Feature Registry
+
+不要让统一入口里堆：
+
+```text
+if include_vpin:
+if include_roll:
+```
+
+而是：
+
+```text
+Register(feature)
+  ↓
+FeatureFactory
+  ↓
+Compute()
+```
+
+### 2. Dependency Graph
+
+显式管理依赖：
+
+```text
+TickRule
+  ↓
+Kyle
+  ↓
+Hasbrouck
+  ↓
+VPIN
+```
+
+避免重复计算。
+
+### 3. Cache
+
+可缓存：
+
+- tick direction；
+- dollar volume；
+- log return；
+- bar start/end；
+- rolling sums；
+- OLS sufficient statistics。
+
+### 4. Incremental Update
+
+当前源码偏 batch：
+
+```text
+whole DataFrame
+  ↓
+compute all
+```
+
+EA 实时运行更需要：
+
+```text
+new tick / new bar
+  ↓
+Update()
+```
+
+这是迁移到 MQL5 的最重要升级。
+
+### 5. Feature Metadata
+
+每个 feature 应声明：
+
+```text
+need_tick?
+need_ohlc?
+need_volume?
+need_high_low?
+window?
+output_columns?
+warmup?
+```
+
+以后 pipeline 可自动决定哪些 feature 能算，哪些缺数据。
 
 ## 对 Python 框架的直接启发
 

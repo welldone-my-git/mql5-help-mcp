@@ -12,6 +12,7 @@
 ## 已收录
 
 - [Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子](./adaptive-kalman-smoother-regime-factor.md)
+- [CSV Data Analysis Part 2：MQL5 到 Python 的 CSV 数据出口层](./csv-export-parsing-pipeline-mql5.md)
 - [Feature Engineering for ML Part 5：微观结构 Feature Pipeline 架构](./afml-microstructure-feature-pipeline-python.md)
 - [Feature Engineering for ML Part 6：AFML 微观结构特征工程](./afml-microstructure-features-mql5.md)
 - [DA-CG-LSTM：动态特征注意力与时序注意力](./da-cg-lstm-dynamic-feature-attention.md)
@@ -24,7 +25,9 @@
 - [Graph Theory / Ford-Fulkerson：把 ICT 市场结构转成图网络](./market-structure-graph-ford-fulkerson-liquidity.md)
 - [002 - Inside Bar：把 Price Action 模式当作假设验证器](./inside-bar-hypothesis-research-ea.md)
 - [Institutional Kyle's Lambda Market Impact Engine：市场冲击与流动性因子](./kyles-lambda-market-impact-liquidity-factor.md)
+- [Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework](./local-stop-loss-ea-framework.md)
 - [Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline](./qnn-markov-feature-pipeline-mql5.md)
 - [Repository Pattern in MQL5：可测试 EA Analytics 架构](./repository-pattern-testable-ea-analytics.md)
+- [Regression + Causal Inference Trading Pipeline：收益回归与可信度过滤](./regression-causal-inference-confidence-trading.md)
 - [Universal Breakout Study：Session Range 突破策略研究框架](./universal-breakout-study-research-framework.md)
 - [Weekend Gap Signal System：市场事件状态机与 EA Buffer 接口](./weekend-gap-state-machine-buffer-interface.md)
