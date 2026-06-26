@@ -10,6 +10,10 @@
 
 ## MQL5
 
+- [Bootstrap File IO](./mql5/Bootstrap_FileIO/) — MQL5 Bootstrap 文件 IO facade，重点是 `CFile`、`CFileIO::open()`、Python-like mode、CSVReader/CSVWriter 和 `FILE_COMMON` bridge。
+- [Bootstrap Logging](./mql5/Bootstrap_Logging/) — MQL5 Bootstrap 日志 facade，重点是 `CLogger`、日志等级、formatter、file rotation、cache mode 和 `FILE_COMMON` diagnostics。
+- [Bootstrap Requests](./mql5/Bootstrap_Requests/) — MQL5 Bootstrap WebRequest facade，重点是 `CSession`、`CResponse`、HTTP verbs、JSON、multipart、headers/cookies 和 Python API bridge。
+- [Bootstrap Trade Helpers](./mql5/Bootstrap_TradeHelpers/) — MQL5 Bootstrap 基础库样例，重点是 positions/orders 通用筛选、计数、关闭、取消、recent/oldest 查询。
 - [BreakEven Framework](./mql5/BreakEven_Framework/) — ATR / RRR / Simple 保本机制的可插拔 Trade Management 样例，重点是 Base、Manager、Factory、`MqlParam[]` 参数系统和多态策略。
 - [Local Stop Loss EA](./mql5/Local_Stop_Loss/) — 本地止损 EA 架构样例，重点是 HashMap 仓位缓存、Position 状态机、Chart Object 生命周期和 Cleanup 管理。
 - [MSNR Clean Edition](./mql5/MSNR_CleanEdition/) — 从 `MSNR_v531Plus_AEU1.mq5` 抽取的收藏版框架模板，包含 Signal Layer、Confluence Engine、Risk Guard、Trade Executor、CSV Logger 和 Dashboard 骨架。

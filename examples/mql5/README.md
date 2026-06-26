@@ -1,5 +1,81 @@
 # MQL5 示例
 
+## Bootstrap File IO
+
+路径：[Bootstrap_FileIO](./Bootstrap_FileIO/)
+
+定位：
+
+```text
+Bootstrap File IO / Python Bridge 基础组件。
+```
+
+核心学习点：
+
+- `CFile` 封装 file handle；
+- `CFileIO::open()` 模仿 Python open mode；
+- `flagsgen()` 统一生成 MQL5 file flags；
+- append 模式自动 seek 到文件尾；
+- `CSVReader` / `CSVWriter` 与通用 File IO 解耦；
+- `FILE_COMMON` 支持 MQL5 与 Python 共享文件。
+
+## Bootstrap Logging
+
+路径：[Bootstrap_Logging](./Bootstrap_Logging/)
+
+定位：
+
+```text
+Bootstrap Diagnostics / Python-like Logging 基础组件。
+```
+
+核心学习点：
+
+- `CLogger` 封装日志输出；
+- `LogLevels` 统一 DEBUG / INFO / WARNING / ERROR / CRITICAL；
+- `basicConfig()` 统一配置日志等级、文件名、格式、console、common folder 和缓存模式；
+- formatter placeholder 支持时间、等级、程序名、函数名、行号、程序类型和消息；
+- file rotation 防止长期运行日志无限增长；
+- cache mode 降低高频文件写入成本。
+
+## Bootstrap Requests
+
+路径：[Bootstrap_Requests](./Bootstrap_Requests/)
+
+定位：
+
+```text
+Bootstrap Integration / Python requests-style WebRequest 基础组件。
+```
+
+核心学习点：
+
+- `CResponse` 统一封装 HTTP status、text、json、headers、content、elapsed、ok 和 reason；
+- `CSession` 封装 headers、cookies、basic auth 和请求方法；
+- `request()` 作为统一入口；
+- `get/post/put/patch/delete_` 提供 Python-like helper；
+- `URLEncode()` 与 `BuildUrlWithParams()` 避免手工拼 URL；
+- 支持 JSON body 和 multipart file upload；
+- `GuessContentType()` 根据扩展名推断 MIME type。
+
+## Bootstrap Trade Helpers
+
+路径：[Bootstrap_TradeHelpers](./Bootstrap_TradeHelpers/)
+
+定位：
+
+```text
+EA Bootstrap / Trade Helper Layer 收藏样例。
+```
+
+核心学习点：
+
+- `PositionExists()` / `OrderExists()` 通用筛选函数；
+- `PositionCount()` / `OrderCount()` 统一计数；
+- `PositionClose()` / `CancelOrders()` 批量处理；
+- recent / oldest position 和 order 查询；
+- 将账户状态扫描从 EA signal 层剥离出来。
+
 ## BreakEven Framework
 
 路径：[BreakEven_Framework](./BreakEven_Framework/)

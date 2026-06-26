@@ -46,6 +46,10 @@
 - `knowledge/articles/markov-chain-matrix-state-engine.md` — Markov Chain Matrix：从二元频率统计提炼状态引擎骨架
 - `knowledge/articles/suffix-autoencoder-confidence-money-management.md` — MQL5 Wizard Part 93：Suffix Automaton + AutoEncoder 的置信度资金管理
 - `knowledge/articles/multi-head-attention-ai-framework-architecture.md` — Multi-Head Attention：MQL5 神经网络架构模板
+- `knowledge/articles/mql5-bootstrap-file-io-pythonic-facade.md` — MQL5 Bootstrap：Pythonic File IO Facade
+- `knowledge/articles/mql5-bootstrap-logging-pythonic-facade.md` — MQL5 Bootstrap：Python-like Logging Facade
+- `knowledge/articles/mql5-bootstrap-requests-webrequest-facade.md` — MQL5 Bootstrap：Python Requests / WebRequest Facade
+- `knowledge/articles/mql5-bootstrap-position-order-helpers.md` — MQL5 Bootstrap：Positions / Orders 可复用基础库
 - `knowledge/articles/fluent-order-builder-trade-framework.md` — Fluent Order Builder：从 COrderBuilder 到可维护下单框架
 - `knowledge/articles/mql5-objects-iii-chart-event-gui.md` — From Basic to Intermediate: Objects (III)：MQL5 图表事件与对象交互
 - `knowledge/articles/generic-object-pool-high-frequency-mql5.md` — Generic Object Pool in MQL5：高频指标里的对象池基础设施
