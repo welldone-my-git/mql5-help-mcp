@@ -20,9 +20,12 @@
 - [RQA Library](./mql5/RQA_Library/) — Recurrence Quantification Analysis 完整库，重点是 recurrence matrix、RQA metrics、epsilon selection、rolling window 和 facade API。
 - [Rolling Sharpe](./mql5/RollingSharpe/) — 统计分析组件样例，重点是 `CReturnBuffer`、O(1) rolling stats、Lo 标准误和 Sharpe 置信带。
 - [TDA Takens Embedding](./mql5/TDA_TakensEmbedding/) — TDA 基础库样例，重点是 Takens embedding、Point Cloud、flattened arrays 和 pairwise distance matrix。
+- [TickValue Compare](./mql5/TickValueCompare/) — Broker 风控诊断工具，重点是三种 Tick Value 对比、Market Watch 扫描和 CSV 导出。
 - [Weekend Gap Indicator](./mql5/WeekendGapIndicator/) — Chart Object Framework 样例，重点是 Entity、状态机、Visual Layer、对象生命周期和 Prefix 命名规范。
 - [ZScore Source Essence](./mql5/ZScore_Source_Essence/) — Z-Score Signal Engine 样例，重点是 Engine 与 EA/Indicator 解耦、OncePerBar、生命周期管理和统一 `Value()` 接口。
 
 ## Research
 
 - [Microstructure Feature Pipeline](./research/microstructure-feature-pipeline/) — AFML Chapter 19 微观结构特征工程 Python 原型，包含 bar-level / tick-level 两层 Feature Pipeline、Numba kernels 和统一 Feature Matrix 输出。
+- [Meta-Labeling ADX Pipeline](./research/meta-labeling-adx/) — Meta Labeling 系列 ADX 样例，重点是 ADX/DI primary signal、Optuna HPO Gate、ADX 特征、Triple Barrier、Meta Model 和 Bet Sizing。
+- [Meta-Labeling RSI Pipeline](./research/meta-labeling-rsi/) — Lopez de Prado Meta Labeling 研究样例，重点是 Primary Signal、Triple Barrier、Meta Model、Probability Filter 和 Bet Sizing。

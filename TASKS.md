@@ -44,6 +44,8 @@
 - `knowledge/articles/decorator-pattern-indicator-factor-pipeline.md` — Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline
 - `knowledge/articles/dsu-dbn-wizard-signal-event-cluster.md` — MQL5 Wizard Part 95：DSU + DBN Signal 的事件聚类信号架构
 - `knowledge/articles/markov-chain-matrix-state-engine.md` — Markov Chain Matrix：从二元频率统计提炼状态引擎骨架
+- `knowledge/articles/meta-labeling-adx-hpo-gate-bet-sizing.md` — Meta-Labeling the Classics Part 2：ADX HPO Gate、Meta Model 与 Bet Sizing
+- `knowledge/articles/meta-labeling-rsi-primary-meta-bet-sizing.md` — Meta-Labeling the Classics Part 1：RSI 信号过滤与 Bet Sizing
 - `knowledge/articles/suffix-autoencoder-confidence-money-management.md` — MQL5 Wizard Part 93：Suffix Automaton + AutoEncoder 的置信度资金管理
 - `knowledge/articles/multi-head-attention-ai-framework-architecture.md` — Multi-Head Attention：MQL5 神经网络架构模板
 - `knowledge/articles/mql5-bootstrap-file-io-pythonic-facade.md` — MQL5 Bootstrap：Pythonic File IO Facade
@@ -64,6 +66,7 @@
 - `knowledge/articles/rqa-complete-analysis-library-mql5.md` — RQA Library：Recurrence Quantification Analysis 完整分析组件
 - `knowledge/articles/rolling-sharpe-statistical-significance-bands.md` — Rolling Sharpe：带统计显著性区间的策略诊断组件
 - `knowledge/articles/tda-takens-embedding-point-cloud-distance.md` — TDA Takens Embedding：时间序列到几何对象的基础库
+- `knowledge/articles/tickvalue-compare-broker-risk-diagnostics.md` — TickValue Compare：Broker Tick Value 风控诊断工具
 - `knowledge/articles/universal-breakout-study-research-framework.md` — Universal Breakout Study：Session Range 突破策略研究框架
 - `knowledge/articles/weekend-gap-state-machine-buffer-interface.md` — Weekend Gap Signal System：市场事件状态机与 EA Buffer 接口
 - `knowledge/articles/weekend-gap-object-framework.md` — Weekend Gap Structure Mapping：Chart Object 状态管理框架

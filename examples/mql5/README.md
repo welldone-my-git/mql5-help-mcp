@@ -76,6 +76,25 @@ EA Bootstrap / Trade Helper Layer 收藏样例。
 - recent / oldest position 和 order 查询；
 - 将账户状态扫描从 EA signal 层剥离出来。
 
+## TickValue Compare
+
+路径：[TickValueCompare](./TickValueCompare/)
+
+定位：
+
+```text
+Risk Management / Broker Diagnostics 开发工具。
+```
+
+核心学习点：
+
+- 读取 `SYMBOL_TRADE_TICK_VALUE`；
+- 读取 `SYMBOL_TRADE_TICK_VALUE_LOSS`；
+- 读取 `SYMBOL_TRADE_TICK_VALUE_PROFIT`；
+- 使用 `SymbolsTotal(true)` / `SymbolName(i,true)` 遍历 Market Watch；
+- 分类 tick value 一致性；
+- CSV 导出供 Python 做 broker audit。
+
 ## BreakEven Framework
 
 路径：[BreakEven_Framework](./BreakEven_Framework/)
