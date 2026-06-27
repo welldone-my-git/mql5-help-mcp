@@ -95,6 +95,65 @@ Risk Management / Broker Diagnostics 开发工具。
 - 分类 tick value 一致性；
 - CSV 导出供 Python 做 broker audit。
 
+## Chart Object Detector
+
+路径：[ChartObjectDetector](./ChartObjectDetector/)
+
+定位：
+
+```text
+Chart Geometry Layer / Object Abstraction 基础样例。
+```
+
+核心学习点：
+
+- `ObjectsTotal()` / `ObjectName()` 枚举图表对象；
+- `ObjectFind()` 做安全检查；
+- `OBJPROP_TYPE` 读取对象类型；
+- `ObjectGetInteger()` / `ObjectGetDouble()` 读取 anchor；
+- `SChartObjectInfo` 统一不同对象的数据结构；
+- `CChartObjectDetector::Detect()` 作为 scanner / normalizer 统一入口。
+
+## Complex Object Geometry
+
+路径：[ComplexObjectGeometry](./ComplexObjectGeometry/)
+
+定位：
+
+```text
+Chart Geometry Engine / Complex Analytical Object Collector。
+```
+
+核心学习点：
+
+- `IsAnalyticalObject()` 过滤复杂分析对象；
+- `SComplexObjectInfo` 继承 `SChartObjectInfo` 扩展复杂几何字段；
+- `CComplexObjectDetector` 继承基础 detector；
+- Fibonacci levels 解析为 ratio 和 actual price；
+- Channel 三个 anchor 点采集；
+- Pitchfork handle、median point、additional levels 采集；
+- demo 中 `LineValueAtTime()` / `PitchforkMedianValue()` 展示几何投影计算。
+
+## Geometry Interaction
+
+路径：[GeometryInteraction](./GeometryInteraction/)
+
+定位：
+
+```text
+Chart Geometry Interaction / Event Layer 样例。
+```
+
+核心学习点：
+
+- `ENUM_INTERACTION` 统一 interaction 类型；
+- `SInteraction` 将几何交互变成事件记录；
+- `CInteractionDetector` 从复杂对象检测 Touch / Cross / Breakout；
+- per-object state tracking 避免重复触发；
+- `AlertManager` 做 duplicate suppression；
+- `TradeExecutor` 演示 signal 与 execution 分离；
+- `TestInteractionEA` 展示 detector → alert → trade 的完整管线。
+
 ## BreakEven Framework
 
 路径：[BreakEven_Framework](./BreakEven_Framework/)

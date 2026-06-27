@@ -13,6 +13,8 @@
 
 - [Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子](./adaptive-kalman-smoother-regime-factor.md)
 - [BreakEven Framework：ATR / RRR 保本机制的可插拔架构](./breakeven-framework-atr-rrr-mql5.md)
+- [Chart Object Detector：从手动画线到 Geometry Layer](./chart-object-detector-geometry-layer.md)
+- [Complex Object Geometry：Fibonacci、Channel、Pitchfork 的几何抽象层](./complex-object-geometry-engine.md)
 - [CSV Data Analysis Part 2：MQL5 到 Python 的 CSV 数据出口层](./csv-export-parsing-pipeline-mql5.md)
 - [Feature Engineering for ML Part 5：微观结构 Feature Pipeline 架构](./afml-microstructure-feature-pipeline-python.md)
 - [Feature Engineering for ML Part 6：AFML 微观结构特征工程](./afml-microstructure-features-mql5.md)
@@ -34,6 +36,7 @@
 - [G Channel：由价格极值驱动的递推趋势通道](./g-channel-recursive-trend-channel.md)
 - [Graph Theory / Ford-Fulkerson：把 ICT 市场结构转成图网络](./market-structure-graph-ford-fulkerson-liquidity.md)
 - [002 - Inside Bar：把 Price Action 模式当作假设验证器](./inside-bar-hypothesis-research-ea.md)
+- [Geometry Interaction：从几何对象到事件、特征与执行层](./geometry-interaction-event-layer.md)
 - [Institutional Kyle's Lambda Market Impact Engine：市场冲击与流动性因子](./kyles-lambda-market-impact-liquidity-factor.md)
 - [Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework](./local-stop-loss-ea-framework.md)
 - [Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline](./qnn-markov-feature-pipeline-mql5.md)

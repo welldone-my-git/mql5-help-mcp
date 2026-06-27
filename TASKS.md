@@ -37,6 +37,8 @@
 
 - `knowledge/articles/adaptive-kalman-smoother-regime-factor.md` — Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子
 - `knowledge/articles/breakeven-framework-atr-rrr-mql5.md` — BreakEven Framework：ATR / RRR 保本机制的可插拔架构
+- `knowledge/articles/chart-object-detector-geometry-layer.md` — Chart Object Detector：从手动画线到 Geometry Layer
+- `knowledge/articles/complex-object-geometry-engine.md` — Complex Object Geometry：Fibonacci、Channel、Pitchfork 的几何抽象层
 - `knowledge/articles/csv-export-parsing-pipeline-mql5.md` — CSV Data Analysis Part 2：MQL5 到 Python 的 CSV 数据出口层
 - `knowledge/articles/afml-microstructure-feature-pipeline-python.md` — Feature Engineering for ML Part 5：微观结构 Feature Pipeline 架构
 - `knowledge/articles/afml-microstructure-features-mql5.md` — Feature Engineering for ML Part 6：AFML 微观结构特征工程
@@ -57,6 +59,7 @@
 - `knowledge/articles/generic-object-pool-high-frequency-mql5.md` — Generic Object Pool in MQL5：高频指标里的对象池基础设施
 - `knowledge/articles/g-channel-recursive-trend-channel.md` — G Channel：由价格极值驱动的递推趋势通道
 - `knowledge/articles/market-structure-graph-ford-fulkerson-liquidity.md` — Graph Theory / Ford-Fulkerson：把 ICT 市场结构转成图网络
+- `knowledge/articles/geometry-interaction-event-layer.md` — Geometry Interaction：从几何对象到事件、特征与执行层
 - `knowledge/articles/inside-bar-hypothesis-research-ea.md` — 002 - Inside Bar：把 Price Action 模式当作假设验证器
 - `knowledge/articles/kyles-lambda-market-impact-liquidity-factor.md` — Institutional Kyle's Lambda Market Impact Engine：市场冲击与流动性因子
 - `knowledge/articles/local-stop-loss-ea-framework.md` — Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework
