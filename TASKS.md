@@ -45,6 +45,7 @@
 - `knowledge/articles/afml-microstructure-features-mql5.md` — Feature Engineering for ML Part 6：AFML 微观结构特征工程
 - `knowledge/articles/da-cg-lstm-dynamic-feature-attention.md` — DA-CG-LSTM：动态特征注意力与时序注意力
 - `knowledge/articles/decorator-pattern-indicator-factor-pipeline.md` — Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline
+- `knowledge/articles/deepar-probabilistic-forecasting-python.md` — DeepAR：多序列概率预测在交易研究中的位置
 - `knowledge/articles/dsu-dbn-wizard-signal-event-cluster.md` — MQL5 Wizard Part 95：DSU + DBN Signal 的事件聚类信号架构
 - `knowledge/articles/economic-calendar-api-event-feature.md` — Economic Calendar API：从新闻挂单 EA 提炼事件因子模块
 - `knowledge/articles/type-safe-event-bus-mql5.md` — Type-Safe Event Bus：用事件总线解耦 EA 组件
@@ -53,6 +54,7 @@
 - `knowledge/articles/meta-labeling-rsi-primary-meta-bet-sizing.md` — Meta-Labeling the Classics Part 1：RSI 信号过滤与 Bet Sizing
 - `knowledge/articles/suffix-autoencoder-confidence-money-management.md` — MQL5 Wizard Part 93：Suffix Automaton + AutoEncoder 的置信度资金管理
 - `knowledge/articles/multi-head-attention-ai-framework-architecture.md` — Multi-Head Attention：MQL5 神经网络架构模板
+- `knowledge/articles/omegajoctan-author-research-map.md` — Omega J. Msigwa 文章研究路线图
 - `knowledge/articles/mql5-bootstrap-file-io-pythonic-facade.md` — MQL5 Bootstrap：Pythonic File IO Facade
 - `knowledge/articles/mql5-bootstrap-logging-pythonic-facade.md` — MQL5 Bootstrap：Python-like Logging Facade
 - `knowledge/articles/mql5-bootstrap-requests-webrequest-facade.md` — MQL5 Bootstrap：Python Requests / WebRequest Facade
@@ -62,6 +64,8 @@
 - `knowledge/articles/generic-object-pool-high-frequency-mql5.md` — Generic Object Pool in MQL5：高频指标里的对象池基础设施
 - `knowledge/articles/g-channel-recursive-trend-channel.md` — G Channel：由价格极值驱动的递推趋势通道
 - `knowledge/articles/carry-cost-engine-swap-risk-mql5.md` — Carry Cost Engine：把 Swap 纳入持仓收益和仓位决策
+- `knowledge/articles/custom-symbols-synthetic-stress-tests.md` — Custom Symbols / Synthetic Markets：用 MT5 构建研究市场和压力测试
+- `knowledge/articles/biased-financial-markets-imbalanced-ml.md` — Biased Financial Markets：金融 ML 的类别不平衡问题
 - `knowledge/articles/market-structure-graph-ford-fulkerson-liquidity.md` — Graph Theory / Ford-Fulkerson：把 ICT 市场结构转成图网络
 - `knowledge/articles/geometry-interaction-event-layer.md` — Geometry Interaction：从几何对象到事件、特征与执行层
 - `knowledge/articles/inside-bar-hypothesis-research-ea.md` — 002 - Inside Bar：把 Price Action 模式当作假设验证器
@@ -71,10 +75,13 @@
 - `knowledge/articles/qnn-markov-feature-pipeline-mql5.md` — Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline
 - `knowledge/articles/repository-pattern-testable-ea-analytics.md` — Repository Pattern in MQL5：可测试 EA Analytics 架构
 - `knowledge/articles/regression-causal-inference-confidence-trading.md` — Regression + Causal Inference Trading Pipeline：收益回归与可信度过滤
+- `knowledge/articles/python-mt5-strategy-tester-series.md` — Python-MetaTrader 5 Strategy Tester 系列：Python 研究与 RL 环境基础
 - `knowledge/articles/rqa-complete-analysis-library-mql5.md` — RQA Library：Recurrence Quantification Analysis 完整分析组件
 - `knowledge/articles/rolling-sharpe-statistical-significance-bands.md` — Rolling Sharpe：带统计显著性区间的策略诊断组件
 - `knowledge/articles/strategy-state-machine-mql5.md` — Strategy State Machine：用显式状态替代嵌套 if-else
 - `knowledge/articles/tda-takens-embedding-point-cloud-distance.md` — TDA Takens Embedding：时间序列到几何对象的基础库
+- `knowledge/articles/transformer-trading-sequence-model.md` — Transformer Trading：序列模型研究素材，不是直接 Alpha
+- `knowledge/articles/bootstrap-datetime-sqlite-omega.md` — Omega Python-like Modules：Datetime 与 SQLite 基础设施
 - `knowledge/articles/tickvalue-compare-broker-risk-diagnostics.md` — TickValue Compare：Broker Tick Value 风控诊断工具
 - `knowledge/articles/universal-breakout-study-research-framework.md` — Universal Breakout Study：Session Range 突破策略研究框架
 - `knowledge/articles/weekend-gap-state-machine-buffer-interface.md` — Weekend Gap Signal System：市场事件状态机与 EA Buffer 接口

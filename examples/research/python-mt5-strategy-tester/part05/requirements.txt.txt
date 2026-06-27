@@ -1,0 +1,5 @@
+pandas
+numpy
+strategytester5==1.7.0
+plotly
+ta==0.11.0

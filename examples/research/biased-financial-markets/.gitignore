@@ -1,0 +1,4 @@
+Common/Files/*.csv
+Common/Files/*.onnx
+**/__pycache__/
+*.pyc

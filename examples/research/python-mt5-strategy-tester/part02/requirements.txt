@@ -1,0 +1,9 @@
+metatrader5==5.0.5430
+numpy==2.4.0
+pandas==2.3.3
+polars==1.36.1
+polars-runtime-32==1.36.1
+python-dateutil==2.9.0.post0
+pytz==2025.2
+six==1.17.0
+tzdata==2025.3

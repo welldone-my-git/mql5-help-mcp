@@ -19,6 +19,23 @@ Bootstrap File IO / Python Bridge 基础组件。
 - `CSVReader` / `CSVWriter` 与通用 File IO 解耦；
 - `FILE_COMMON` 支持 MQL5 与 Python 共享文件。
 
+## Bootstrap Datetime
+
+路径：[Bootstrap_Datetime](./Bootstrap_Datetime/)
+
+定位：
+
+```text
+MQL5 Bootstrap / Python-like DateTime Utilities。
+```
+
+核心学习点：
+
+- Python-like time/date/datetime facade；
+- timezone database；
+- `TZInfo`；
+- 对 CalendarEngine、session filter、schedule engine 有直接价值。
+
 ## Bootstrap Logging
 
 路径：[Bootstrap_Logging](./Bootstrap_Logging/)
@@ -37,6 +54,24 @@ Bootstrap Diagnostics / Python-like Logging 基础组件。
 - formatter placeholder 支持时间、等级、程序名、函数名、行号、程序类型和消息；
 - file rotation 防止长期运行日志无限增长；
 - cache mode 降低高频文件写入成本。
+
+## Bootstrap SQLite
+
+路径：[Bootstrap_SQLite](./Bootstrap_SQLite/)
+
+定位：
+
+```text
+MQL5 Bootstrap / SQLite3-inspired Database Facade。
+```
+
+核心学习点：
+
+- Python sqlite3-style interface；
+- MQL5 database API facade；
+- local structured storage；
+- state cache；
+- tester output storage。
 
 ## Bootstrap Requests
 
@@ -268,6 +303,24 @@ Risk / Holding Cost / Carry-Aware Position Management。
 - `ExpectedSwapForPosition()`；
 - `IsWorthHolding()`；
 - `CarryAdjustedLotSize()`。
+
+## Custom Symbols Stress Tests
+
+路径：[CustomSymbolsStressTests](./CustomSymbolsStressTests/)
+
+定位：
+
+```text
+MQL5 Research Infrastructure / Custom Symbols / Synthetic Data / Stress Testing。
+```
+
+核心学习点：
+
+- MT5 custom symbols API；
+- Renko / Range / Equal-Volume bar generation；
+- synthetic tick generator；
+- spread widening stress test；
+- custom symbol order routing 到真实 symbol。
 
 ## BreakEven Framework
 
