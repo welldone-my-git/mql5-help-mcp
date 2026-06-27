@@ -16,6 +16,7 @@
 - [Chart Object Detector：从手动画线到 Geometry Layer](./chart-object-detector-geometry-layer.md)
 - [Complex Object Geometry：Fibonacci、Channel、Pitchfork 的几何抽象层](./complex-object-geometry-engine.md)
 - [CSV Data Analysis Part 2：MQL5 到 Python 的 CSV 数据出口层](./csv-export-parsing-pipeline-mql5.md)
+- [CSV Data Analysis 系列：MT5 → Python 研究平台的数据管线](./csv-data-analysis-series-research-platform.md)
 - [Feature Engineering for ML Part 5：微观结构 Feature Pipeline 架构](./afml-microstructure-feature-pipeline-python.md)
 - [Feature Engineering for ML Part 6：AFML 微观结构特征工程](./afml-microstructure-features-mql5.md)
 - [DA-CG-LSTM：动态特征注意力与时序注意力](./da-cg-lstm-dynamic-feature-attention.md)
