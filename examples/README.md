@@ -31,6 +31,7 @@
 - [MSNR Clean Edition](./mql5/MSNR_CleanEdition/) — 从 `MSNR_v531Plus_AEU1.mq5` 抽取的收藏版框架模板，包含 Signal Layer、Confluence Engine、Risk Guard、Trade Executor、CSV Logger 和 Dashboard 骨架。
 - [RQA Library](./mql5/RQA_Library/) — Recurrence Quantification Analysis 完整库，重点是 recurrence matrix、RQA metrics、epsilon selection、rolling window 和 facade API。
 - [Rolling Sharpe](./mql5/RollingSharpe/) — 统计分析组件样例，重点是 `CReturnBuffer`、O(1) rolling stats、Lo 标准误和 Sharpe 置信带。
+- [Session Boxes](./mql5/SessionBoxes/) — Session Range 可视化指标，重点是 Asia/London/NY high-low box、GMT offset、跨午夜 session 判断和 session feature seed。
 - [TDA Takens Embedding](./mql5/TDA_TakensEmbedding/) — TDA 基础库样例，重点是 Takens embedding、Point Cloud、flattened arrays 和 pairwise distance matrix。
 - [TickValue Compare](./mql5/TickValueCompare/) — Broker 风控诊断工具，重点是三种 Tick Value 对比、Market Watch 扫描和 CSV 导出。
 - [Weekend Gap Indicator](./mql5/WeekendGapIndicator/) — Chart Object Framework 样例，重点是 Entity、状态机、Visual Layer、对象生命周期和 Prefix 命名规范。

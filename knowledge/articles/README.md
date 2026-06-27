@@ -54,6 +54,7 @@
 - [Python-MetaTrader 5 Strategy Tester 系列：Python 研究与 RL 环境基础](./python-mt5-strategy-tester-series.md)
 - [RQA Library：Recurrence Quantification Analysis 完整分析组件](./rqa-complete-analysis-library-mql5.md)
 - [Rolling Sharpe：带统计显著性区间的策略诊断组件](./rolling-sharpe-statistical-significance-bands.md)
+- [Session Boxes：Session Range 可视化到特征工程骨架](./session-boxes-session-range-feature.md)
 - [Strategy State Machine：用显式状态替代嵌套 if-else](./strategy-state-machine-mql5.md)
 - [TDA Takens Embedding：时间序列到几何对象的基础库](./tda-takens-embedding-point-cloud-distance.md)
 - [Transformer Trading：序列模型研究素材，不是直接 Alpha](./transformer-trading-sequence-model.md)

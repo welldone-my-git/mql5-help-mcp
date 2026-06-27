@@ -304,6 +304,25 @@ Risk / Holding Cost / Carry-Aware Position Management。
 - `IsWorthHolding()`；
 - `CarryAdjustedLotSize()`。
 
+## Session Boxes
+
+路径：[SessionBoxes](./SessionBoxes/)
+
+定位：
+
+```text
+Session Range / Chart Tool / Feature Engineering Seed。
+```
+
+核心学习点：
+
+- H1 `CopyRates()` 构建 session high / low；
+- `InpBrokerGMTOffset` 做 broker time → GMT；
+- `IsHourInSession()` 支持跨午夜 session；
+- `OBJ_RECTANGLE` 绘制 Asia / London / New York boxes；
+- prefix 对象命名和 `ObjectsDeleteAll()` 生命周期清理；
+- 可升级为 SessionFeatureEngine。
+
 ## Custom Symbols Stress Tests
 
 路径：[CustomSymbolsStressTests](./CustomSymbolsStressTests/)

@@ -78,6 +78,7 @@
 - `knowledge/articles/python-mt5-strategy-tester-series.md` — Python-MetaTrader 5 Strategy Tester 系列：Python 研究与 RL 环境基础
 - `knowledge/articles/rqa-complete-analysis-library-mql5.md` — RQA Library：Recurrence Quantification Analysis 完整分析组件
 - `knowledge/articles/rolling-sharpe-statistical-significance-bands.md` — Rolling Sharpe：带统计显著性区间的策略诊断组件
+- `knowledge/articles/session-boxes-session-range-feature.md` — Session Boxes：Session Range 可视化到特征工程骨架
 - `knowledge/articles/strategy-state-machine-mql5.md` — Strategy State Machine：用显式状态替代嵌套 if-else
 - `knowledge/articles/tda-takens-embedding-point-cloud-distance.md` — TDA Takens Embedding：时间序列到几何对象的基础库
 - `knowledge/articles/transformer-trading-sequence-model.md` — Transformer Trading：序列模型研究素材，不是直接 Alpha
