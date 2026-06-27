@@ -18,6 +18,11 @@
 - [Complex Object Geometry](./mql5/ComplexObjectGeometry/) — Chart Geometry Engine 核心样例，重点是复杂分析对象过滤、Fib level 解析、Channel 三点采集和 Pitchfork 结构化。
 - [Geometry Interaction](./mql5/GeometryInteraction/) — Chart Geometry Interaction 样例，重点是 `SInteraction`、Touch/Cross/Breakout 检测、状态去重、AlertManager 和 TradeExecutor 分层。
 - [Economic Calendar API](./mql5/EconomicCalendarAPI/) — MT5 官方经济日历 API 与 `CalendarEngine` 骨架，重点是 `CalendarValueHistory()`、`CalendarEventById()`、High Impact 新闻过滤、QuietPeriod 和事件因子化。
+- [EventBus](./mql5/EventBus/) — Type-safe publish-subscribe EA 事件总线，重点是 `IEventListener`、`SEventPayload`、enum-indexed subscription table 和组件解耦。
+- [OrderBuilder](./mql5/OrderBuilder/) — Fluent `MqlTradeRequest` 构造器，重点是链式接口、字段完整性、方向性 SL/TP、stop-level 和 `OrderCheck()` 前置。
+- [ObjectPool](./mql5/ObjectPool/) — 高频对象池基础设施，重点是 templated pool、free-list、O(1) acquire/release、double-release protection 和 benchmark。
+- [Strategy State Machine](./mql5/StrategyStateMachine/) — 显式 EA 状态机样例，重点是 `IState`、`CStrategyContext`、`OnEnter/Evaluate/OnExit` 和 include 循环依赖拆分。
+- [Carry Cost Engine](./mql5/CarryCostEngine/) — Swap / Carry 风控组件，重点是 swap 换算、预期持仓成本、是否值得持有和 carry-adjusted lot。
 - [BreakEven Framework](./mql5/BreakEven_Framework/) — ATR / RRR / Simple 保本机制的可插拔 Trade Management 样例，重点是 Base、Manager、Factory、`MqlParam[]` 参数系统和多态策略。
 - [Local Stop Loss EA](./mql5/Local_Stop_Loss/) — 本地止损 EA 架构样例，重点是 HashMap 仓位缓存、Position 状态机、Chart Object 生命周期和 Cleanup 管理。
 - [MSNR Clean Edition](./mql5/MSNR_CleanEdition/) — 从 `MSNR_v531Plus_AEU1.mq5` 抽取的收藏版框架模板，包含 Signal Layer、Confluence Engine、Risk Guard、Trade Executor、CSV Logger 和 Dashboard 骨架。

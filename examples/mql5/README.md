@@ -175,6 +175,100 @@ Event Feature / Economic Calendar API 使用样例。
 - 将新闻事件重构为 `CalendarEngine`、`IsQuietPeriod()` 和 `RedNewsWithin()`；
 - 作为 ML / Meta Label 的 `minutes_to_news`、`news_importance`、`is_red_news_window` 事件特征。
 
+## EventBus
+
+路径：[EventBus](./EventBus/)
+
+定位：
+
+```text
+EA Framework / Typed Publish-Subscribe Event Bus。
+```
+
+核心学习点：
+
+- `ENUM_EA_EVENT` 统一事件类型；
+- `SEventPayload` 作为轻量事件结构；
+- `IEventListener::OnEvent()` 抽象监听接口；
+- `CEventBus::Subscribe()` / `Unsubscribe()` / `Publish()`；
+- signal、order、drawdown monitor 通过事件通信，避免 global variable 和交叉引用。
+
+## OrderBuilder
+
+路径：[OrderBuilder](./OrderBuilder/)
+
+定位：
+
+```text
+Execution Layer / Fluent Order Request Builder。
+```
+
+核心学习点：
+
+- fluent chaining 封装 `MqlTradeRequest`；
+- volume min/max/step 校验；
+- market / pending order helper；
+- buy/sell 方向性 SL/TP 检查；
+- broker stop-level 检查；
+- `OrderCheck()` 前置到 `OrderSend()` 之前。
+
+## ObjectPool
+
+路径：[ObjectPool](./ObjectPool/)
+
+定位：
+
+```text
+Performance Infrastructure / Generic Object Pool。
+```
+
+核心学习点：
+
+- `CObjectPool<T>` 模板对象池；
+- fixed-capacity free-list；
+- O(1) `Acquire()` / `Release()`；
+- pooled object metadata；
+- double-release protection；
+- `GetMicrosecondCount()` benchmark。
+
+## Strategy State Machine
+
+路径：[StrategyStateMachine](./StrategyStateMachine/)
+
+定位：
+
+```text
+EA Framework / Formal State Machine。
+```
+
+核心学习点：
+
+- `IState` 生命周期接口；
+- `CStrategyContext` 作为 mediator；
+- `OnEnter()` / `Evaluate()` / `OnExit()`；
+- `SetState()` 集中处理状态切换；
+- declaration / implementation 分离解决 include 循环依赖。
+
+## Carry Cost Engine
+
+路径：[CarryCostEngine](./CarryCostEngine/)
+
+定位：
+
+```text
+Risk / Holding Cost / Carry-Aware Position Management。
+```
+
+核心学习点：
+
+- `SYMBOL_SWAP_LONG` / `SYMBOL_SWAP_SHORT`；
+- `SYMBOL_SWAP_MODE`；
+- swap 换算到账户货币；
+- Wednesday triple swap 估算；
+- `ExpectedSwapForPosition()`；
+- `IsWorthHolding()`；
+- `CarryAdjustedLotSize()`。
+
 ## BreakEven Framework
 
 路径：[BreakEven_Framework](./BreakEven_Framework/)
