@@ -45,6 +45,7 @@
 - `knowledge/articles/da-cg-lstm-dynamic-feature-attention.md` — DA-CG-LSTM：动态特征注意力与时序注意力
 - `knowledge/articles/decorator-pattern-indicator-factor-pipeline.md` — Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline
 - `knowledge/articles/dsu-dbn-wizard-signal-event-cluster.md` — MQL5 Wizard Part 95：DSU + DBN Signal 的事件聚类信号架构
+- `knowledge/articles/economic-calendar-api-event-feature.md` — Economic Calendar API：从新闻挂单 EA 提炼事件因子模块
 - `knowledge/articles/markov-chain-matrix-state-engine.md` — Markov Chain Matrix：从二元频率统计提炼状态引擎骨架
 - `knowledge/articles/meta-labeling-adx-hpo-gate-bet-sizing.md` — Meta-Labeling the Classics Part 2：ADX HPO Gate、Meta Model 与 Bet Sizing
 - `knowledge/articles/meta-labeling-rsi-primary-meta-bet-sizing.md` — Meta-Labeling the Classics Part 1：RSI 信号过滤与 Bet Sizing

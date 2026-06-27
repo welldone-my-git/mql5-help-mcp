@@ -154,6 +154,27 @@ Chart Geometry Interaction / Event Layer 样例。
 - `TradeExecutor` 演示 signal 与 execution 分离；
 - `TestInteractionEA` 展示 detector → alert → trade 的完整管线。
 
+## Economic Calendar API
+
+路径：[EconomicCalendarAPI](./EconomicCalendarAPI/)
+
+定位：
+
+```text
+Event Feature / Economic Calendar API 使用样例。
+```
+
+核心学习点：
+
+- `CalendarValueHistory()` 读取时间区间内的经济日历值；
+- `CalendarEventByCurrency()` 查询指定货币事件；
+- `CalendarEventById()` 获取事件名称和 importance；
+- `CALENDAR_IMPORTANCE_HIGH` 做红色新闻过滤；
+- `CalendarEngine.mqh` 封装缓存、过滤、NextNews、QuietPeriod 和 RedNews 判断；
+- 新闻发布时间与 `TimeTradeServer()` 的窗口判断；
+- 将新闻事件重构为 `CalendarEngine`、`IsQuietPeriod()` 和 `RedNewsWithin()`；
+- 作为 ML / Meta Label 的 `minutes_to_news`、`news_importance`、`is_red_news_window` 事件特征。
+
 ## BreakEven Framework
 
 路径：[BreakEven_Framework](./BreakEven_Framework/)
