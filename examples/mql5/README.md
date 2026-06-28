@@ -88,6 +88,27 @@ Bootstrap Integration / Python requests-style WebRequest 基础组件。
 - `CResponse` 统一封装 HTTP status、text、json、headers、content、elapsed、ok 和 reason；
 - `CSession` 封装 headers、cookies、basic auth 和请求方法；
 - `request()` 作为统一入口；
+- `get/post/put/patch/delete_` 提供 Python-like helper；
+- `URLEncode()` 与 `BuildUrlWithParams()` 避免手工拼 URL；
+- 支持 JSON body 和 multipart file upload；
+- `GuessContentType()` 根据扩展名推断 MIME type。
+
+## Bootstrap Schedule
+
+路径：[Bootstrap_Schedule](./Bootstrap_Schedule/)
+
+定位：
+
+```text
+MQL5 Bootstrap / Python schedule-style Timer Orchestration。
+```
+
+核心学习点：
+
+- 用 Python `schedule` 思路封装 MQL5 `OnTimer()`；
+- 将周期任务从 EA 主逻辑中分离；
+- 适合 Calendar refresh、Risk check、Storage flush、状态同步；
+- 对 `core/clock.py` 和后续 runtime scheduler 有参考价值。
 
 ## Better Programmer
 
@@ -111,10 +132,6 @@ MQL5 Engineering Practice / Reusable Include 示例。
 - `CGrid::LastPositionOpenPrice(type)` 获取指定方向最新持仓开仓价；
 - `InitializeModule(magic)` 用 Magic Number 约束查询范围；
 - 适合学习 include 抽取，不适合直接作为生产级 Grid 模块。
-- `get/post/put/patch/delete_` 提供 Python-like helper；
-- `URLEncode()` 与 `BuildUrlWithParams()` 避免手工拼 URL；
-- 支持 JSON body 和 multipart file upload；
-- `GuessContentType()` 根据扩展名推断 MIME type。
 
 ## Bootstrap Trade Helpers
 
@@ -250,6 +267,24 @@ EA Framework / Typed Publish-Subscribe Event Bus。
 - `IEventListener::OnEvent()` 抽象监听接口；
 - `CEventBus::Subscribe()` / `Unsubscribe()` / `Publish()`；
 - signal、order、drawdown monitor 通过事件通信，避免 global variable 和交叉引用。
+
+## Discord Notification
+
+路径：[DiscordNotification](./DiscordNotification/)
+
+定位：
+
+```text
+MQL5 Notification Adapter / Webhook Alert。
+```
+
+核心学习点：
+
+- Discord webhook message 封装；
+- JSON payload 构造；
+- emoji / formatting；
+- 可迁移为 trade alert、risk alert、exception alert；
+- 后续可扩展为 Telegram / Email / Webhook notification service。
 
 ## OrderBuilder
 

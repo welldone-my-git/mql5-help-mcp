@@ -14,6 +14,7 @@
 - [Bootstrap Datetime](./mql5/Bootstrap_Datetime/) — Python-like time/date/datetime 模块，重点是 timezone、session/calendar/schedule 相关时间处理。
 - [Bootstrap Logging](./mql5/Bootstrap_Logging/) — MQL5 Bootstrap 日志 facade，重点是 `CLogger`、日志等级、formatter、file rotation、cache mode 和 `FILE_COMMON` diagnostics。
 - [Bootstrap Requests](./mql5/Bootstrap_Requests/) — MQL5 Bootstrap WebRequest facade，重点是 `CSession`、`CResponse`、HTTP verbs、JSON、multipart、headers/cookies 和 Python API bridge。
+- [Bootstrap Schedule](./mql5/Bootstrap_Schedule/) — Python schedule 风格 MQL5 定时任务模块，重点是 OnTimer orchestration 和周期任务管理。
 - [Bootstrap SQLite](./mql5/Bootstrap_SQLite/) — Python sqlite3-inspired MQL5 database facade，重点是本地结构化存储、cache 和 state persistence。
 - [Bootstrap Trade Helpers](./mql5/Bootstrap_TradeHelpers/) — MQL5 Bootstrap 基础库样例，重点是 positions/orders 通用筛选、计数、关闭、取消、recent/oldest 查询。
 - [Better Programmer](./mql5/BetterProgrammer/) — Omega Better Programmer Part 06 附件源码，重点是把 Grid 常用 position helper 抽成 `.mqh` 可复用模块。
@@ -21,6 +22,7 @@
 - [Complex Object Geometry](./mql5/ComplexObjectGeometry/) — Chart Geometry Engine 核心样例，重点是复杂分析对象过滤、Fib level 解析、Channel 三点采集和 Pitchfork 结构化。
 - [Geometry Interaction](./mql5/GeometryInteraction/) — Chart Geometry Interaction 样例，重点是 `SInteraction`、Touch/Cross/Breakout 检测、状态去重、AlertManager 和 TradeExecutor 分层。
 - [Economic Calendar API](./mql5/EconomicCalendarAPI/) — MT5 官方经济日历 API 与 `CalendarEngine` 骨架，重点是 `CalendarValueHistory()`、`CalendarEventById()`、High Impact 新闻过滤、QuietPeriod 和事件因子化。
+- [Discord Notification](./mql5/DiscordNotification/) — MQL5 到 Discord 的通知桥，重点是 webhook、JSON payload、trade/risk alert 和 Notification Adapter。
 - [EventBus](./mql5/EventBus/) — Type-safe publish-subscribe EA 事件总线，重点是 `IEventListener`、`SEventPayload`、enum-indexed subscription table 和组件解耦。
 - [OrderBuilder](./mql5/OrderBuilder/) — Fluent `MqlTradeRequest` 构造器，重点是链式接口、字段完整性、方向性 SL/TP、stop-level 和 `OrderCheck()` 前置。
 - [ObjectPool](./mql5/ObjectPool/) — 高频对象池基础设施，重点是 templated pool、free-list、O(1) acquire/release、double-release protection 和 benchmark。
@@ -45,8 +47,13 @@
 
 - [Biased Financial Markets](./research/biased-financial-markets/) — 金融 ML 类别不平衡样例，重点是 resampling、metrics、ONNX 输出流程和时间序列验证风险。
 - [DeepAR Forecasting](./research/deepar-forecasting/) — DeepAR 多序列概率预测样例，重点是 autoregressive neural forecasting、forecast uncertainty 和 Python research layer。
+- [ARIMA Forecasting](./research/arima-forecasting/) — 传统统计时间序列 baseline，用于 sanity check 和模型 benchmark。
+- [LGMM Regime](./research/lgmm-regime/) — Latent Gaussian Mixture hidden pattern / regime detection 样例，包含 MQL5 indicator/EA 和 Python notebook。
 - [Microstructure Feature Pipeline](./research/microstructure-feature-pipeline/) — AFML Chapter 19 微观结构特征工程 Python 原型，包含 bar-level / tick-level 两层 Feature Pipeline、Numba kernels 和统一 Feature Matrix 输出。
+- [N-BEATS Forecasting](./research/nbeats-forecasting/) — N-BEATS 深度时间序列预测样例，用于 model zoo 和 forecasting baseline。
+- [Prophet Forecasting](./research/prophet-forecasting/) — Prophet 趋势/季节性/日历效应预测样例，适合中低频 baseline。
 - [Meta-Labeling ADX Pipeline](./research/meta-labeling-adx/) — Meta Labeling 系列 ADX 样例，重点是 ADX/DI primary signal、Optuna HPO Gate、ADX 特征、Triple Barrier、Meta Model 和 Bet Sizing。
 - [Meta-Labeling RSI Pipeline](./research/meta-labeling-rsi/) — Lopez de Prado Meta Labeling 研究样例，重点是 Primary Signal、Triple Barrier、Meta Model、Probability Filter 和 Bet Sizing。
 - [Python-MT5 Strategy Tester](./research/python-mt5-strategy-tester/) — Omega Python Strategy Tester 系列源码，重点是 MT5-like Python backtester、bars/ticks、trade simulator、多品种多周期和 RL 环境基础。
 - [Transformer Trading](./research/transformer-trading/) — Transformer 序列模型交易实验，重点是 sequence tensor、attention encoder、feature extraction 和严格 walk-forward 验证。
+- [VAR Forecasting](./research/var-forecasting/) — 多变量时间序列 baseline，适合 OHLC / intermarket dependency study。

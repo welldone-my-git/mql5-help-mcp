@@ -46,8 +46,10 @@
 - `knowledge/articles/da-cg-lstm-dynamic-feature-attention.md` — DA-CG-LSTM：动态特征注意力与时序注意力
 - `knowledge/articles/decorator-pattern-indicator-factor-pipeline.md` — Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline
 - `knowledge/articles/deepar-probabilistic-forecasting-python.md` — DeepAR：多序列概率预测在交易研究中的位置
+- `knowledge/articles/arima-forecasting-baseline-python.md` — ARIMA：传统时间序列预测 baseline
 - `knowledge/articles/dsu-dbn-wizard-signal-event-cluster.md` — MQL5 Wizard Part 95：DSU + DBN Signal 的事件聚类信号架构
 - `knowledge/articles/economic-calendar-api-event-feature.md` — Economic Calendar API：从新闻挂单 EA 提炼事件因子模块
+- `knowledge/articles/discord-notification-mql5-webhook.md` — Discord Notification：MQL5 到 Discord 的通知桥
 - `knowledge/articles/type-safe-event-bus-mql5.md` — Type-Safe Event Bus：用事件总线解耦 EA 组件
 - `knowledge/articles/markov-chain-matrix-state-engine.md` — Markov Chain Matrix：从二元频率统计提炼状态引擎骨架
 - `knowledge/articles/meta-labeling-adx-hpo-gate-bet-sizing.md` — Meta-Labeling the Classics Part 2：ADX HPO Gate、Meta Model 与 Bet Sizing
@@ -58,6 +60,8 @@
 - `knowledge/articles/mql5-bootstrap-file-io-pythonic-facade.md` — MQL5 Bootstrap：Pythonic File IO Facade
 - `knowledge/articles/mql5-bootstrap-logging-pythonic-facade.md` — MQL5 Bootstrap：Python-like Logging Facade
 - `knowledge/articles/mql5-bootstrap-requests-webrequest-facade.md` — MQL5 Bootstrap：Python Requests / WebRequest Facade
+- `knowledge/articles/mql5-bootstrap-schedule-pythonic-facade.md` — MQL5 Bootstrap：Python Schedule 风格定时任务模块
+- `knowledge/articles/mql5-bootstrap-sqlite3-facade.md` — MQL5 Bootstrap：SQLite3 Inspired 本地结构化存储
 - `knowledge/articles/mql5-bootstrap-position-order-helpers.md` — MQL5 Bootstrap：Positions / Orders 可复用基础库
 - `knowledge/articles/fluent-order-builder-trade-framework.md` — Fluent Order Builder：从 COrderBuilder 到可维护下单框架
 - `knowledge/articles/mql5-objects-iii-chart-event-gui.md` — From Basic to Intermediate: Objects (III)：MQL5 图表事件与对象交互
@@ -73,6 +77,8 @@
 - `knowledge/articles/kyles-lambda-market-impact-liquidity-factor.md` — Institutional Kyle's Lambda Market Impact Engine：市场冲击与流动性因子
 - `knowledge/articles/iorkumbulushana-author-priority-map.md` — Ushana Kevin Iorkumbul 文章优先级地图
 - `knowledge/articles/local-stop-loss-ea-framework.md` — Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework
+- `knowledge/articles/lgmm-hidden-regime-detection.md` — LGMM：指标数据中的 Hidden Pattern / Regime Detection
+- `knowledge/articles/nbeats-time-series-forecasting-python.md` — N-BEATS：深度时间序列预测模型样例
 - `knowledge/articles/qnn-markov-feature-pipeline-mql5.md` — Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline
 - `knowledge/articles/repository-pattern-testable-ea-analytics.md` — Repository Pattern in MQL5：可测试 EA Analytics 架构
 - `knowledge/articles/regression-causal-inference-confidence-trading.md` — Regression + Causal Inference Trading Pipeline：收益回归与可信度过滤
@@ -81,12 +87,14 @@
 - `knowledge/articles/jrqa-joint-recurrence-library.md` — JRQA：双系统同步 recurrence 的 Regime 特征库
 - `knowledge/articles/rna-recurrence-network-analysis.md` — RNA：从 Recurrence Matrix 到复杂网络特征
 - `knowledge/articles/python-mt5-strategy-tester-series.md` — Python-MetaTrader 5 Strategy Tester 系列：Python 研究与 RL 环境基础
+- `knowledge/articles/prophet-calendar-forecasting-python.md` — Prophet：带趋势/季节性/日历效应的预测 baseline
 - `knowledge/articles/rqa-complete-analysis-library-mql5.md` — RQA Library：Recurrence Quantification Analysis 完整分析组件
 - `knowledge/articles/rolling-sharpe-statistical-significance-bands.md` — Rolling Sharpe：带统计显著性区间的策略诊断组件
 - `knowledge/articles/session-boxes-session-range-feature.md` — Session Boxes：Session Range 可视化到特征工程骨架
 - `knowledge/articles/strategy-state-machine-mql5.md` — Strategy State Machine：用显式状态替代嵌套 if-else
 - `knowledge/articles/tda-takens-embedding-point-cloud-distance.md` — TDA Takens Embedding：时间序列到几何对象的基础库
 - `knowledge/articles/transformer-trading-sequence-model.md` — Transformer Trading：序列模型研究素材，不是直接 Alpha
+- `knowledge/articles/var-multivariate-forecasting-python.md` — VAR：多变量时间序列预测 baseline
 - `knowledge/articles/bootstrap-datetime-sqlite-omega.md` — Omega Python-like Modules：Datetime 与 SQLite 基础设施
 - `knowledge/articles/tickvalue-compare-broker-risk-diagnostics.md` — TickValue Compare：Broker Tick Value 风控诊断工具
 - `knowledge/articles/universal-breakout-study-research-framework.md` — Universal Breakout Study：Session Range 突破策略研究框架

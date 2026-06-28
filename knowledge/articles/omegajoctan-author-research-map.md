@@ -324,6 +324,38 @@ Position / Order Helper Layer
 - MQL5 database API facade；
 - 对 DuckDB 方向不是直接替代，但对本地 SQLite / cache / state 很有参考价值。
 
+已单独收录：
+
+- [MQL5 Bootstrap：SQLite3 Inspired 本地结构化存储](./mql5-bootstrap-sqlite3-facade.md)
+
+### Python Schedule
+
+链接：https://www.mql5.com/en/articles/18913
+
+已收录：
+
+- [MQL5 Bootstrap：Python Schedule 风格定时任务模块](./mql5-bootstrap-schedule-pythonic-facade.md)
+
+价值：
+
+- OnTimer orchestration；
+- 周期任务管理；
+- Calendar / Risk / Storage flush 的基础设施。
+
+### Discord Notification
+
+链接：https://www.mql5.com/en/articles/18550
+
+已收录：
+
+- [Discord Notification：MQL5 到 Discord 的通知桥](./discord-notification-mql5-webhook.md)
+
+价值：
+
+- live notification；
+- risk alert；
+- trade / fill / exception 推送。
+
 ## A 级：其他值得单列的工程主题
 
 ### Custom Symbols / Synthetic Market / Stress Tests
@@ -399,6 +431,9 @@ Omega J. Msigwa
 | 5 | Custom Symbols / Stress Tests | 22391 | 合成市场与压力测试 |
 | 6 | Python Datetime | 19035 | Calendar / Session / Schedule 基础 |
 | 7 | SQLite3 facade | 18640 | 本地结构化存储参考 |
+| 8 | Schedule Module | 18913 | OnTimer / runtime scheduler |
+| 9 | Discord Notification | 18550 | live alert / notification adapter |
+| 10 | N-BEATS / VAR / LGMM / Prophet / ARIMA | 18242 / 18371 / 18497 / 18549 / 18247 | model zoo / baseline |
 
 ## 最终判断
 
