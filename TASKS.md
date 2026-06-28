@@ -35,6 +35,8 @@
 
 ### 已处理文章
 
+- `knowledge/architecture/fsm-context-state-pattern.md` — FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机
+- `knowledge/architecture/platform-design-source-map.md` — Platform Design Source Map：Research → Replay → Paper → Live 资料映射
 - `knowledge/articles/adaptive-kalman-smoother-regime-factor.md` — Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子
 - `knowledge/articles/breakeven-framework-atr-rrr-mql5.md` — BreakEven Framework：ATR / RRR 保本机制的可插拔架构
 - `knowledge/articles/chart-object-detector-geometry-layer.md` — Chart Object Detector：从手动画线到 Geometry Layer

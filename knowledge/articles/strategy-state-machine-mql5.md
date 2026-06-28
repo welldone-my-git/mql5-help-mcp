@@ -72,6 +72,25 @@ SessionClosed
 
 组合成可维护 EA 框架。
 
+## 平台级升级
+
+这篇可以进一步提炼为平台级架构资产：
+
+- [FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机](../architecture/fsm-context-state-pattern.md)
+
+EA 层的 `Idle / Entry / InTrade / Exit` 只是起点。对于 Research → Replay → Paper → Live 框架，更重要的是：
+
+```text
+ApplicationFSM
+BrokerFSM
+OrderFSM
+PositionFSM
+ReplayFSM
+StrategyFSM
+```
+
+状态机负责生命周期，EventBus 负责模块通信，Context 负责运行依赖和共享状态。
+
 ## 反模式
 
 应避免：
