@@ -565,6 +565,63 @@ Statistical Analytics 收藏样例，不是交易策略。
 - `SSharpeResult` 统一返回结果、置信带和有效标志；
 - `ComputeBar()` 无状态计算适配 MT5 完整重算行为。
 
+## News Filter
+
+路径：[NewsFilter](./NewsFilter/)
+
+定位：
+
+```text
+Event Feature / Calendar Risk Filter / Strategy Tester CSV Fallback。
+```
+
+核心学习点：
+
+- MT5 Economic Calendar API 与 CSV fallback 组合；
+- symbol-to-currency mapping；
+- high / medium importance 新闻过滤；
+- pre-event / post-event quiet period；
+- `IsNewsWindow()` / `IsPostNewsWindow()` / `IsHighImpactNewsToday()`；
+- `NewsEventLogger.mq5` 导出新闻数据供回测或离线研究复用。
+
+## State Persistence
+
+路径：[StatePersistence](./StatePersistence/)
+
+定位：
+
+```text
+EA StateManager / Restart Recovery 基础设施。
+```
+
+核心学习点：
+
+- `EAState` struct 集中保存 EA 内部状态；
+- `FileWriteStruct()` / `FileReadStruct()` 二进制读写；
+- `FILE_COMMON` 支持跨终端共享状态文件；
+- state version guard；
+- `OnTradeTransaction()` 中保存关键交易状态变化；
+- 适合抽象为 Paper / Live 的 `StateStore`。
+
+## MTFEngine
+
+路径：[MTFEngine](./MTFEngine/)
+
+定位：
+
+```text
+Multi-Timeframe Feature Engine / No-Repaint Guard。
+```
+
+核心学习点：
+
+- 多周期 indicator handle registry；
+- `ReadBuffer()` 默认 closed-bar shift；
+- `bar_shift=1` 避免 forming-bar repaint；
+- `IsReady()` 统一 handle 可用性检查；
+- `ReleaseAll()` 集中释放 indicator handles；
+- `Index0MTF` / `Index1MTF` 对比展示 current bar 与 closed bar 的差异。
+
 ## TDA Takens Embedding
 
 路径：[TDA_TakensEmbedding](./TDA_TakensEmbedding/)

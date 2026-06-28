@@ -36,7 +36,9 @@
 ### 已处理文章
 
 - `knowledge/architecture/fsm-context-state-pattern.md` — FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机
+- `knowledge/architecture/mtf-feature-engine.md` — MTF Feature Engine：多周期闭合 K 线特征设计
 - `knowledge/architecture/platform-design-source-map.md` — Platform Design Source Map：Research → Replay → Paper → Live 资料映射
+- `knowledge/architecture/state-persistence.md` — State Persistence：平台状态持久化设计
 - `knowledge/articles/adaptive-kalman-smoother-regime-factor.md` — Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子
 - `knowledge/articles/breakeven-framework-atr-rrr-mql5.md` — BreakEven Framework：ATR / RRR 保本机制的可插拔架构
 - `knowledge/articles/chart-object-detector-geometry-layer.md` — Chart Object Detector：从手动画线到 Geometry Layer
@@ -51,6 +53,7 @@
 - `knowledge/articles/arima-forecasting-baseline-python.md` — ARIMA：传统时间序列预测 baseline
 - `knowledge/articles/dsu-dbn-wizard-signal-event-cluster.md` — MQL5 Wizard Part 95：DSU + DBN Signal 的事件聚类信号架构
 - `knowledge/articles/economic-calendar-api-event-feature.md` — Economic Calendar API：从新闻挂单 EA 提炼事件因子模块
+- `knowledge/articles/news-filter-calendar-csv-fallback.md` — News Filtering：Economic Calendar + CSV Fallback
 - `knowledge/articles/discord-notification-mql5-webhook.md` — Discord Notification：MQL5 到 Discord 的通知桥
 - `knowledge/articles/type-safe-event-bus-mql5.md` — Type-Safe Event Bus：用事件总线解耦 EA 组件
 - `knowledge/articles/markov-chain-matrix-state-engine.md` — Markov Chain Matrix：从二元频率统计提炼状态引擎骨架
@@ -80,6 +83,7 @@
 - `knowledge/articles/iorkumbulushana-author-priority-map.md` — Ushana Kevin Iorkumbul 文章优先级地图
 - `knowledge/articles/local-stop-loss-ea-framework.md` — Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework
 - `knowledge/articles/lgmm-hidden-regime-detection.md` — LGMM：指标数据中的 Hidden Pattern / Regime Detection
+- `knowledge/articles/leak-free-mtf-engine-closed-bar.md` — Leak-Free MTF Engine：闭合 K 线多周期特征引擎
 - `knowledge/articles/nbeats-time-series-forecasting-python.md` — N-BEATS：深度时间序列预测模型样例
 - `knowledge/articles/qnn-markov-feature-pipeline-mql5.md` — Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline
 - `knowledge/articles/repository-pattern-testable-ea-analytics.md` — Repository Pattern in MQL5：可测试 EA Analytics 架构
@@ -93,6 +97,7 @@
 - `knowledge/articles/rqa-complete-analysis-library-mql5.md` — RQA Library：Recurrence Quantification Analysis 完整分析组件
 - `knowledge/articles/rolling-sharpe-statistical-significance-bands.md` — Rolling Sharpe：带统计显著性区间的策略诊断组件
 - `knowledge/articles/session-boxes-session-range-feature.md` — Session Boxes：Session Range 可视化到特征工程骨架
+- `knowledge/articles/state-persistence-binary-files-mql5.md` — State Persistence：Binary EA State Manager
 - `knowledge/articles/strategy-state-machine-mql5.md` — Strategy State Machine：用显式状态替代嵌套 if-else
 - `knowledge/articles/tda-takens-embedding-point-cloud-distance.md` — TDA Takens Embedding：时间序列到几何对象的基础库
 - `knowledge/articles/transformer-trading-sequence-model.md` — Transformer Trading：序列模型研究素材，不是直接 Alpha

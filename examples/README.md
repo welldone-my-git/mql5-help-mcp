@@ -22,11 +22,14 @@
 - [Complex Object Geometry](./mql5/ComplexObjectGeometry/) — Chart Geometry Engine 核心样例，重点是复杂分析对象过滤、Fib level 解析、Channel 三点采集和 Pitchfork 结构化。
 - [Geometry Interaction](./mql5/GeometryInteraction/) — Chart Geometry Interaction 样例，重点是 `SInteraction`、Touch/Cross/Breakout 检测、状态去重、AlertManager 和 TradeExecutor 分层。
 - [Economic Calendar API](./mql5/EconomicCalendarAPI/) — MT5 官方经济日历 API 与 `CalendarEngine` 骨架，重点是 `CalendarValueHistory()`、`CalendarEventById()`、High Impact 新闻过滤、QuietPeriod 和事件因子化。
+- [News Filter](./mql5/NewsFilter/) — Economic Calendar + CSV fallback 新闻风控组件，重点是 Strategy Tester 可回放新闻源、QuietPeriod、symbol-currency mapping 和新闻日降风险。
 - [Discord Notification](./mql5/DiscordNotification/) — MQL5 到 Discord 的通知桥，重点是 webhook、JSON payload、trade/risk alert 和 Notification Adapter。
 - [EventBus](./mql5/EventBus/) — Type-safe publish-subscribe EA 事件总线，重点是 `IEventListener`、`SEventPayload`、enum-indexed subscription table 和组件解耦。
 - [OrderBuilder](./mql5/OrderBuilder/) — Fluent `MqlTradeRequest` 构造器，重点是链式接口、字段完整性、方向性 SL/TP、stop-level 和 `OrderCheck()` 前置。
 - [ObjectPool](./mql5/ObjectPool/) — 高频对象池基础设施，重点是 templated pool、free-list、O(1) acquire/release、double-release protection 和 benchmark。
 - [Strategy State Machine](./mql5/StrategyStateMachine/) — 显式 EA 状态机样例，重点是 `IState`、`CStrategyContext`、`OnEnter/Evaluate/OnExit` 和 include 循环依赖拆分。
+- [State Persistence](./mql5/StatePersistence/) — EA 重启恢复基础设施，重点是 binary state struct、版本校验、`FILE_COMMON` 和 `OnTradeTransaction` 状态保存。
+- [MTFEngine](./mql5/MTFEngine/) — 多周期闭合 K 线特征引擎，重点是 indicator handle registry、`bar_shift=1`、No-Repaint Guard 和统一释放。
 - [Carry Cost Engine](./mql5/CarryCostEngine/) — Swap / Carry 风控组件，重点是 swap 换算、预期持仓成本、是否值得持有和 carry-adjusted lot。
 - [Custom Symbols Stress Tests](./mql5/CustomSymbolsStressTests/) — Custom Symbols / Synthetic Markets 样例，重点是 Renko/Range/Volume bars、synthetic ticks、spread stress test 和 custom order routing。
 - [BreakEven Framework](./mql5/BreakEven_Framework/) — ATR / RRR / Simple 保本机制的可插拔 Trade Management 样例，重点是 Base、Manager、Factory、`MqlParam[]` 参数系统和多态策略。

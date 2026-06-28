@@ -27,7 +27,7 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | EventBus | Type-Safe Event Bus | 高 | Python 版可先同步 publish/subscribe |
 | FSM / Context | Strategy State Machine 22950 | 高 | 已提升为平台架构资产 |
 | Strategy Interface | Meta-Labeling RSI/ADX, Transformer, DeepAR | 高 | Strategy 只产出 SignalEvent |
-| RiskEngine | TickValue, CarryCost, CalendarEngine, BreakEven | 中高 | 够 MVP，后续补 portfolio-level risk |
+| RiskEngine | TickValue, CarryCost, CalendarEngine, NewsFilter, BreakEven | 中高 | 够 MVP，后续补 portfolio-level risk |
 | OrderManager | OrderBuilder, Bootstrap TradeHelpers | 高 | 足够生成 OrderEvent |
 | PaperBroker | Python-MT5 Strategy Tester | 中高 | 够 market-order immediate fill |
 | MT5Broker | Python MetaTrader5 API 待补 | 中 | 先 stub |
@@ -35,7 +35,8 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | ReplayEngine | Python Strategy Tester, CSV Data Analysis | 高 | 够 CSV/Parquet bar replay |
 | MT5 Replay Adapter | Strategy Tester export 待补 | 中低 | 后续需要 order/deal/position schema |
 | Storage | CSV Data Analysis, Bootstrap SQLite, File IO | 中高 | DuckDB schema 还要单独定 |
-| Feature Store | Microstructure, RQA/TDA/RNA, Meta Labeling | 高 | 研究侧素材充足 |
+| Feature Store | Microstructure, RQA/TDA/RNA, Meta Labeling, MTFEngine | 高 | 研究侧素材充足，需统一 closed-bar 语义 |
+| State Persistence | State Persistence 22277, Bootstrap SQLite | 中高 | Paper/Live 必需，MVP 可先文件后端 |
 | Notification | Discord Notification | 中高 | 可做 risk/fill alert adapter |
 | Scheduler | Bootstrap Schedule | 高 | 可映射 core/clock.py |
 | API | OpenAlgo 思路待补 | 中 | FastAPI skeleton 足够 |
@@ -49,6 +50,8 @@ knowledge/architecture/
 ├── event-model.md           # 待建
 ├── broker-adapter.md        # 待建
 ├── risk-engine.md           # 待建
+├── state-persistence.md
+├── mtf-feature-engine.md
 ├── storage-schema.md        # 待建
 └── replay-engine.md         # 待建
 ```

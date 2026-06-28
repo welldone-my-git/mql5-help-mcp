@@ -64,10 +64,12 @@ CalendarEngine
 
 与现有仓库关系：
 
+- 已收录精华：[News Filtering：Economic Calendar + CSV Fallback](./news-filter-calendar-csv-fallback.md)
+- 已收录源码：`examples/mql5/NewsFilter/`
 - 已有基础版：[Economic Calendar API](./economic-calendar-api-event-feature.md)
 - 已有示例：`examples/mql5/EconomicCalendarAPI/CalendarEngine.mqh`
 
-后续应升级：
+后续可继续升级：
 
 - 增加 Strategy Tester CSV fallback；
 - 增加 symbol-to-currency mapping；
@@ -88,6 +90,11 @@ Alternative to terminal Global Variables.
 ```
 
 收藏价值：★★★★★
+
+已收录：
+
+- 精华：[State Persistence：Binary EA State Manager](./state-persistence-binary-files-mql5.md)
+- 源码：`examples/mql5/StatePersistence/`
 
 应落地模块：
 
@@ -427,6 +434,11 @@ Kalman Gain 作为 regime / confidence feature。
 链接：https://www.mql5.com/en/articles/22363
 
 收藏价值：★★★★☆
+
+已收录：
+
+- 精华：[Leak-Free MTF Engine：闭合 K 线多周期特征引擎](./leak-free-mtf-engine-closed-bar.md)
+- 源码：`examples/mql5/MTFEngine/`
 
 应落地模块：
 

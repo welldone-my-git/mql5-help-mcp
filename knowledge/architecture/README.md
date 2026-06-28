@@ -17,7 +17,9 @@ quant_platform implementation
 ## 已收录架构资产
 
 - [FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机](./fsm-context-state-pattern.md)
+- [MTF Feature Engine：多周期闭合 K 线特征设计](./mtf-feature-engine.md)
 - [Platform Design Source Map：Research → Replay → Paper → Live 资料映射](./platform-design-source-map.md)
+- [State Persistence：平台状态持久化设计](./state-persistence.md)
 
 ## 后续建议资产
 
