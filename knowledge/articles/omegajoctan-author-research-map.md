@@ -143,6 +143,32 @@ Portfolio / Multi-Asset Research Engine
 
 这是整个系列最接近当前研究平台目标的一篇。
 
+## A 级：Better Programmer 系列
+
+独立条目：
+
+- [Better Programmer 系列：MQL5 工程习惯与可复用开发方法](./Better_Programmer.md)
+
+真实链接：
+
+| Part | 链接 | 定位 |
+|---:|---|---|
+| 01 | https://www.mql5.com/en/articles/9643 | 开发坏习惯与反模式 |
+| 02 | https://www.mql5.com/en/articles/9711 | 开发习惯延续 |
+| 03 | https://www.mql5.com/en/articles/9746 | 开发思维与职业习惯 |
+| 04 | https://www.mql5.com/en/articles/9752 | 提升开发速度 |
+| 05 | https://www.mql5.com/en/articles/9840 | 提升开发速度延续 |
+| 06 | https://www.mql5.com/en/articles/9923 | 可复用 `.mqh`、代码片段库、工程化习惯 |
+| 07 | https://www.mql5.com/en/articles/9995 | freelance developer 经验 |
+
+优先级：
+
+```text
+Part 06 > Part 04-05 > Part 01-03 > Part 07
+```
+
+该系列不提供交易 Alpha，但适合作为 MQL5 Framework 开发规范的补充材料。尤其 Part 06 强调可复用模块和代码资产化，与当前知识库的 `examples/`、`Include`、组件化 EA 方向一致。
+
 ## S 级：Data Science & ML 重点篇
 
 ### Part 48：Transformers

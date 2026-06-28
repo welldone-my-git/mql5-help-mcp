@@ -16,6 +16,7 @@
 - [Bootstrap Requests](./mql5/Bootstrap_Requests/) — MQL5 Bootstrap WebRequest facade，重点是 `CSession`、`CResponse`、HTTP verbs、JSON、multipart、headers/cookies 和 Python API bridge。
 - [Bootstrap SQLite](./mql5/Bootstrap_SQLite/) — Python sqlite3-inspired MQL5 database facade，重点是本地结构化存储、cache 和 state persistence。
 - [Bootstrap Trade Helpers](./mql5/Bootstrap_TradeHelpers/) — MQL5 Bootstrap 基础库样例，重点是 positions/orders 通用筛选、计数、关闭、取消、recent/oldest 查询。
+- [Better Programmer](./mql5/BetterProgrammer/) — Omega Better Programmer Part 06 附件源码，重点是把 Grid 常用 position helper 抽成 `.mqh` 可复用模块。
 - [Chart Object Detector](./mql5/ChartObjectDetector/) — Chart Geometry Layer 基础样例，重点是图表对象扫描、类型识别、属性读取和 `SChartObjectInfo` 标准化结构。
 - [Complex Object Geometry](./mql5/ComplexObjectGeometry/) — Chart Geometry Engine 核心样例，重点是复杂分析对象过滤、Fib level 解析、Channel 三点采集和 Pitchfork 结构化。
 - [Geometry Interaction](./mql5/GeometryInteraction/) — Chart Geometry Interaction 样例，重点是 `SInteraction`、Touch/Cross/Breakout 检测、状态去重、AlertManager 和 TradeExecutor 分层。

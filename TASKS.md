@@ -66,6 +66,7 @@
 - `knowledge/articles/carry-cost-engine-swap-risk-mql5.md` — Carry Cost Engine：把 Swap 纳入持仓收益和仓位决策
 - `knowledge/articles/custom-symbols-synthetic-stress-tests.md` — Custom Symbols / Synthetic Markets：用 MT5 构建研究市场和压力测试
 - `knowledge/articles/biased-financial-markets-imbalanced-ml.md` — Biased Financial Markets：金融 ML 的类别不平衡问题
+- `knowledge/articles/Better_Programmer.md` — Better Programmer 系列：MQL5 工程习惯与可复用开发方法
 - `knowledge/articles/market-structure-graph-ford-fulkerson-liquidity.md` — Graph Theory / Ford-Fulkerson：把 ICT 市场结构转成图网络
 - `knowledge/articles/geometry-interaction-event-layer.md` — Geometry Interaction：从几何对象到事件、特征与执行层
 - `knowledge/articles/inside-bar-hypothesis-research-ea.md` — 002 - Inside Bar：把 Price Action 模式当作假设验证器

@@ -88,6 +88,29 @@ Bootstrap Integration / Python requests-style WebRequest 基础组件。
 - `CResponse` 统一封装 HTTP status、text、json、headers、content、elapsed、ok 和 reason；
 - `CSession` 封装 headers、cookies、basic auth 和请求方法；
 - `request()` 作为统一入口；
+
+## Better Programmer
+
+路径：[BetterProgrammer](./BetterProgrammer/)
+
+定位：
+
+```text
+MQL5 Engineering Practice / Reusable Include 示例。
+```
+
+来源：
+
+- Better Programmer Part 06：https://www.mql5.com/en/articles/9923
+- 附件源码：`gridmodule.mqh`
+
+核心学习点：
+
+- 把多个 Grid EA 都会重复写的 position helper 提取为 `.mqh`；
+- `CGrid::CountPositions(type)` 统计指定方向持仓；
+- `CGrid::LastPositionOpenPrice(type)` 获取指定方向最新持仓开仓价；
+- `InitializeModule(magic)` 用 Magic Number 约束查询范围；
+- 适合学习 include 抽取，不适合直接作为生产级 Grid 模块。
 - `get/post/put/patch/delete_` 提供 Python-like helper；
 - `URLEncode()` 与 `BuildUrlWithParams()` 避免手工拼 URL；
 - 支持 JSON body 和 multipart file upload；
