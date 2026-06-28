@@ -75,6 +75,10 @@
 - `knowledge/articles/qnn-markov-feature-pipeline-mql5.md` — Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline
 - `knowledge/articles/repository-pattern-testable-ea-analytics.md` — Repository Pattern in MQL5：可测试 EA Analytics 架构
 - `knowledge/articles/regression-causal-inference-confidence-trading.md` — Regression + Causal Inference Trading Pipeline：收益回归与可信度过滤
+- `knowledge/articles/recurrence-analysis-library-series.md` — Recurrence Analysis 系列：RQA / CRQA / JRQA / RNA 非线性动力系统特征库
+- `knowledge/articles/crqa-cross-recurrence-library.md` — CRQA：两个时间序列之间的 Cross Recurrence 特征库
+- `knowledge/articles/jrqa-joint-recurrence-library.md` — JRQA：双系统同步 recurrence 的 Regime 特征库
+- `knowledge/articles/rna-recurrence-network-analysis.md` — RNA：从 Recurrence Matrix 到复杂网络特征
 - `knowledge/articles/python-mt5-strategy-tester-series.md` — Python-MetaTrader 5 Strategy Tester 系列：Python 研究与 RL 环境基础
 - `knowledge/articles/rqa-complete-analysis-library-mql5.md` — RQA Library：Recurrence Quantification Analysis 完整分析组件
 - `knowledge/articles/rolling-sharpe-statistical-significance-bands.md` — Rolling Sharpe：带统计显著性区间的策略诊断组件

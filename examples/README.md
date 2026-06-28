@@ -30,6 +30,9 @@
 - [Local Stop Loss EA](./mql5/Local_Stop_Loss/) — 本地止损 EA 架构样例，重点是 HashMap 仓位缓存、Position 状态机、Chart Object 生命周期和 Cleanup 管理。
 - [MSNR Clean Edition](./mql5/MSNR_CleanEdition/) — 从 `MSNR_v531Plus_AEU1.mq5` 抽取的收藏版框架模板，包含 Signal Layer、Confluence Engine、Risk Guard、Trade Executor、CSV Logger 和 Dashboard 骨架。
 - [RQA Library](./mql5/RQA_Library/) — Recurrence Quantification Analysis 完整库，重点是 recurrence matrix、RQA metrics、epsilon selection、rolling window 和 facade API。
+- [CRQA Library](./mql5/CRQA_Library/) — Cross Recurrence Quantification Analysis 双序列特征库，重点是 cross recurrence matrix、CRR/CDET/CLAM/CENTR 和 rolling CRQA。
+- [JRQA Library](./mql5/JRQA_Library/) — Joint Recurrence Quantification Analysis 同步 recurrence 特征库，重点是 joint matrix、dual epsilon、JRR/JDET/JLAM/JENTR 和 OpenCL fallback。
+- [RNA Library](./mql5/RNA_Library/) — Recurrence Network Analysis 复杂网络特征库，重点是 adjacency graph、clustering、path length、betweenness、density 和 rolling RNA/JRNA。
 - [Rolling Sharpe](./mql5/RollingSharpe/) — 统计分析组件样例，重点是 `CReturnBuffer`、O(1) rolling stats、Lo 标准误和 Sharpe 置信带。
 - [Session Boxes](./mql5/SessionBoxes/) — Session Range 可视化指标，重点是 Asia/London/NY high-low box、GMT offset、跨午夜 session 判断和 session feature seed。
 - [TDA Takens Embedding](./mql5/TDA_TakensEmbedding/) — TDA 基础库样例，重点是 Takens embedding、Point Cloud、flattened arrays 和 pairwise distance matrix。

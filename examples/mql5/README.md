@@ -432,6 +432,63 @@ Nonlinear Dynamics / Recurrence Feature Engine 收藏样例。
 - `CRQA` facade 提供统一入口；
 - `SRQAResult` 统一承载完整 RQA 指标。
 
+## CRQA Library
+
+路径：[CRQA_Library](./CRQA_Library/)
+
+定位：
+
+```text
+Nonlinear Dynamics / Cross Recurrence Feature Engine。
+```
+
+核心学习点：
+
+- dual-series embedding；
+- cross recurrence matrix；
+- CRR / CDET / CLAM / CENTR；
+- rolling CRQA；
+- pair trading / intermarket / lead-lag research 特征。
+
+## JRQA Library
+
+路径：[JRQA_Library](./JRQA_Library/)
+
+定位：
+
+```text
+Nonlinear Dynamics / Joint Recurrence Feature Engine。
+```
+
+核心学习点：
+
+- joint recurrence matrix；
+- dual epsilon configuration；
+- JRR / JDET / JLAM / JENTR / JTREND；
+- OpenCL acceleration + CPU fallback；
+- regime synchronization / market resonance。
+
+## RNA Library
+
+路径：[RNA_Library](./RNA_Library/)
+
+定位：
+
+```text
+Nonlinear Dynamics / Recurrence Network Feature Engine。
+```
+
+核心学习点：
+
+- recurrence matrix → adjacency matrix；
+- clustering coefficient；
+- average path length；
+- betweenness；
+- assortativity；
+- density；
+- rolling RNA / joint RNA；
+- complex network regime features。
+
 ## Rolling Sharpe
 
 路径：[RollingSharpe](./RollingSharpe/)
