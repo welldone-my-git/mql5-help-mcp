@@ -56,6 +56,8 @@
 - [Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework](./local-stop-loss-ea-framework.md)
 - [LGMM：指标数据中的 Hidden Pattern / Regime Detection](./lgmm-hidden-regime-detection.md)
 - [Leak-Free MTF Engine：闭合 K 线多周期特征引擎](./leak-free-mtf-engine-closed-bar.md)
+- [Linear Regression Prediction Channels：统计化回归通道](./linear-regression-prediction-channels.md)
+- [Live CSV Streaming：实时交易会话遥测管线](./live-csv-streaming-telemetry-pipeline.md)
 - [N-BEATS：深度时间序列预测模型样例](./nbeats-time-series-forecasting-python.md)
 - [Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline](./qnn-markov-feature-pipeline-mql5.md)
 - [Repository Pattern in MQL5：可测试 EA Analytics 架构](./repository-pattern-testable-ea-analytics.md)

@@ -37,6 +37,8 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | Storage | CSV Data Analysis, Bootstrap SQLite, File IO | 中高 | DuckDB schema 还要单独定 |
 | Feature Store | Microstructure, RQA/TDA/RNA, Meta Labeling, MTFEngine | 高 | 研究侧素材充足，需统一 closed-bar 语义 |
 | State Persistence | State Persistence 22277, Bootstrap SQLite | 中高 | Paper/Live 必需，MVP 可先文件后端 |
+| Live Telemetry | CSV Data Analysis Part 5 | 中高 | CSV 只做 fallback，长期升级 DuckDB / socket sink |
+| Statistical Diagnostics | Rolling Sharpe, Regression Channels | 高 | 可用于策略稳定性和区间覆盖率评估 |
 | Notification | Discord Notification | 中高 | 可做 risk/fill alert adapter |
 | Scheduler | Bootstrap Schedule | 高 | 可映射 core/clock.py |
 | API | OpenAlgo 思路待补 | 中 | FastAPI skeleton 足够 |
@@ -52,6 +54,7 @@ knowledge/architecture/
 ├── risk-engine.md           # 待建
 ├── state-persistence.md
 ├── mtf-feature-engine.md
+├── live-telemetry-pipeline.md
 ├── storage-schema.md        # 待建
 └── replay-engine.md         # 待建
 ```

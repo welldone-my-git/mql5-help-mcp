@@ -268,6 +268,25 @@ EA Framework / Typed Publish-Subscribe Event Bus。
 - `CEventBus::Subscribe()` / `Unsubscribe()` / `Publish()`；
 - signal、order、drawdown monitor 通过事件通信，避免 global variable 和交叉引用。
 
+## Decorator Pattern
+
+路径：[DecoratorPattern](./DecoratorPattern/)
+
+定位：
+
+```text
+Design Pattern / Indicator Wrapper / Feature Pipeline。
+```
+
+核心学习点：
+
+- `IIndicator` 统一 `GetValue()` / `GetName()` contract；
+- `CRSIIndicator` / `CMovingAverageIndicator` 只负责指标值和 handle 生命周期；
+- `CBaseDecorator` 持有 wrapped indicator，并负责级联释放；
+- `CLoggingDecorator` / `CTimingDecorator` / `CThresholdFilterDecorator` 分离横切能力；
+- EA 只持有最外层 decorator pointer；
+- 适合迁移为 Feature Pipeline 的 cache / normalize / timing / logging wrappers。
+
 ## Discord Notification
 
 路径：[DiscordNotification](./DiscordNotification/)
@@ -564,6 +583,44 @@ Statistical Analytics 收藏样例，不是交易策略。
 - `CSharpeCalculator.mqh` 负责 Sharpe 与标准误计算；
 - `SSharpeResult` 统一返回结果、置信带和有效标志；
 - `ComputeBar()` 无状态计算适配 MT5 完整重算行为。
+
+## Regression Channels
+
+路径：[RegressionChannels](./RegressionChannels/)
+
+定位：
+
+```text
+Statistical Channels / Regression Diagnostics / Prediction Interval Engine。
+```
+
+核心学习点：
+
+- `COLSStatistics` 计算 slope、intercept、SSE；
+- `CResidualAnalysis` 使用 `n-2` 自由度估计 residual variance；
+- `CTDistribution` 提供 Student's t critical value；
+- `CConfidenceInterval` / `CPredictionInterval` 明确区分均值置信带与单点预测带；
+- `EVAL_CURRENT_EDGE` 与 `EVAL_NEXT_BAR` 区分窗口边缘描述和下一根预测；
+- 五条 `DRAW_LINE` 避免复杂 fill rendering 问题。
+
+## Live CSV Streaming
+
+路径：[LiveCSVStreaming](./LiveCSVStreaming/)
+
+定位：
+
+```text
+Live Telemetry / Streaming Export / Python Monitoring Bridge。
+```
+
+核心学习点：
+
+- `CStreamBuffer` 使用 buffer + flush threshold 降低写盘频率；
+- daily rotation 防止单个 live stream 文件无限增长；
+- `SLiveBarRecord` / `SLiveTickRecord` 分离 bar 与 tick telemetry；
+- `live_stream_daemon.py` 使用 file-tail offset 增量读取；
+- Python daemon 维护 rolling equity、slope、spread、whipsaw 等监控窗口；
+- 适合升级成 DuckDB / Parquet / Socket sink。
 
 ## News Filter
 

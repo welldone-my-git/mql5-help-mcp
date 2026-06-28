@@ -24,6 +24,7 @@
 - [Economic Calendar API](./mql5/EconomicCalendarAPI/) — MT5 官方经济日历 API 与 `CalendarEngine` 骨架，重点是 `CalendarValueHistory()`、`CalendarEventById()`、High Impact 新闻过滤、QuietPeriod 和事件因子化。
 - [News Filter](./mql5/NewsFilter/) — Economic Calendar + CSV fallback 新闻风控组件，重点是 Strategy Tester 可回放新闻源、QuietPeriod、symbol-currency mapping 和新闻日降风险。
 - [Discord Notification](./mql5/DiscordNotification/) — MQL5 到 Discord 的通知桥，重点是 webhook、JSON payload、trade/risk alert 和 Notification Adapter。
+- [Decorator Pattern](./mql5/DecoratorPattern/) — MQL5 指标装饰器链源码，重点是 `IIndicator`、BaseDecorator、Logging/Timing/Threshold wrappers 和确定性级联释放。
 - [EventBus](./mql5/EventBus/) — Type-safe publish-subscribe EA 事件总线，重点是 `IEventListener`、`SEventPayload`、enum-indexed subscription table 和组件解耦。
 - [OrderBuilder](./mql5/OrderBuilder/) — Fluent `MqlTradeRequest` 构造器，重点是链式接口、字段完整性、方向性 SL/TP、stop-level 和 `OrderCheck()` 前置。
 - [ObjectPool](./mql5/ObjectPool/) — 高频对象池基础设施，重点是 templated pool、free-list、O(1) acquire/release、double-release protection 和 benchmark。
@@ -40,6 +41,8 @@
 - [JRQA Library](./mql5/JRQA_Library/) — Joint Recurrence Quantification Analysis 同步 recurrence 特征库，重点是 joint matrix、dual epsilon、JRR/JDET/JLAM/JENTR 和 OpenCL fallback。
 - [RNA Library](./mql5/RNA_Library/) — Recurrence Network Analysis 复杂网络特征库，重点是 adjacency graph、clustering、path length、betweenness、density 和 rolling RNA/JRNA。
 - [Rolling Sharpe](./mql5/RollingSharpe/) — 统计分析组件样例，重点是 `CReturnBuffer`、O(1) rolling stats、Lo 标准误和 Sharpe 置信带。
+- [Regression Channels](./mql5/RegressionChannels/) — OLS 回归通道统计组件，重点是 Student's t、confidence interval、prediction interval 和 leverage-aware band。
+- [Live CSV Streaming](./mql5/LiveCSVStreaming/) — MT5 live telemetry 到 Python daemon 的实时流样例，重点是 buffered writer、daily rotation、file tail 和 dashboard。
 - [Session Boxes](./mql5/SessionBoxes/) — Session Range 可视化指标，重点是 Asia/London/NY high-low box、GMT offset、跨午夜 session 判断和 session feature seed。
 - [TDA Takens Embedding](./mql5/TDA_TakensEmbedding/) — TDA 基础库样例，重点是 Takens embedding、Point Cloud、flattened arrays 和 pairwise distance matrix。
 - [TickValue Compare](./mql5/TickValueCompare/) — Broker 风控诊断工具，重点是三种 Tick Value 对比、Market Watch 扫描和 CSV 导出。

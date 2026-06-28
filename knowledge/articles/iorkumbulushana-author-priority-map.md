@@ -392,6 +392,7 @@ CarryCostEngine
 已收录：
 
 - [Decorator Pattern in MQL5：从指标包装到因子处理 Pipeline](./decorator-pattern-indicator-factor-pipeline.md)
+- 源码：`examples/mql5/DecoratorPattern/`
 
 价值：
 
@@ -465,6 +466,11 @@ MTFEngine
 
 收藏价值：★★★★☆
 
+已收录：
+
+- 精华：[Linear Regression Prediction Channels：统计化回归通道](./linear-regression-prediction-channels.md)
+- 源码：`examples/mql5/RegressionChannels/`
+
 价值：
 
 - rolling OLS；
@@ -478,6 +484,27 @@ MTFEngine
 ```text
 Statistical Channels / Regression Diagnostics
 ```
+
+### CSV Data Analysis Part 5：Live CSV Streaming
+
+链接：https://www.mql5.com/en/articles/23065
+
+收藏价值：★★★★★
+
+已收录：
+
+- 精华：[Live CSV Streaming：实时交易会话遥测管线](./live-csv-streaming-telemetry-pipeline.md)
+- 源码：`examples/mql5/LiveCSVStreaming/`
+- 架构资产：[Live Telemetry Pipeline](../architecture/live-telemetry-pipeline.md)
+
+价值：
+
+- live telemetry；
+- buffered writer；
+- daily rotation；
+- file-tail daemon；
+- rolling dashboard；
+- 后续可升级为 DuckDB / Parquet / Socket sink。
 
 ## 推荐落地顺序
 
@@ -493,7 +520,8 @@ Statistical Channels / Regression Diagnostics
 | 6 | MTFEngine | Leak-Free MTF Engine |
 | 7 | ObjectPool | Generic Object Pool |
 | 8 | CarryCostEngine | Carry Trade Logic |
-| 9 | RegressionChannelEngine | Linear Regression Prediction Channels |
+| 9 | LiveTelemetryPipeline | CSV Data Analysis Part 5 |
+| 10 | RegressionChannelEngine | Linear Regression Prediction Channels |
 
 ## 建议框架归档
 
@@ -508,6 +536,7 @@ examples/mql5/
 ├── MTFEngine/
 ├── ObjectPool/
 ├── CarryCostEngine/
+├── LiveCSVStreaming/
 └── RegressionChannels/
 ```
 

@@ -36,6 +36,7 @@
 ### 已处理文章
 
 - `knowledge/architecture/fsm-context-state-pattern.md` — FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机
+- `knowledge/architecture/live-telemetry-pipeline.md` — Live Telemetry Pipeline：Replay / Paper / Live 统一遥测
 - `knowledge/architecture/mtf-feature-engine.md` — MTF Feature Engine：多周期闭合 K 线特征设计
 - `knowledge/architecture/platform-design-source-map.md` — Platform Design Source Map：Research → Replay → Paper → Live 资料映射
 - `knowledge/architecture/state-persistence.md` — State Persistence：平台状态持久化设计
@@ -84,6 +85,8 @@
 - `knowledge/articles/local-stop-loss-ea-framework.md` — Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework
 - `knowledge/articles/lgmm-hidden-regime-detection.md` — LGMM：指标数据中的 Hidden Pattern / Regime Detection
 - `knowledge/articles/leak-free-mtf-engine-closed-bar.md` — Leak-Free MTF Engine：闭合 K 线多周期特征引擎
+- `knowledge/articles/linear-regression-prediction-channels.md` — Linear Regression Prediction Channels：统计化回归通道
+- `knowledge/articles/live-csv-streaming-telemetry-pipeline.md` — Live CSV Streaming：实时交易会话遥测管线
 - `knowledge/articles/nbeats-time-series-forecasting-python.md` — N-BEATS：深度时间序列预测模型样例
 - `knowledge/articles/qnn-markov-feature-pipeline-mql5.md` — Quantum Neural Network in MQL5 Part II：Markov 状态建模与 Feature Pipeline
 - `knowledge/articles/repository-pattern-testable-ea-analytics.md` — Repository Pattern in MQL5：可测试 EA Analytics 架构

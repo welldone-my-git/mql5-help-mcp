@@ -8,6 +8,7 @@
 - 发布日期：2026-06-19
 - 分类：MetaTrader 5 / Trading systems
 - 处理日期：2026-06-23
+- 源码目录：[examples/mql5/DecoratorPattern](../../examples/mql5/DecoratorPattern/)
 
 ## 用户评审结论
 
