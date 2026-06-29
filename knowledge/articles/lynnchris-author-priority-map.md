@@ -112,6 +112,31 @@ EA
 
 ## A 级：值得收
 
+### Price Action Part 63 / 65 / 66
+
+已收录：
+
+- Part 63 Wedge：[WedgePatternDetector](../../examples/mql5/WedgePatternDetector/)
+- Part 65 Fibonacci Monitor：[FibonacciMonitor](../../examples/mql5/FibonacciMonitor/)
+- Part 66 Head & Shoulders：[HeadShouldersScanner](../../examples/mql5/HeadShouldersScanner/)
+
+已收录精华：
+
+- [Advanced Pattern Geometry：Wedge / Fibonacci / Head & Shoulders](./advanced-pattern-geometry-lynnchris.md)
+- [Pattern Event Engine](../architecture/pattern-event-engine.md)
+
+价值：
+
+```text
+Pivot / Manual Object
+  ↓
+Pattern Entity
+  ↓
+Quality Score / State
+  ↓
+PatternEvent / Feature
+```
+
 ### Price Action Part 61 / 62 / 64
 
 已收录：
@@ -189,6 +214,7 @@ Market State / Structure Score / Regime Feature
 2. Range Contraction / Market State
 3. TrendMap Python 通讯系列（按需）
 4. Chart Projector / UI 工具（按需）
+5. BOS / ChoCH、Liquidity Sweep 等 SMC 结构（按需）
 ```
 
 ## 最终判断

@@ -290,6 +290,24 @@ Horizontal Line → Support / Resistance Event Monitor。
 - 用 prefix 管理按钮、label、arrow；
 - 适合扩展为 liquidity level / manual level feature。
 
+## Fibonacci Monitor
+
+路径：[FibonacciMonitor](./FibonacciMonitor/)
+
+定位：
+
+```text
+Manual OBJ_FIBO → Level Entities → Event Monitor。
+```
+
+核心学习点：
+
+- 读取 `OBJ_FIBO` anchors；
+- 读取 Fibonacci level ratio 和 level text；
+- 将 ratio 映射为实际价格；
+- 为每个 level 创建可监控水平线；
+- 可迁移为 `FibonacciAdapter` / `LevelMonitor`。
+
 ## Parallel Channel Geometry
 
 路径：[ParallelChannelGeometry](./ParallelChannelGeometry/)
@@ -325,6 +343,42 @@ Pattern Detector / Geometry Visualizer。
 - retracement / duration 约束；
 - breakout / invalidation lifecycle；
 - 可抽象为 `PatternDetector` / `PatternEvent`。
+
+## Wedge Pattern Detector
+
+路径：[WedgePatternDetector](./WedgePatternDetector/)
+
+定位：
+
+```text
+Pivot Stream → Wedge Entity → Breakout / Failure State。
+```
+
+核心学习点：
+
+- `Pivot` / `Wedge` OOP 实体；
+- `CArrayObj` 管理对象生命周期；
+- overlap control；
+- breakout / failure 状态更新；
+- 可迁移为 `PatternEventEngine`。
+
+## Head & Shoulders Scanner
+
+路径：[HeadShouldersScanner](./HeadShouldersScanner/)
+
+定位：
+
+```text
+Swing Points → Pattern Candidate → Quality Score。
+```
+
+核心学习点：
+
+- `SwingPoint` 与 `Pattern` 数据结构；
+- neckline geometry；
+- shoulder symmetry / time symmetry / ATR height scoring；
+- pattern overlap 过滤；
+- 适合生成 Meta Label context features。
 
 ## Flag Signal Buffer EA
 

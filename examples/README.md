@@ -26,9 +26,11 @@
 - [Discord Notification](./mql5/DiscordNotification/) — MQL5 到 Discord 的通知桥，重点是 webhook、JSON payload、trade/risk alert 和 Notification Adapter。
 - [Decorator Pattern](./mql5/DecoratorPattern/) — MQL5 指标装饰器链源码，重点是 `IIndicator`、BaseDecorator、Logging/Timing/Threshold wrappers 和确定性级联释放。
 - [EventBus](./mql5/EventBus/) — Type-safe publish-subscribe EA 事件总线，重点是 `IEventListener`、`SEventPayload`、enum-indexed subscription table 和组件解耦。
+- [Fibonacci Monitor](./mql5/FibonacciMonitor/) — LynnChris Part 65 手动 Fibonacci 监控样例，重点是 `OBJ_FIBO` level 解析、实际价格映射和 level event seed。
 - [Flag Pattern Detector](./mql5/FlagPatternDetector/) — LynnChris Part 69 形态检测器，重点是 ActiveFlag lifecycle、ATR 过滤、breakout / invalidation 和 PatternEvent 抽象。
 - [Flag Signal Buffer EA](./mql5/FlagSignalBufferEA/) — LynnChris Part 70 指标信号到 EA 执行样例，重点是 indicator buffers、`iCustom()` / `CopyBuffer()`、闭合 K 线消费和 SignalEvent 契约。
 - [Manual Trendline Sync](./mql5/ManualTrendlineSync/) — LynnChris Part 64 手动画线监控样例，重点是 `OnChartEvent()`、趋势线 registry、touch/breakout/retest 事件。
+- [Head & Shoulders Scanner](./mql5/HeadShouldersScanner/) — LynnChris Part 66 结构化头肩形态样例，重点是 SwingPoint、Pattern score、neckline geometry 和 quality metrics。
 - [OrderBuilder](./mql5/OrderBuilder/) — Fluent `MqlTradeRequest` 构造器，重点是链式接口、字段完整性、方向性 SL/TP、stop-level 和 `OrderCheck()` 前置。
 - [ObjectPool](./mql5/ObjectPool/) — 高频对象池基础设施，重点是 templated pool、free-list、O(1) acquire/release、double-release protection 和 benchmark。
 - [Parallel Channel Geometry](./mql5/ParallelChannelGeometry/) — LynnChris Part 62 自动通道检测样例，重点是 SwingPoint、Channel entity、touch count、score、breakout 和 retest。
@@ -55,6 +57,7 @@
 - [TickValue Compare](./mql5/TickValueCompare/) — Broker 风控诊断工具，重点是三种 Tick Value 对比、Market Watch 扫描和 CSV 导出。
 - [Weekend Gap Indicator](./mql5/WeekendGapIndicator/) — Chart Object Framework 样例，重点是 Entity、状态机、Visual Layer、对象生命周期和 Prefix 命名规范。
 - [Weekend Gap Signal Pipeline](./mql5/WeekendGapSignalPipeline/) — LynnChris Weekend Gap Part 72–74 完整链路，重点是 gap detection、signal buffers、TP/SL buffer schema 和 EA 执行 adapter。
+- [Wedge Pattern Detector](./mql5/WedgePatternDetector/) — LynnChris Part 63 楔形检测样例，重点是 Pivot/Wedge OOP lifecycle、overlap control、breakout/failure state。
 - [ZScore Source Essence](./mql5/ZScore_Source_Essence/) — Z-Score Signal Engine 样例，重点是 Engine 与 EA/Indicator 解耦、OncePerBar、生命周期管理和统一 `Value()` 接口。
 
 ## Research

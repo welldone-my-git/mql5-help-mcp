@@ -12,6 +12,7 @@
 ## 已收录
 
 - [Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子](./adaptive-kalman-smoother-regime-factor.md)
+- [Advanced Pattern Geometry：Wedge / Fibonacci / Head & Shoulders](./advanced-pattern-geometry-lynnchris.md)
 - [BreakEven Framework：ATR / RRR 保本机制的可插拔架构](./breakeven-framework-atr-rrr-mql5.md)
 - [Chart Object Detector：从手动画线到 Geometry Layer](./chart-object-detector-geometry-layer.md)
 - [Complex Object Geometry：Fibonacci、Channel、Pitchfork 的几何抽象层](./complex-object-geometry-engine.md)

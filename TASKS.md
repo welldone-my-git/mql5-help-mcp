@@ -41,6 +41,7 @@
 - `knowledge/architecture/model-production-pipeline.md` — Model Production Pipeline：Python Research 到 MQL5 ONNX Runtime
 - `knowledge/architecture/mtf-feature-engine.md` — MTF Feature Engine：多周期闭合 K 线特征设计
 - `knowledge/architecture/object-pool.md` — Object Pool：热路径对象生命周期管理
+- `knowledge/architecture/pattern-event-engine.md` — Pattern Event Engine：形态实体到结构化事件
 - `knowledge/architecture/platform-design-source-map.md` — Platform Design Source Map：Research → Replay → Paper → Live 资料映射
 - `knowledge/architecture/repository-pattern.md` — Repository Pattern：交易数据访问抽象
 - `knowledge/architecture/signal-buffer-contract.md` — Signal Buffer Contract：Indicator Buffer 到 SignalEvent 的执行接口
@@ -48,6 +49,7 @@
 - `knowledge/architecture/state-persistence.md` — State Persistence：平台状态持久化设计
 - `knowledge/architecture/trade-governance.md` — Trade Governance：交易纪律与执行前治理层
 - `knowledge/articles/adaptive-kalman-smoother-regime-factor.md` — Adaptive Kalman Smoother：把 Kalman Gain 当作市场状态因子
+- `knowledge/articles/advanced-pattern-geometry-lynnchris.md` — Advanced Pattern Geometry：Wedge / Fibonacci / Head & Shoulders
 - `knowledge/articles/breakeven-framework-atr-rrr-mql5.md` — BreakEven Framework：ATR / RRR 保本机制的可插拔架构
 - `knowledge/articles/chart-object-detector-geometry-layer.md` — Chart Object Detector：从手动画线到 Geometry Layer
 - `knowledge/articles/complex-object-geometry-engine.md` — Complex Object Geometry：Fibonacci、Channel、Pitchfork 的几何抽象层
