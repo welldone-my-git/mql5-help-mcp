@@ -308,6 +308,79 @@ Manual OBJ_FIBO → Level Entities → Event Monitor。
 - 为每个 level 创建可监控水平线；
 - 可迁移为 `FibonacciAdapter` / `LevelMonitor`。
 
+## Fractal Reaction BOS
+
+路径：[FractalReactionBOS](./FractalReactionBOS/)
+
+定位：
+
+```text
+Fractal Pivots → BOS / ChoCH Structure Event。
+```
+
+核心学习点：
+
+- closed-bar 结构扫描；
+- fractal high / low history；
+- `os_state` 结构方向状态；
+- BOS / ChoCH 分类；
+- 可迁移为 `StructureEvent`。
+
+## Liquidity Sweep
+
+路径：[LiquiditySweep](./LiquiditySweep/)
+
+定位：
+
+```text
+Prior High / Low Sweep → LiquiditySweepEvent。
+```
+
+核心学习点：
+
+- bull / bear sweep 规则；
+- LessStrict / Strict 模式；
+- MA context filter；
+- closed-bar signal；
+- 可扩展到 session high/low、PDH/PDL、swing levels。
+
+## Opening Range Breakout
+
+路径：[OpeningRangeBreakout](./OpeningRangeBreakout/)
+
+定位：
+
+```text
+Session Open → Range Capture → Breakout / Retest。
+```
+
+核心学习点：
+
+- `CRangeCapture` 封装 opening range；
+- `CATRModule` 封装 ATR handle；
+- `CRetestSignal` 管理 retest；
+- session range high/low/size 可作为 feature；
+- 适合接入 SessionClock。
+
+## Tick VWAP / Imbalance
+
+路径：[TickVWAPImbalance](./TickVWAPImbalance/)
+
+定位：
+
+```text
+Tick Buffer → Microstructure Feature。
+```
+
+核心学习点：
+
+- `MqlTick` buffer；
+- VWAP over time window；
+- flow / imbalance；
+- spread_to_atr；
+- hysteresis alert；
+- 适合迁移为 `MicrostructureFeatureEngine`。
+
 ## Parallel Channel Geometry
 
 路径：[ParallelChannelGeometry](./ParallelChannelGeometry/)

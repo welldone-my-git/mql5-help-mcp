@@ -112,6 +112,31 @@ EA
 
 ## A 级：值得收
 
+### Market Structure / Microstructure
+
+已收录：
+
+- Part 27 Liquidity Sweep：[LiquiditySweep](../../examples/mql5/LiquiditySweep/)
+- Part 28 Opening Range Breakout：[OpeningRangeBreakout](../../examples/mql5/OpeningRangeBreakout/)
+- Part 38 Tick Buffer VWAP / Imbalance：[TickVWAPImbalance](../../examples/mql5/TickVWAPImbalance/)
+- Part 39 BOS / ChoCH：[FractalReactionBOS](../../examples/mql5/FractalReactionBOS/)
+
+已收录精华：
+
+- [Market Structure Event Engine：BOS / ChoCH / Liquidity Sweep / ORB](./market-structure-event-engine-lynnchris.md)
+- [Tick VWAP / Imbalance：Tick Buffer 微观结构特征](./tick-vwap-imbalance-microstructure.md)
+- [Market Structure Event Engine](../architecture/market-structure-event-engine.md)
+- [Microstructure Feature Engine](../architecture/microstructure-feature-engine.md)
+
+价值：
+
+```text
+Structure Event
+Microstructure Feature
+Session Range Feature
+Execution Filter
+```
+
 ### Price Action Part 63 / 65 / 66
 
 已收录：

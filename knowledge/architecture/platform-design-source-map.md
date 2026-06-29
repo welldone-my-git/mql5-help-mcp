@@ -28,6 +28,8 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | FSM / Context | Strategy State Machine 22950 | 高 | 已提升为平台架构资产 |
 | Geometry Event | LynnChris Manual Trendline / Support Resistance / Geometry Interaction | 高 | 手动画线和水平位可转 GeometryEvent / Feature |
 | Pattern Event | LynnChris Wedge / Flag / H&S / Channel | 高 | 形态不直接交易，先转 PatternEvent 和 context features |
+| Market Structure Event | LynnChris BOS/ChoCH, Liquidity Sweep, ORB | 高 | 结构事件进入 Regime / Meta Label / Signal |
+| Microstructure Feature | LynnChris Tick VWAP/Imbalance, AFML microstructure | 高 | TickEvent 到 spread/flow/VWAP 特征与执行过滤 |
 | Repository | Repository Pattern 22958 | 高 | 统一 MT5/Paper/Replay/DuckDB 数据访问 |
 | Strategy Interface | Meta-Labeling RSI/ADX, Transformer, DeepAR | 高 | Strategy 只产出 SignalEvent |
 | Model Production | Python + MT5 ONNX Integration 22020 | 高 | Python 训练、ONNX 交付、MQL5 runtime 推理的官方闭环 |

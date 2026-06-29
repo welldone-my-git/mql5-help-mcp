@@ -38,6 +38,8 @@
 - `knowledge/architecture/fsm-context-state-pattern.md` — FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机
 - `knowledge/architecture/chart-object-event-monitor.md` — Chart Object Event Monitor：手动画线到 GeometryEvent
 - `knowledge/architecture/live-telemetry-pipeline.md` — Live Telemetry Pipeline：Replay / Paper / Live 统一遥测
+- `knowledge/architecture/market-structure-event-engine.md` — Market Structure Event Engine：BOS / ChoCH / Sweep / ORB
+- `knowledge/architecture/microstructure-feature-engine.md` — Microstructure Feature Engine：TickEvent 到短窗口执行特征
 - `knowledge/architecture/model-production-pipeline.md` — Model Production Pipeline：Python Research 到 MQL5 ONNX Runtime
 - `knowledge/architecture/mtf-feature-engine.md` — MTF Feature Engine：多周期闭合 K 线特征设计
 - `knowledge/architecture/object-pool.md` — Object Pool：热路径对象生命周期管理
@@ -97,6 +99,7 @@
 - `knowledge/articles/local-stop-loss-ea-framework.md` — Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework
 - `knowledge/articles/lgmm-hidden-regime-detection.md` — LGMM：指标数据中的 Hidden Pattern / Regime Detection
 - `knowledge/articles/lynnchris-author-priority-map.md` — Christian Benjamin（LynnChris）文章优先级地图
+- `knowledge/articles/market-structure-event-engine-lynnchris.md` — Market Structure Event Engine：BOS / ChoCH / Liquidity Sweep / ORB
 - `knowledge/articles/leak-free-mtf-engine-closed-bar.md` — Leak-Free MTF Engine：闭合 K 线多周期特征引擎
 - `knowledge/articles/linear-regression-prediction-channels.md` — Linear Regression Prediction Channels：统计化回归通道
 - `knowledge/articles/live-csv-streaming-telemetry-pipeline.md` — Live CSV Streaming：实时交易会话遥测管线
@@ -122,6 +125,7 @@
 - `knowledge/articles/var-multivariate-forecasting-python.md` — VAR：多变量时间序列预测 baseline
 - `knowledge/articles/bootstrap-datetime-sqlite-omega.md` — Omega Python-like Modules：Datetime 与 SQLite 基础设施
 - `knowledge/articles/tickvalue-compare-broker-risk-diagnostics.md` — TickValue Compare：Broker Tick Value 风控诊断工具
+- `knowledge/articles/tick-vwap-imbalance-microstructure.md` — Tick VWAP / Imbalance：Tick Buffer 微观结构特征
 - `knowledge/articles/universal-breakout-study-research-framework.md` — Universal Breakout Study：Session Range 突破策略研究框架
 - `knowledge/articles/weekend-gap-signal-pipeline-lynnchris.md` — Weekend Gap Signal Pipeline：从对象状态机到 EA Buffer 执行
 - `knowledge/articles/weekend-gap-state-machine-buffer-interface.md` — Weekend Gap Signal System：市场事件状态机与 EA Buffer 接口

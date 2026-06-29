@@ -19,6 +19,8 @@ quant_platform implementation
 - [FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机](./fsm-context-state-pattern.md)
 - [Chart Object Event Monitor：手动画线到 GeometryEvent](./chart-object-event-monitor.md)
 - [Live Telemetry Pipeline：Replay / Paper / Live 统一遥测](./live-telemetry-pipeline.md)
+- [Market Structure Event Engine：BOS / ChoCH / Sweep / ORB](./market-structure-event-engine.md)
+- [Microstructure Feature Engine：TickEvent 到短窗口执行特征](./microstructure-feature-engine.md)
 - [Model Production Pipeline：Python Research 到 MQL5 ONNX Runtime](./model-production-pipeline.md)
 - [MTF Feature Engine：多周期闭合 K 线特征设计](./mtf-feature-engine.md)
 - [Object Pool：热路径对象生命周期管理](./object-pool.md)
