@@ -45,6 +45,7 @@
 - `knowledge/architecture/object-pool.md` — Object Pool：热路径对象生命周期管理
 - `knowledge/architecture/pattern-event-engine.md` — Pattern Event Engine：形态实体到结构化事件
 - `knowledge/architecture/platform-design-source-map.md` — Platform Design Source Map：Research → Replay → Paper → Live 资料映射
+- `knowledge/architecture/python-bridge-service.md` — Python Bridge Service：MT5 / MQL5 到 Python Research Layer
 - `knowledge/architecture/repository-pattern.md` — Repository Pattern：交易数据访问抽象
 - `knowledge/architecture/signal-buffer-contract.md` — Signal Buffer Contract：Indicator Buffer 到 SignalEvent 的执行接口
 - `knowledge/architecture/statistical-diagnostics.md` — Statistical Diagnostics：策略与特征统计诊断层
@@ -99,6 +100,7 @@
 - `knowledge/articles/local-stop-loss-ea-framework.md` — Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework
 - `knowledge/articles/lgmm-hidden-regime-detection.md` — LGMM：指标数据中的 Hidden Pattern / Regime Detection
 - `knowledge/articles/lynnchris-author-priority-map.md` — Christian Benjamin（LynnChris）文章优先级地图
+- `knowledge/articles/lynnchris-python-bridge-pipeline.md` — LynnChris Python Bridge Pipeline：MQL5 WebRequest 到 Python ML 服务
 - `knowledge/articles/market-structure-event-engine-lynnchris.md` — Market Structure Event Engine：BOS / ChoCH / Liquidity Sweep / ORB
 - `knowledge/articles/leak-free-mtf-engine-closed-bar.md` — Leak-Free MTF Engine：闭合 K 线多周期特征引擎
 - `knowledge/articles/linear-regression-prediction-channels.md` — Linear Regression Prediction Channels：统计化回归通道

@@ -60,6 +60,7 @@
 - [Local Stop Loss EA：用 HashMap 和对象管理构建 EA Framework](./local-stop-loss-ea-framework.md)
 - [LGMM：指标数据中的 Hidden Pattern / Regime Detection](./lgmm-hidden-regime-detection.md)
 - [Christian Benjamin（LynnChris）文章优先级地图](./lynnchris-author-priority-map.md)
+- [LynnChris Python Bridge Pipeline：MQL5 WebRequest 到 Python ML 服务](./lynnchris-python-bridge-pipeline.md)
 - [Market Structure Event Engine：BOS / ChoCH / Liquidity Sweep / ORB](./market-structure-event-engine-lynnchris.md)
 - [Leak-Free MTF Engine：闭合 K 线多周期特征引擎](./leak-free-mtf-engine-closed-bar.md)
 - [Linear Regression Prediction Channels：统计化回归通道](./linear-regression-prediction-channels.md)

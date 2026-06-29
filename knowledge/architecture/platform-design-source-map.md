@@ -33,6 +33,7 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | Repository | Repository Pattern 22958 | 高 | 统一 MT5/Paper/Replay/DuckDB 数据访问 |
 | Strategy Interface | Meta-Labeling RSI/ADX, Transformer, DeepAR | 高 | Strategy 只产出 SignalEvent |
 | Model Production | Python + MT5 ONNX Integration 22020 | 高 | Python 训练、ONNX 交付、MQL5 runtime 推理的官方闭环 |
+| Python Bridge | LynnChris Part 34–36, Python-MT5 Strategy Tester | 高 | MQL5 WebRequest / Python MT5 API / Flask signal service |
 | Signal Adapter | LynnChris Part 70/74 Indicator Buffer → EA | 高 | 指标输出 buffer，EA 转换为 SignalEvent / OrderEvent |
 | RiskEngine | TickValue, CarryCost, CalendarEngine, NewsFilter, BreakEven | 中高 | 够 MVP，后续补 portfolio-level risk |
 | Trade Governance | LynnChris Trading Discipline 系列 | 高 | 统一 symbol/session/news/daily-limit/equity governance |

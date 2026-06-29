@@ -112,6 +112,30 @@ EA
 
 ## A 级：值得收
 
+### Python Bridge / Research Pipeline
+
+已收录：
+
+- Part 34 History Ingestion：[part34-history-ingestion](../../examples/research/lynnchris-python-bridge/part34-history-ingestion/)
+- Part 35 Model Training / REST Inference：[part35-model-training](../../examples/research/lynnchris-python-bridge/part35-model-training/)
+- Part 36 Live MT5 Market Streams：[part36-live-inference](../../examples/research/lynnchris-python-bridge/part36-live-inference/)
+
+已收录精华：
+
+- [LynnChris Python Bridge Pipeline：MQL5 WebRequest 到 Python ML 服务](./lynnchris-python-bridge-pipeline.md)
+- [Python Bridge Service](../architecture/python-bridge-service.md)
+
+价值：
+
+```text
+MQL5 WebRequest
+Python Flask
+MetaTrader5 Python API
+Parquet
+ModelService
+Signal API
+```
+
 ### Market Structure / Microstructure
 
 已收录：

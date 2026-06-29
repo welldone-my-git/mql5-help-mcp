@@ -70,6 +70,7 @@
 - [DeepAR Forecasting](./research/deepar-forecasting/) — DeepAR 多序列概率预测样例，重点是 autoregressive neural forecasting、forecast uncertainty 和 Python research layer。
 - [ARIMA Forecasting](./research/arima-forecasting/) — 传统统计时间序列 baseline，用于 sanity check 和模型 benchmark。
 - [LGMM Regime](./research/lgmm-regime/) — Latent Gaussian Mixture hidden pattern / regime detection 样例，包含 MQL5 indicator/EA 和 Python notebook。
+- [LynnChris Python Bridge Pipeline](./research/lynnchris-python-bridge/) — MQL5 WebRequest + Python Flask / MT5 API 研究到执行桥，重点是 history ingestion、model training、REST inference 和 Parquet。
 - [Microstructure Feature Pipeline](./research/microstructure-feature-pipeline/) — AFML Chapter 19 微观结构特征工程 Python 原型，包含 bar-level / tick-level 两层 Feature Pipeline、Numba kernels 和统一 Feature Matrix 输出。
 - [N-BEATS Forecasting](./research/nbeats-forecasting/) — N-BEATS 深度时间序列预测样例，用于 model zoo 和 forecasting baseline。
 - [Prophet Forecasting](./research/prophet-forecasting/) — Prophet 趋势/季节性/日历效应预测样例，适合中低频 baseline。
