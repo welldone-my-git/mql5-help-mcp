@@ -18,6 +18,7 @@ quant_platform implementation
 
 - [FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机](./fsm-context-state-pattern.md)
 - [Live Telemetry Pipeline：Replay / Paper / Live 统一遥测](./live-telemetry-pipeline.md)
+- [Model Production Pipeline：Python Research 到 MQL5 ONNX Runtime](./model-production-pipeline.md)
 - [MTF Feature Engine：多周期闭合 K 线特征设计](./mtf-feature-engine.md)
 - [Object Pool：热路径对象生命周期管理](./object-pool.md)
 - [Platform Design Source Map：Research → Replay → Paper → Live 资料映射](./platform-design-source-map.md)

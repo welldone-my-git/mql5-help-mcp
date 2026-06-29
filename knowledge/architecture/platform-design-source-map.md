@@ -28,6 +28,7 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | FSM / Context | Strategy State Machine 22950 | 高 | 已提升为平台架构资产 |
 | Repository | Repository Pattern 22958 | 高 | 统一 MT5/Paper/Replay/DuckDB 数据访问 |
 | Strategy Interface | Meta-Labeling RSI/ADX, Transformer, DeepAR | 高 | Strategy 只产出 SignalEvent |
+| Model Production | Python + MT5 ONNX Integration 22020 | 高 | Python 训练、ONNX 交付、MQL5 runtime 推理的官方闭环 |
 | RiskEngine | TickValue, CarryCost, CalendarEngine, NewsFilter, BreakEven | 中高 | 够 MVP，后续补 portfolio-level risk |
 | OrderManager | OrderBuilder, Bootstrap TradeHelpers | 高 | 足够生成 OrderEvent |
 | PaperBroker | Python-MT5 Strategy Tester | 中高 | 够 market-order immediate fill |
@@ -57,6 +58,10 @@ knowledge/architecture/
 ├── state-persistence.md
 ├── mtf-feature-engine.md
 ├── live-telemetry-pipeline.md
+├── model-production-pipeline.md
+├── repository-pattern.md
+├── object-pool.md
+├── statistical-diagnostics.md
 ├── storage-schema.md        # 待建
 └── replay-engine.md         # 待建
 ```

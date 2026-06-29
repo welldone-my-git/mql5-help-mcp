@@ -67,6 +67,7 @@
 - [JRQA：双系统同步 recurrence 的 Regime 特征库](./jrqa-joint-recurrence-library.md)
 - [RNA：从 Recurrence Matrix 到复杂网络特征](./rna-recurrence-network-analysis.md)
 - [Python-MetaTrader 5 Strategy Tester 系列：Python 研究与 RL 环境基础](./python-mt5-strategy-tester-series.md)
+- [Python + MetaTrader 5：Research → Production ONNX 流程](./python-mt5-onnx-research-production.md)
 - [Prophet：带趋势/季节性/日历效应的预测 baseline](./prophet-calendar-forecasting-python.md)
 - [RQA Library：Recurrence Quantification Analysis 完整分析组件](./rqa-complete-analysis-library-mql5.md)
 - [Rolling Sharpe：带统计显著性区间的策略诊断组件](./rolling-sharpe-statistical-significance-bands.md)

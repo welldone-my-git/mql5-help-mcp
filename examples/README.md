@@ -61,6 +61,7 @@
 - [Prophet Forecasting](./research/prophet-forecasting/) — Prophet 趋势/季节性/日历效应预测样例，适合中低频 baseline。
 - [Meta-Labeling ADX Pipeline](./research/meta-labeling-adx/) — Meta Labeling 系列 ADX 样例，重点是 ADX/DI primary signal、Optuna HPO Gate、ADX 特征、Triple Barrier、Meta Model 和 Bet Sizing。
 - [Meta-Labeling RSI Pipeline](./research/meta-labeling-rsi/) — Lopez de Prado Meta Labeling 研究样例，重点是 Primary Signal、Triple Barrier、Meta Model、Probability Filter 和 Bet Sizing。
+- [Python + MT5 ONNX Integration](./research/python-mt5-onnx-integration/) — MetaQuotes Research → Production 样例，重点是 Python MT5 API、RandomForest、ONNX 导出、MQL5 `OnnxRun()` 和 Strategy Tester 集成。
 - [Python-MT5 Strategy Tester](./research/python-mt5-strategy-tester/) — Omega Python Strategy Tester 系列源码，重点是 MT5-like Python backtester、bars/ticks、trade simulator、多品种多周期和 RL 环境基础。
 - [Transformer Trading](./research/transformer-trading/) — Transformer 序列模型交易实验，重点是 sequence tensor、attention encoder、feature extraction 和严格 walk-forward 验证。
 - [VAR Forecasting](./research/var-forecasting/) — 多变量时间序列 baseline，适合 OHLC / intermarket dependency study。

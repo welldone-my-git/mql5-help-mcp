@@ -37,6 +37,7 @@
 
 - `knowledge/architecture/fsm-context-state-pattern.md` — FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机
 - `knowledge/architecture/live-telemetry-pipeline.md` — Live Telemetry Pipeline：Replay / Paper / Live 统一遥测
+- `knowledge/architecture/model-production-pipeline.md` — Model Production Pipeline：Python Research 到 MQL5 ONNX Runtime
 - `knowledge/architecture/mtf-feature-engine.md` — MTF Feature Engine：多周期闭合 K 线特征设计
 - `knowledge/architecture/object-pool.md` — Object Pool：热路径对象生命周期管理
 - `knowledge/architecture/platform-design-source-map.md` — Platform Design Source Map：Research → Replay → Paper → Live 资料映射
@@ -99,6 +100,7 @@
 - `knowledge/articles/jrqa-joint-recurrence-library.md` — JRQA：双系统同步 recurrence 的 Regime 特征库
 - `knowledge/articles/rna-recurrence-network-analysis.md` — RNA：从 Recurrence Matrix 到复杂网络特征
 - `knowledge/articles/python-mt5-strategy-tester-series.md` — Python-MetaTrader 5 Strategy Tester 系列：Python 研究与 RL 环境基础
+- `knowledge/articles/python-mt5-onnx-research-production.md` — Python + MetaTrader 5：Research → Production ONNX 流程
 - `knowledge/articles/prophet-calendar-forecasting-python.md` — Prophet：带趋势/季节性/日历效应的预测 baseline
 - `knowledge/articles/rqa-complete-analysis-library-mql5.md` — RQA Library：Recurrence Quantification Analysis 完整分析组件
 - `knowledge/articles/rolling-sharpe-statistical-significance-bands.md` — Rolling Sharpe：带统计显著性区间的策略诊断组件
