@@ -24,15 +24,10 @@ SignalEngine / MetaLabel / Regime
 
 不同预测模型的输入、训练、输出差异很大：
 
-- Grey Model；
-- Polynomial Model；
-- Linear Regression；
-- Kalman Filter；
-- ARIMA；
-- Prophet；
-- DeepAR；
-- N-BEATS；
-- Transformer。
+- 第一代数学解析模型；
+- 第二代统计学习模型；
+- 第三代机器学习模型；
+- 第四代深度学习模型。
 
 但平台消费它们时只需要统一结果：
 
@@ -43,6 +38,138 @@ forecast error
 model confidence
 metadata
 ```
+
+## 四代预测模型分类
+
+ForecastEngine 按四代模型组织。
+
+```text
+第一代：数学解析 / 可解释基线
+    ↓
+Linear
+Polynomial
+Grey Model
+Kalman
+Fourier
+Wavelet
+
+第二代：统计学习 / 随机过程
+    ↓
+AR
+MA
+ARMA
+ARIMA
+SARIMA
+GARCH
+State Space
+
+第三代：机器学习 / 表格特征模型
+    ↓
+Random Forest
+SVM
+XGBoost
+LightGBM
+CatBoost
+
+第四代：深度学习 / 序列表示学习
+    ↓
+LSTM
+GRU
+Transformer
+TCN
+N-BEATS
+TimeMixer
+```
+
+### 第一代：数学解析
+
+用途：
+
+- 可解释 baseline；
+- 小样本建模；
+- smoothing / detrending；
+- forecast feature；
+- sanity check。
+
+典型模型：
+
+```text
+Linear
+Polynomial
+Grey Model
+Kalman
+Fourier
+Wavelet
+```
+
+这一层不追求最强预测能力，追求可解释、低依赖、低成本。
+
+### 第二代：统计学习
+
+用途：
+
+- 时间序列 baseline；
+- 自相关 / 季节性 / 波动建模；
+- 预测区间；
+- volatility forecast。
+
+典型模型：
+
+```text
+AR
+MA
+ARMA
+ARIMA
+SARIMA
+GARCH
+State Space
+```
+
+这一层是判断深度模型是否真的有增量价值的基准。
+
+### 第三代：机器学习
+
+用途：
+
+- 表格特征建模；
+- 非线性关系；
+- 因子组合；
+- meta labeling；
+- probability output。
+
+典型模型：
+
+```text
+Random Forest
+SVM
+XGBoost
+LightGBM
+CatBoost
+```
+
+这一层最适合结合 AFML FeatureEngine 和 Meta Labeling。
+
+### 第四代：深度学习
+
+用途：
+
+- 多变量序列建模；
+- 长依赖建模；
+- representation learning；
+- cross-asset / multi-horizon forecasting。
+
+典型模型：
+
+```text
+LSTM
+GRU
+Transformer
+TCN
+N-BEATS
+TimeMixer
+```
+
+这一层必须严格通过 walk-forward、CPCV、成本压力测试，否则容易只是高复杂度拟合。
 
 ## 统一接口
 
@@ -84,18 +211,36 @@ research/
 ├── forecasting/
 │   ├── base.py
 │   ├── result.py
-│   ├── grey/
-│   │   ├── ago.py
-│   │   ├── gm11.py
-│   │   ├── rolling_gm.py
-│   │   ├── adaptive_gm.py
-│   │   └── discrete_gm.py
-│   ├── polynomial.py
-│   ├── linear.py
-│   ├── kalman.py
-│   ├── arima.py
-│   ├── prophet.py
-│   ├── neural/
+│   ├── classical/
+│   │   ├── linear.py
+│   │   ├── polynomial.py
+│   │   ├── kalman.py
+│   │   ├── fourier.py
+│   │   ├── wavelet.py
+│   │   └── grey/
+│   │       ├── ago.py
+│   │       ├── gm11.py
+│   │       ├── rolling_gm.py
+│   │       ├── adaptive_gm.py
+│   │       └── discrete_gm.py
+│   ├── statistical/
+│   │   ├── arima.py
+│   │   ├── sarima.py
+│   │   ├── garch.py
+│   │   └── state_space.py
+│   ├── ml/
+│   │   ├── random_forest.py
+│   │   ├── svm.py
+│   │   ├── xgboost.py
+│   │   ├── lightgbm.py
+│   │   └── catboost.py
+│   ├── deep/
+│   │   ├── lstm.py
+│   │   ├── gru.py
+│   │   ├── transformer.py
+│   │   ├── tcn.py
+│   │   ├── nbeats.py
+│   │   └── timemixer.py
 │   └── ensemble.py
 ```
 
@@ -185,4 +330,3 @@ walk-forward evaluator
 ```
 
 GreyModel 可先作为研究插件，不进入 live execution。
-

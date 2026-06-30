@@ -39,18 +39,33 @@ Mathematical Tooling
 
 ```text
 ForecastEngine
-├── GreyModel
-├── PolynomialModel
-├── LinearRegression
-├── KalmanFilter
-├── ARIMA
-├── Prophet
-├── N-BEATS
-├── DeepAR
-└── Transformer
+├── 第一代：数学解析
+│   ├── Linear
+│   ├── Polynomial
+│   ├── Grey Model
+│   ├── Kalman
+│   ├── Fourier
+│   └── Wavelet
+├── 第二代：统计学习
+│   ├── AR / MA / ARMA
+│   ├── ARIMA / SARIMA
+│   ├── GARCH
+│   └── State Space
+├── 第三代：机器学习
+│   ├── Random Forest
+│   ├── SVM
+│   ├── XGBoost
+│   ├── LightGBM
+│   └── CatBoost
+└── 第四代：深度学习
+    ├── LSTM / GRU
+    ├── Transformer
+    ├── TCN
+    ├── N-BEATS
+    └── TimeMixer
 ```
 
-Grey Model、Polynomial Model、Trend Criteria 这类文章可以补齐传统数学建模层。
+Grey Model、Polynomial Model、Trend Criteria 这类文章可以补齐第一代数学解析层。它们不是为了替代 ML，而是作为可解释 baseline、feature generator 和 sanity check。
 
 ## S 级：Grey Model 系列
 
@@ -171,9 +186,15 @@ MathToolkit
 research/
 ├── forecasting/
 │   ├── base.py
-│   ├── grey_model.py
-│   ├── polynomial.py
-│   ├── kalman.py
+│   ├── classical/
+│   │   ├── grey_model.py
+│   │   ├── polynomial.py
+│   │   ├── kalman.py
+│   │   ├── fourier.py
+│   │   └── wavelet.py
+│   ├── statistical/
+│   ├── ml/
+│   ├── deep/
 │   └── ensemble.py
 ├── trend/
 │   ├── criteria.py
@@ -216,4 +237,3 @@ Research SDK / Mathematical Modeling / ForecastEngine
 ```text
 EA Strategy Collection
 ```
-
