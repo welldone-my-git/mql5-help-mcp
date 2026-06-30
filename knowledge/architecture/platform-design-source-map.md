@@ -46,6 +46,7 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | MT5 Replay Adapter | Strategy Tester export 待补 | 中低 | 后续需要 order/deal/position schema |
 | Storage | CSV Data Analysis, Bootstrap SQLite, File IO | 中高 | DuckDB schema 还要单独定 |
 | Feature Store | Microstructure, RQA/TDA/RNA, Meta Labeling, MTFEngine | 高 | 研究侧素材充足，需统一 closed-bar 语义 |
+| ForecastEngine | Aleksej Poljakov Grey Models, ARIMA, Prophet, DeepAR, N-BEATS, Transformer | 高 | 统一传统数学模型、统计模型和深度预测器的 fit/predict/result 接口 |
 | State Persistence | State Persistence 22277, Bootstrap SQLite | 中高 | Paper/Live 必需，MVP 可先文件后端 |
 | Runtime Recovery | Chacha Ian Self-Healing EA series | 高 | 运行时状态、虚拟保护、重启恢复、多品种对账 |
 | Live Telemetry | CSV Data Analysis Part 5, Chacha Ian Trade Analytics System | 中高 | CSV 只做 fallback，长期升级 DuckDB / socket sink |
@@ -62,6 +63,7 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 knowledge/architecture/
 ├── fsm-context-state-pattern.md
 ├── platform-design-source-map.md
+├── forecast-engine.md
 ├── event-model.md           # 待建
 ├── broker-adapter.md        # 待建
 ├── risk-engine.md           # 待建

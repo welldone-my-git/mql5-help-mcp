@@ -17,6 +17,7 @@ quant_platform implementation
 ## 已收录架构资产
 
 - [FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机](./fsm-context-state-pattern.md)
+- [Forecast Engine：Research SDK 的统一预测器层](./forecast-engine.md)
 - [Chart Object Event Monitor：手动画线到 GeometryEvent](./chart-object-event-monitor.md)
 - [Live Telemetry Pipeline：Replay / Paper / Live 统一遥测](./live-telemetry-pipeline.md)
 - [Market Structure Event Engine：BOS / ChoCH / Sweep / ORB](./market-structure-event-engine.md)
