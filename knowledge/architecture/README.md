@@ -16,6 +16,8 @@ quant_platform implementation
 
 ## 已收录架构资产
 
+- [AFML Feature Engine：从 OHLCV 到机器学习特征矩阵](./afml-feature-engine.md)
+- [AFML Research Validation：Sequential Bootstrap / Purged CV / CPCV](./afml-research-validation.md)
 - [FSM / Context / State Pattern：从 EA 状态机升级到平台运行状态机](./fsm-context-state-pattern.md)
 - [Forecast Engine：Research SDK 的统一预测器层](./forecast-engine.md)
 - [Chart Object Event Monitor：手动画线到 GeometryEvent](./chart-object-event-monitor.md)
