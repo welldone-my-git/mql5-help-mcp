@@ -31,6 +31,7 @@
 - [Flag Signal Buffer EA](./mql5/FlagSignalBufferEA/) — LynnChris Part 70 指标信号到 EA 执行样例，重点是 indicator buffers、`iCustom()` / `CopyBuffer()`、闭合 K 线消费和 SignalEvent 契约。
 - [Fractal Reaction BOS](./mql5/FractalReactionBOS/) — LynnChris Part 39 BOS / ChoCH 结构事件样例，重点是 fractal pivot、structure state 和 closed-bar structure break。
 - [Manual Trendline Sync](./mql5/ManualTrendlineSync/) — LynnChris Part 64 手动画线监控样例，重点是 `OnChartEvent()`、趋势线 registry、touch/breakout/retest 事件。
+- [Market Structure Sentinel](./mql5/MarketStructureSentinel/) — Bikeen 市场结构指标源码，重点是 SwingPoint、HH/HL/LH/LL、BOS、CHOCH 和结构事件抽取。
 - [Head & Shoulders Scanner](./mql5/HeadShouldersScanner/) — LynnChris Part 66 结构化头肩形态样例，重点是 SwingPoint、Pattern score、neckline geometry 和 quality metrics。
 - [Liquidity Sweep](./mql5/LiquiditySweep/) — LynnChris Part 27 流动性扫点样例，重点是 prior high/low sweep、strictness、MA context 和 SweepEvent 抽象。
 - [OrderBuilder](./mql5/OrderBuilder/) — Fluent `MqlTradeRequest` 构造器，重点是链式接口、字段完整性、方向性 SL/TP、stop-level 和 `OrderCheck()` 前置。
@@ -56,6 +57,7 @@
 - [Regression Channels](./mql5/RegressionChannels/) — OLS 回归通道统计组件，重点是 Student's t、confidence interval、prediction interval 和 leverage-aware band。
 - [Live CSV Streaming](./mql5/LiveCSVStreaming/) — MT5 live telemetry 到 Python daemon 的实时流样例，重点是 buffered writer、daily rotation、file tail 和 dashboard。
 - [Session Boxes](./mql5/SessionBoxes/) — Session Range 可视化指标，重点是 Asia/London/NY high-low box、GMT offset、跨午夜 session 判断和 session feature seed。
+- [SNR Sentinel](./mql5/SNRSentinel/) — Bikeen Support / Resistance Sentinel 源码，重点是候选水平位验证、break 监控、level replacement 和 S/R 事件特征。
 - [TDA Takens Embedding](./mql5/TDA_TakensEmbedding/) — TDA 基础库样例，重点是 Takens embedding、Point Cloud、flattened arrays 和 pairwise distance matrix。
 - [TickValue Compare](./mql5/TickValueCompare/) — Broker 风控诊断工具，重点是三种 Tick Value 对比、Market Watch 扫描和 CSV 导出。
 - [Tick VWAP / Imbalance](./mql5/TickVWAPImbalance/) — LynnChris Part 38 Tick buffer 微观结构样例，重点是 VWAP、flow、spread_to_atr 和 execution filter feature。
