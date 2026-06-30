@@ -31,6 +31,7 @@ Live MT5 / 高保真成交生命周期：仍需补资料
 | Market Structure Event | LynnChris BOS/ChoCH, Liquidity Sweep, ORB | 高 | 结构事件进入 Regime / Meta Label / Signal |
 | Microstructure Feature | LynnChris Tick VWAP/Imbalance, AFML microstructure | 高 | TickEvent 到 spread/flow/VWAP 特征与执行过滤 |
 | Repository | Repository Pattern 22958 | 高 | 统一 MT5/Paper/Replay/DuckDB 数据访问 |
+| Research Methodology | Maxim Romanov scientific approach / discretization / trend-flat / self-adapting series | 高 | 足够定义 hypothesis、sampling、state、adaptive parameter policy |
 | Strategy Interface | Meta-Labeling RSI/ADX, Transformer, DeepAR | 高 | Strategy 只产出 SignalEvent |
 | Model Production | Python + MT5 ONNX Integration 22020 | 高 | Python 训练、ONNX 交付、MQL5 runtime 推理的官方闭环 |
 | Python Bridge | LynnChris Part 34–36, Python-MT5 Strategy Tester | 高 | MQL5 WebRequest / Python MT5 API / Flask signal service |
@@ -68,6 +69,7 @@ knowledge/architecture/
 ├── model-production-pipeline.md
 ├── repository-pattern.md
 ├── object-pool.md
+├── scientific-research-pipeline.md
 ├── statistical-diagnostics.md
 ├── trade-governance.md
 ├── storage-schema.md        # 待建

@@ -29,6 +29,7 @@ quant_platform implementation
 - [Python Bridge Service：MT5 / MQL5 到 Python Research Layer](./python-bridge-service.md)
 - [Repository Pattern：交易数据访问抽象](./repository-pattern.md)
 - [Signal Buffer Contract：Indicator Buffer 到 SignalEvent 的执行接口](./signal-buffer-contract.md)
+- [Scientific Research Pipeline：从交易想法到可验证模型](./scientific-research-pipeline.md)
 - [Statistical Diagnostics：策略与特征统计诊断层](./statistical-diagnostics.md)
 - [State Persistence：平台状态持久化设计](./state-persistence.md)
 - [Trade Governance：交易纪律与执行前治理层](./trade-governance.md)

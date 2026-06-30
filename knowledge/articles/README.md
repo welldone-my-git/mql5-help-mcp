@@ -41,6 +41,7 @@
 - [MQL5 Bootstrap：SQLite3 Inspired 本地结构化存储](./mql5-bootstrap-sqlite3-facade.md)
 - [MQL5 Bootstrap：Positions / Orders 可复用基础库](./mql5-bootstrap-position-order-helpers.md)
 - [Manual Chart Object Sync：把手动画线变成事件源](./manual-chart-object-sync-lynnchris.md)
+- [Maxim Romanov：市场规律研究方法论路线图](./maxim-romanov-research-methodology-map.md)
 - [News Filtering：Economic Calendar + CSV Fallback](./news-filter-calendar-csv-fallback.md)
 - [Fluent Order Builder：从 COrderBuilder 到可维护下单框架](./fluent-order-builder-trade-framework.md)
 - [From Basic to Intermediate: Objects (III)：MQL5 图表事件与对象交互](./mql5-objects-iii-chart-event-gui.md)
