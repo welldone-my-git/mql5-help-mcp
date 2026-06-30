@@ -28,10 +28,12 @@ quant_platform implementation
 - [Pattern Event Engine：形态实体到结构化事件](./pattern-event-engine.md)
 - [Python Bridge Service：MT5 / MQL5 到 Python Research Layer](./python-bridge-service.md)
 - [Repository Pattern：交易数据访问抽象](./repository-pattern.md)
+- [Runtime Recovery Engine：Replay / Paper / Live 的自恢复运行时](./runtime-recovery-engine.md)
 - [Signal Buffer Contract：Indicator Buffer 到 SignalEvent 的执行接口](./signal-buffer-contract.md)
 - [Scientific Research Pipeline：从交易想法到可验证模型](./scientific-research-pipeline.md)
 - [Statistical Diagnostics：策略与特征统计诊断层](./statistical-diagnostics.md)
 - [State Persistence：平台状态持久化设计](./state-persistence.md)
+- [Trade Analytics Event Pipeline：订单/成交/持仓到研究分析](./trade-analytics-event-pipeline.md)
 - [Trade Governance：交易纪律与执行前治理层](./trade-governance.md)
 
 ## 后续建议资产
