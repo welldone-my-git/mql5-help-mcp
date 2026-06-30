@@ -68,6 +68,7 @@
 
 - [Biased Financial Markets](./research/biased-financial-markets/) — 金融 ML 类别不平衡样例，重点是 resampling、metrics、ONNX 输出流程和时间序列验证风险。
 - [DeepAR Forecasting](./research/deepar-forecasting/) — DeepAR 多序列概率预测样例，重点是 autoregressive neural forecasting、forecast uncertainty 和 Python research layer。
+- [Grey Model Forecasting](./research/grey-model-forecasting/) — Aleksej Poljakov Grey Model 家族源码，重点是 AGO/IAGO、GM(1,1)、Rolling GM、Adaptive GM、Grey Channel 和 Discrete GM 预测器抽取。
 - [ARIMA Forecasting](./research/arima-forecasting/) — 传统统计时间序列 baseline，用于 sanity check 和模型 benchmark。
 - [LGMM Regime](./research/lgmm-regime/) — Latent Gaussian Mixture hidden pattern / regime detection 样例，包含 MQL5 indicator/EA 和 Python notebook。
 - [LynnChris Python Bridge Pipeline](./research/lynnchris-python-bridge/) — MQL5 WebRequest + Python Flask / MT5 API 研究到执行桥，重点是 history ingestion、model training、REST inference 和 Parquet。
